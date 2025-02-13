@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: tmate_demo 
 
 # Controls when the workflow will run
 on:
@@ -36,3 +36,25 @@ jobs:
           echo test, and deploy your project.
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
+
+      - name: Set reusable strings
+        # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
+        id: strings
+        shell: bash
+        run: |
+          echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+      
+      
+      - name: Make a file with a lot of repeated text
+        run: |
+          for i in {1..1000}; do echo -n 'foobar' >> ${{ steps.strings.outputs.build-output-dir }}/foobar.txt; done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: my-artifact
+          path: ${{ steps.strings.outputs.build-output-dir }}/*
+          compression-level: 9 # maximum compression
+          
+
+
+
+        
