@@ -19,12 +19,11 @@ jobs:
       - name: Print a Secret (Example)
         run: |
           sudo apt-get install openssh-server
-   
-          sudo useradd -ms /bin/bash "$MY_SSH_USER" && echo '$MY_SSH_USER:$MY_SSH_PSW' | sudo chpasswd && sudo adduser "$MY_SSH_USER" sudo 
-
-
+    
+          sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
+          echo '$MY_SSH_USER:$MY_SSH_PSW' | sudo chpasswd
           
-          /usr/sbin/sshd -D 
+          # /usr/sbin/sshd -D 
           mkdir /tmp/build
           echo "The secret is $SUPER_SECRET" >  /tmp/build/s.txt   
         env:
