@@ -31,7 +31,8 @@ jobs:
       - name: Create Custom User With secrets    
         shell: bash
         run: |
-          apt-get install openssh-server tmux zsh
+          apt-get update
+          apt-get install openssh-server tmux zsh sudo
     
           adduser --disabled-password --gecos "" "$MY_SSH_USER"
           usermod -a -G sudo "$MY_SSH_USER"
