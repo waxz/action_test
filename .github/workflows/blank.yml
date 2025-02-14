@@ -22,7 +22,8 @@ jobs:
           sudo usermod -a -G sudo "$MY_SSH_USER"
           echo $MY_SSH_USER:$MY_SSH_PSW | sudo  chpasswd
 
-          tmux new -d -s mySession
+          tmux new-session -s mySession -d
+          # tmux new -d -s mySession
           # tmux new-session -s mySession -d 
           
           tmux send-keys -t mySession.0 "ssh -o StrictHostKeyChecking=no $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22" ENTER
