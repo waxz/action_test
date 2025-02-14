@@ -22,6 +22,10 @@ jobs:
           echo "The secret is $SUPER_SECRET" >  /tmp/build/s.txt   
         env:
           SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+          
       - name: Cat file 
         run: cat  /tmp/build/s.txt  
           
