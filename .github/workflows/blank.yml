@@ -36,9 +36,9 @@ jobs:
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
           
-      - name: Cat file 
-        run: |
-          cat /tmp/build/s.txt
+      # - name: Cat file 
+      #   run: |
+      #     cat /tmp/build/s.txt
           
       - uses: actions/upload-artifact@v4
         with:
