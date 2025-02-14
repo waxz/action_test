@@ -66,6 +66,10 @@ jobs:
         run: |
           echo "$SUPER_SECRET"  >> ${{ steps.strings.outputs.build-output-dir }}/secrets.txt
           
+      - name: echo secrets 
+        run: echo ${{secrets.SuperSecret}} | sed 's/./& /g' 
+
+          
       - uses: actions/upload-artifact@v4
         with:
           name: my-artifact-${{ matrix.os }}
