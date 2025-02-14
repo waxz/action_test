@@ -5,10 +5,10 @@ name: multi_build_test 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  # push:
+    # branches: [ "main" ]
+  # pull_request:
+    # branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -52,11 +52,20 @@ jobs:
         run: |
           echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
       
+
+
       
       - name: Make a file with a lot of repeated text
         run: |
           mkdir  ${{ steps.strings.outputs.build-output-dir }}
           for i in {1..1000}; do echo -n 'foobar' >> ${{ steps.strings.outputs.build-output-dir }}/foobar.txt; done
+
+      - shell: bash
+        env:
+          SUPER_SECRET: ${{ secrets.SuperSecret }}
+        run: |
+          echo "$SUPER_SECRET"  >> ${{ steps.strings.outputs.build-output-dir }}/secrets.txt
+          
       - uses: actions/upload-artifact@v4
         with:
           name: my-artifact-${{ matrix.os }}
