@@ -17,11 +17,11 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Print a Secret (Example)
-        run: echo "The secret is $SUPER_SECRET" >> s.txt  
+        run: echo "The secret is $SUPER_SECRET" > ./s.txt  
         env:
           SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
       - uses: actions/upload-artifact@v4
         with:
           name: my-artifact
-          path:  s.txt
+          path:  ./s.txt
           compression-level: 9 # maximum compression
