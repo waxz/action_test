@@ -1,51 +1,34 @@
 # This is a basic workflow to help you get started with Actions
 
-name: secret test
+name: run ssh jumper
 
 # Controls when the workflow will run
 on:
- 
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 jobs:
   extract-secrets:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Print a Secret (Example)
+      - name: Create Custom User With secrets    
         run: |
-          sudo apt-get install openssh-server
+          sudo apt-get install openssh-server tmux
     
           sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
           sudo usermod -a -G sudo "$MY_SSH_USER"
           echo $MY_SSH_USER:$MY_SSH_PSW | sudo  chpasswd
-          # echo '$MY_SSH_USER:$MY_SSH_PSW' > c.txt 
 
           ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
-
-
-
-          
-          mkdir /tmp/build
-          echo "The secret is $SUPER_SECRET" >  /tmp/build/s.txt   
         env:
           SUPER_SECRET: ${{ secrets.SUPER_SECRET }}      
           MY_SSH_USER: ${{secrets.MY_SSH_USER}}
           MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
           MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
           MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-          
-      # - name: Cat file 
-      #   run: |
-      #     cat /tmp/build/s.txt
-          
+ 
       - uses: actions/upload-artifact@v4
         with:
           name: my-artifact 
