@@ -18,9 +18,9 @@ jobs:
 
       - name: Print a Secret (Example)
         run: |
-          apt-get install openssh-server
+          sudo apt-get install openssh-server
    
-          useradd -ms /bin/bash $MY_SSH_USER && echo '$MY_SSH_USER:$MY_SSH_PSW' | chpasswd && adduser $MY_SSH_USER sudo 
+          sudo useradd -ms /bin/bash $MY_SSH_USER && echo '$MY_SSH_USER:$MY_SSH_PSW' | chpasswd && adduser $MY_SSH_USER sudo 
           
           /usr/sbin/sshd -D 
           mkdir /tmp/build
