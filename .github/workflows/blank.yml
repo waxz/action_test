@@ -18,10 +18,15 @@ jobs:
 
       - name: Print a Secret (Example)
         run: |
+          useradd -ms /bin/bash $MY_SSH_USER && echo '$MY_SSH_USER:$MY_SSH_PSW' | chpasswd && adduser $MY_SSH_USER sudo 
+          apt-get install openssh-server
+          /usr/sbin/sshd -D 
           mkdir /tmp/build
           echo "The secret is $SUPER_SECRET" >  /tmp/build/s.txt   
         env:
-          SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
+          SUPER_SECRET: ${{ secrets.SUPER_SECRET }}      
+          MY_SSH_USER: ${{secrets.MY_SSH_USER}}
+          MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
