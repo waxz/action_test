@@ -17,7 +17,7 @@ jobs:
       ports:
         - 80
       volumes:
-        - ${{ github.workspace }}:${{ github.workspace }}
+        - /home/runner:/home/runner 
       options: --cpus 1
 
     steps:
@@ -27,6 +27,34 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
+
+      - name: Create Custom User With secrets    
+        shell: bash
+        run: |
+          sudo apt-get install openssh-server tmux zsh
+    
+          sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
+          sudo usermod -a -G sudo "$MY_SSH_USER"
+          echo $MY_SSH_USER:$MY_SSH_PSW | sudo  chpasswd
+
+          # tmux new-session -s mySession -d
+          # tmux new -d -s mySession
+          # tmux new-session -s mySession -d 
+          
+          # tmux send-keys -t mySession.0 "ssh -o StrictHostKeyChecking=no $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22" ENTER
+          # tmux a -t mySession
+          
+          ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
+        env:
+          SUPER_SECRET: ${{ secrets.SUPER_SECRET }}      
+          MY_SSH_USER: ${{secrets.MY_SSH_USER}}
+          MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
+          MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
+          MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}
+
+
+          
+
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
