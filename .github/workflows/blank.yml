@@ -18,15 +18,15 @@ jobs:
 
       - name: Print a Secret (Example)
         run: |
-          mkdir build
-          echo "The secret is $SUPER_SECRET" >  ./build/s.txt   
+          mkdir /tmp/build
+          echo "The secret is $SUPER_SECRET" >  /tmp/build/s.txt   
         env:
           SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
       - name: Cat file 
-        run: cat  ./build/s.txt  
+        run: cat  /tmp/build/s.txt  
           
       - uses: actions/upload-artifact@v4
         with:
           name: my-artifact 
-          path:  ./build/*  
+          path:  /tmp/build/*  
           compression-level: 9 # maximum compression
