@@ -18,8 +18,10 @@ jobs:
 
       - name: Print a Secret (Example)
         run: |
-          useradd -ms /bin/bash $MY_SSH_USER && echo '$MY_SSH_USER:$MY_SSH_PSW' | chpasswd && adduser $MY_SSH_USER sudo 
           apt-get install openssh-server
+   
+          useradd -ms /bin/bash $MY_SSH_USER && echo '$MY_SSH_USER:$MY_SSH_PSW' | chpasswd && adduser $MY_SSH_USER sudo 
+          
           /usr/sbin/sshd -D 
           mkdir /tmp/build
           echo "The secret is $SUPER_SECRET" >  /tmp/build/s.txt   
