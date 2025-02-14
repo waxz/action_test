@@ -28,34 +28,34 @@ jobs:
       - name: Run a one-line script
         run: echo Hello, world!
 
-      - name: Create Custom User With secrets    
-        shell: bash
-        run: |
-          apt-get update
-          apt-get install -y openssh-server tmux zsh sudo
+      # - name: Create Custom User With secrets    
+      #   shell: bash
+      #   run: |
+      #     apt-get update
+      #     apt-get install -y openssh-server tmux zsh sudo
     
-          adduser --disabled-password --gecos "" "$MY_SSH_USER"
-          usermod -a -G sudo "$MY_SSH_USER"
-          echo $MY_SSH_USER:$MY_SSH_PSW |   chpasswd
+      #     adduser --disabled-password --gecos "" "$MY_SSH_USER"
+      #     usermod -a -G sudo "$MY_SSH_USER"
+      #     echo $MY_SSH_USER:$MY_SSH_PSW |   chpasswd
 
-          # tmux new-session -s mySession -d
-          # tmux new -d -s mySession
-          # tmux new-session -s mySession -d 
+      #     # tmux new-session -s mySession -d
+      #     # tmux new -d -s mySession
+      #     # tmux new-session -s mySession -d 
           
-          # tmux send-keys -t mySession.0 "ssh -o StrictHostKeyChecking=no $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22" ENTER
-          # tmux a -t mySession
+      #     # tmux send-keys -t mySession.0 "ssh -o StrictHostKeyChecking=no $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22" ENTER
+      #     # tmux a -t mySession
 
 
-          # run sshd 
-          mkdir  /var/run/sshd
-          /usr/sbin/sshd -D
-          ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
-        env:
-          SUPER_SECRET: ${{ secrets.SUPER_SECRET }}      
-          MY_SSH_USER: ${{secrets.MY_SSH_USER}}
-          MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
-          MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
-          MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}
+      #     # run sshd 
+      #     mkdir  /var/run/sshd
+      #     /usr/sbin/sshd -D
+      #     ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
+      #   env:
+      #     SUPER_SECRET: ${{ secrets.SUPER_SECRET }}      
+      #     MY_SSH_USER: ${{secrets.MY_SSH_USER}}
+      #     MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
+      #     MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
+      #     MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}
 
 
           
