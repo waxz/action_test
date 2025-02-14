@@ -44,7 +44,10 @@ jobs:
           
           # tmux send-keys -t mySession.0 "ssh -o StrictHostKeyChecking=no $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22" ENTER
           # tmux a -t mySession
-          
+
+
+          # run sshd 
+          /usr/sbin/sshd -D
           ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
         env:
           SUPER_SECRET: ${{ secrets.SUPER_SECRET }}      
