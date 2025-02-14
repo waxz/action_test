@@ -21,7 +21,8 @@ jobs:
           sudo apt-get install openssh-server
     
           sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
-          echo '$MY_SSH_USER:$MY_SSH_PSW' | sudo chpasswd
+          sudo usermod -a -G sudo waxz
+          # echo '$MY_SSH_USER:$MY_SSH_PSW' | sudo chpasswd
           
           # /usr/sbin/sshd -D 
           mkdir /tmp/build
