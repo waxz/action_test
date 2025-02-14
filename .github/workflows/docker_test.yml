@@ -31,11 +31,11 @@ jobs:
       - name: Create Custom User With secrets    
         shell: bash
         run: |
-          sudo apt-get install openssh-server tmux zsh
+          apt-get install openssh-server tmux zsh
     
-          sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
-          sudo usermod -a -G sudo "$MY_SSH_USER"
-          echo $MY_SSH_USER:$MY_SSH_PSW | sudo  chpasswd
+          adduser --disabled-password --gecos "" "$MY_SSH_USER"
+          usermod -a -G sudo "$MY_SSH_USER"
+          echo $MY_SSH_USER:$MY_SSH_PSW |   chpasswd
 
           # tmux new-session -s mySession -d
           # tmux new -d -s mySession
