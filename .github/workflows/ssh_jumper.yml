@@ -71,13 +71,13 @@ jobs:
           # }
           # EOF
 
-          cat << EOF | sudo tee -a /etc/docker/daemon.json
+          cat << EOF | sudo tee -a /etc/docker/daemon.json.test
           {
             "graph":"/mnt/docker"
           }
           EOF
 
-          sudo systemctl daemon-reload
+          # sudo systemctl daemon-reload
           # sudo systemctl restart docker
           # sudo systemctl start docker
           # sudo service docker start
