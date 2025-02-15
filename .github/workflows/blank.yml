@@ -9,6 +9,10 @@ on:
 jobs:
   extract-secrets:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+        
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -16,6 +20,7 @@ jobs:
       - name: Create Custom User With secrets    
         shell: bash
         run: |
+          echo github.workspace ${{ github.workspace }}
           sudo apt-get install openssh-server tmux zsh
     
           sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
@@ -33,9 +38,9 @@ jobs:
           nohup ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
           echo "waiting......"
           # tmux
-          bash 
+          # bash 
         env:
-          SUPER_SECRET: ${{ secrets.SUPER_SECRET }}      
+          SUPER_SECRET: ${{ secrets.SUPER_SECRET }}       
           MY_SSH_USER: ${{secrets.MY_SSH_USER}}
           MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
           MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
