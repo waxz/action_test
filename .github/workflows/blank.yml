@@ -59,6 +59,6 @@ jobs:
  
       - uses: actions/upload-artifact@v4
         with:
-          name: my-install 
+          name: my-install-${{ env.START_TIME }}
           path:  /tmp/install/*  
           compression-level: 9 # maximum compression
