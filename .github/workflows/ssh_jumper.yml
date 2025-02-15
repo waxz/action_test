@@ -52,7 +52,7 @@ jobs:
           
           # touch $file   
           echo xx >> $file
-          sudo bash -c "echo rm /tmp/blocker.txt >> /bin/exit.sh"
+          sudo bash -c "echo rm $file >> /bin/exit.sh"
           sudo chmod +x /bin/exit.sh
           
           echo "waiting on file $file ......"   
