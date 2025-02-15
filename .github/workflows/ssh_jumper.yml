@@ -23,13 +23,16 @@ jobs:
           echo "STAMP=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
       
       - name: Echo current date
-        run: echo ${{ env.START_TIME }} # Gives "2022-12-11T01:42:20"
+        run: |
+          echo ${{ env.STAMP }} # Gives "2022-12-11-01-42-20"
+          echo ${{ env.START_TIME }} # Gives "2022-12-11T01:42:20"
+
         
       - name: Create Custom User With secrets    
         shell: bash
         run: |
           echo github.workspace ${{ github.workspace }}
-          sudo apt-get install openssh-server tmux zsh inotify-tools
+          sudo apt-get install openssh-server tmux
     
           sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
           sudo usermod -a -G sudo "$MY_SSH_USER"
@@ -46,6 +49,7 @@ jobs:
           nohup ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
           file=/tmp/blocker.txt
           touch $file
+          mkdir /tmp/install
           
           echo "waiting on file $file ......"
           echo "remove file $file to exit......"      
