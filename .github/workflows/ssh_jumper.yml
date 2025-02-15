@@ -55,9 +55,9 @@ jobs:
 
 
           # change docker 
-          # sudo systemctl stop docker
+          sudo systemctl stop docker
           # mkdir /mnt/docker
-          sudo service docker stop              
+          # sudo service docker stop              
 
           cp /var/lib/docker/* /mnt/docker/
           umount -f /var/lib/docker/overlay/*/*
@@ -77,10 +77,10 @@ jobs:
           }
           EOF
 
-          # sudo systemctl daemon-reload
-          # sudo systemctl restart docker
+          sudo systemctl daemon-reload
+          sudo systemctl restart docker
           # sudo systemctl start docker
-          sudo service docker start
+          # sudo service docker start
           
 
 
