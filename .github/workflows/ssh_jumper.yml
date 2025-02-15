@@ -46,7 +46,8 @@ jobs:
           sudo wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
           
           sudo wget https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
-          sudo chmod +x  /bin/cloudflared
+          
+          # sudo chmod +x  /bin/cloudflared
           
           # sudo cp /tmp/.tmux.conf* /home/$MY_SSH_USER/      
           
