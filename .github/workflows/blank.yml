@@ -29,8 +29,8 @@ jobs:
           # tmux send-keys -t mySession.0 "ssh -o StrictHostKeyChecking=no $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22" ENTER
           # tmux a -t mySession
           
-          ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 'nohup sleep 300 &'
-          
+          # ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
+          nohup ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
           echo "waiting......"
           tmux
           # bash
