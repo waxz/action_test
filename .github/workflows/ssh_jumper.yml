@@ -52,14 +52,11 @@ jobs:
           
           touch $file    
           echo waiting >> $file 
+          echo check /tmp
           cat $file 
+          ls /tmp
           
-          
-          # sudo echo "sudo rm $file" >> /usr/bin/exit.sh 
-          # sudo chmod +x /usr/bin/exit.sh
-          
-          echo "waiting on file $file ......"
-          echo "run exit.sh to exit......"      
+          echo "waiting on file $file ......"   
           while [  -f "$file" ]; do sleep 10; done
           echo "exited......"
           # tmux
