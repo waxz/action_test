@@ -57,8 +57,8 @@ jobs:
           echo "waiting on file $file ......"   
           while [  -f "$file" ]; do sleep 10; done
           echo "exited......"
-          # tmux
-          # bash 
+          echo check /tmp
+          ls -a /tmp
         env:
           SUPER_SECRET: ${{ secrets.SUPER_SECRET }}       
           MY_SSH_USER: ${{secrets.MY_SSH_USER}}
