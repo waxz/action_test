@@ -1,8 +1,12 @@
+# use sshj  
+[ssh_jumper.yml](.github/workflows/ssh_jumper.yml)
 
 
-# tmate   
+
+
+# use tmate   
 ### add ssh key in Github Setting     
-https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account?tool=webui
+[adding-a-new-ssh-key-to-your-github-account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account?tool=webui)
 ### set key in local machine
 ```
 chmod 700 .ssh
