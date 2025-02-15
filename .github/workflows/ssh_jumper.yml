@@ -44,10 +44,10 @@ jobs:
 
 
           # wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /tmp/.tmux.conf
-          sudo wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
-          sudo wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
+          sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
+          sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
           
-          sudo wget https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
+          sudo wget -q https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
           
           # sudo chmod +x  /bin/cloudflared
           
@@ -59,7 +59,7 @@ jobs:
           # mkdir /mnt/docker
           # sudo service docker stop              
 
-          sudo cp /var/lib/docker/* /mnt/docker/
+          # sudo cp /var/lib/docker/* /mnt/docker/
           # umount -f /var/lib/docker/overlay/*/*
           # umount -f /var/lib/docker/containers/*/mounts/shm
           
