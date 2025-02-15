@@ -52,11 +52,11 @@ jobs:
           
           # touch $file   
           echo xx >> $file
-          sudo bash -c "echo rm $file >> /bin/exit.sh"
-          sudo chmod +x /bin/exit.sh
+          sudo bash -c "echo rm $file >> /bin/quit-ssj.sh"
+          sudo chmod +x /bin/quit-ssj.sh
           
           echo "waiting on file $file ......"   
-          echo "run exit.sh to exit"   
+          echo "run quit-ssj.sh to exit"   
           
           while [  -s "$file" ]; do sleep 10; done
           echo "exited......"
