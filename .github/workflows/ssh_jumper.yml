@@ -47,8 +47,13 @@ jobs:
           
           # ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
           nohup ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
+          
           file=/tmp/blocker.txt
-          touch $file                   
+          
+          touch $file    
+          echo waiting >> $file 
+          cat $file 
+          
           
           # sudo echo "sudo rm $file" >> /usr/bin/exit.sh 
           # sudo chmod +x /usr/bin/exit.sh
