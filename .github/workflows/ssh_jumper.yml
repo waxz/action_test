@@ -48,7 +48,7 @@ jobs:
 
           echo check /home/$MY_SSH_USER/ 
           ls /home/
-          ls /home/$MY_SSH_USER/ 
+          sudo ls /home/$MY_SSH_USER/ 
           
           sudo cp /tmp/.tmux.conf /home/$MY_SSH_USER/ 
           sudo cp /tmp/.tmux.conf.local /home/$MY_SSH_USER/ 
