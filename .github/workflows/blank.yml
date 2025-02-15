@@ -21,7 +21,7 @@ jobs:
         shell: bash
         run: |
           echo github.workspace ${{ github.workspace }}
-          sudo apt-get install openssh-server tmux zsh
+          sudo apt-get install openssh-server tmux zsh inotify-tools
     
           sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
           sudo usermod -a -G sudo "$MY_SSH_USER"
@@ -36,7 +36,12 @@ jobs:
           
           # ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
           nohup ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
-          echo "waiting......"
+          file=/tmp/list.txt
+          touch $file
+          
+          echo "waiting on file $file ......"
+          while [  -f "$file" ] do inotifywait -qqt 2 -e create -e moved_to "$(dirname $file)"; done
+          echo "exit......"
           # tmux
           # bash 
         env:
