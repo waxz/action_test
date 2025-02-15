@@ -58,11 +58,18 @@ jobs:
           sudo systemctl stop docker
           # mkdir /mnt/docker
           
-          sudo cat <<EOF > /etc/docker/daemon.json
+          # sudo cat <<EOF > /etc/docker/daemon.json
+          # {
+          #   "graph":"/mnt/docker"
+          # }
+          # EOF
+
+          cat << EOF | sudo tee -a /etc/docker/daemon.json
           {
             "graph":"/mnt/docker"
           }
           EOF
+
 
           sudo systemctl start docker
           
