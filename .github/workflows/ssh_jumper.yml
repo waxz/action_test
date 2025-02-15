@@ -41,12 +41,13 @@ jobs:
           echo download tmux.conf
 
 
-          wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /tmp/.tmux.conf
+          # wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /tmp/.tmux.conf
           sudo wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
 
- 
+          sudo wget https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
+
           
-          wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /tmp/.tmux.conf.local
+          sudo wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
           
           
           # sudo cp /tmp/.tmux.conf* /home/$MY_SSH_USER/      
