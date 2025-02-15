@@ -59,7 +59,7 @@ jobs:
           # mkdir /mnt/docker
           # sudo service docker stop              
 
-          # sudo cp /var/lib/docker/* /mnt/docker/
+          sudo rsync -a /var/lib/docker/ /mnt/docker/
           # umount -f /var/lib/docker/overlay/*/*
           # umount -f /var/lib/docker/containers/*/mounts/shm
           
