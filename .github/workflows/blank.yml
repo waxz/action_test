@@ -40,7 +40,7 @@ jobs:
           touch $file
           
           echo "waiting on file $file ......"
-          while [  -f "$file" ]; do inotifywait -qqt 2 -e create -e moved_to "$(dirname $file)"; done
+          while [  -f "$file" ]; do sleep 10; done
           echo "exit......"
           # tmux
           # bash 
