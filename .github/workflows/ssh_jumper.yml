@@ -42,8 +42,10 @@ jobs:
 
 
           wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf /tmp/.tmux.conf
+          sudo cp /tmp/.tmux.conf /home/$MY_SSH_USER/
+          
           wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local  /tmp/.tmux.conf.local
-          sudo cp /tmp/.tmux.conf* /home/$MY_SSH_USER/
+          sudo cp /tmp/.tmux.conf.local /home/$MY_SSH_USER/
           
 
           # tmux new-session -s mySession -d
