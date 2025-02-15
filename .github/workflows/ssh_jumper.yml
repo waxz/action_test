@@ -55,11 +55,15 @@ jobs:
 
 
           # change docker 
-          # sudo systemctl stop docker
+          sudo systemctl stop docker
           # mkdir /mnt/docker
           # sudo service docker stop              
 
           sudo rsync -a /var/lib/docker/ /mnt/docker/
+          sudo rm -f /var/lib/docker/
+          sudo ln -s /mnt/docker /var/lib/docker
+
+          
           # umount -f /var/lib/docker/overlay/*/*
           # umount -f /var/lib/docker/containers/*/mounts/shm
           
@@ -71,14 +75,14 @@ jobs:
           # }
           # EOF
 
-          cat << EOF | sudo tee -a /etc/docker/daemon.json.test
-          {
-            "graph":"/mnt/docker"
-          }
-          EOF
+          # cat << EOF | sudo tee -a /etc/docker/daemon.json.test
+          # {
+          #   "graph":"/mnt/docker"
+          # }
+          # EOF
 
           # sudo systemctl daemon-reload
-          # sudo systemctl restart docker
+          sudo systemctl restart docker
           # sudo systemctl start docker
           # sudo service docker start
           
