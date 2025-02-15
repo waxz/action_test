@@ -24,10 +24,10 @@ jobs:
 
           # tmux new-session -s mySession -d
           # tmux new -d -s mySession
-          # tmux new-session -s mySession -d 
+          bash -c "tmux new-session -s mySession -d"   
           
-          # tmux send-keys -t mySession.0 "ssh -o StrictHostKeyChecking=no $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22" ENTER
-          # tmux a -t mySession
+          tmux send-keys -t mySession.0 "ssh -o StrictHostKeyChecking=no $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22" ENTER
+          tmux a -t mySession
           
           ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
         env:
