@@ -50,12 +50,13 @@ jobs:
           
           file=/tmp/blocker.txt
           
-          touch $file    
+          # touch $file   
+          echo xx >> $file
           echo check /tmp
           ls -a /tmp
           
           echo "waiting on file $file ......"   
-          while [  -f "$file" ]; do sleep 10; done
+          while [  -s "$file" ]; do sleep 10; done
           echo "exited......"
           echo check /tmp
           ls -a /tmp
