@@ -49,7 +49,6 @@ jobs:
           nohup ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
           file=/tmp/blocker.txt
           touch $file
-          mkdir /tmp/install
           
           echo "waiting on file $file ......"
           echo "remove file $file to exit......"      
