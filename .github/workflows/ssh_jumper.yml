@@ -41,8 +41,8 @@ jobs:
           echo download tmux.conf
 
 
-          wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf /tmp/
-          wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local  /tmp/
+          wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf /tmp/.tmux.conf
+          wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local  /tmp/.tmux.conf.local
           sudo cp /tmp/.tmux.conf* /home/$MY_SSH_USER/
           
 
