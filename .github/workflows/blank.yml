@@ -17,8 +17,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
         
-      - name: Set current date as env variable
-        run: echo "START_TIME=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
+      - name: Set current date as env variable                
+        run: |
+          echo "START_TIME=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
+          echo "STAMP=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
+      
       - name: Echo current date
         run: echo ${{ env.START_TIME }} # Gives "2022-12-11T01:42:20"
         
@@ -59,6 +62,6 @@ jobs:
  
       - uses: actions/upload-artifact@v4
         with:
-          name: my-install-${{ env.START_TIME }}
+          name: my-install-${{ env.STAMP }}
           path:  /tmp/install/*  
           compression-level: 9 # maximum compression
