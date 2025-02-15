@@ -52,14 +52,15 @@ jobs:
           
           # touch $file   
           echo xx >> $file
-          echo check /tmp
-          ls -a /tmp
+          sudo bash -c "echo rm /tmp/blocker.txt >> /bin/exit.sh"
+          sudo chmod +x /bin/exit.sh
           
           echo "waiting on file $file ......"   
+          echo "run exit.sh to exit"   
+          
           while [  -s "$file" ]; do sleep 10; done
           echo "exited......"
-          echo check /tmp
-          ls -a /tmp
+          
         env:
           SUPER_SECRET: ${{ secrets.SUPER_SECRET }}       
           MY_SSH_USER: ${{secrets.MY_SSH_USER}}
