@@ -47,6 +47,7 @@ jobs:
           
           # ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
           nohup ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
+          echo run ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no   -J $MY_SSHJ_NS@ssh-j.com $MY_SSH_USER@$MY_SSHJ_HOST
           
           file=/tmp/blocker.txt
           
