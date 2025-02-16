@@ -85,7 +85,14 @@ jobs:
           sudo systemctl restart docker
           # sudo systemctl start docker
           # sudo service docker start
+
+
+          # netbird
+          curl -fsSL https://pkgs.netbird.io/install.sh | sh
+
+          $NETBIRD_UP
           
+
 
 
           # tmux new-session -s mySession -d
@@ -117,7 +124,8 @@ jobs:
           MY_SSH_USER: ${{secrets.MY_SSH_USER}}
           MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
           MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
-          MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}
+          MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}      
+          NETBIRD_UP: ${{secrets.NETBIRD_UP}}
  
       - uses: actions/upload-artifact@v4
         with:
