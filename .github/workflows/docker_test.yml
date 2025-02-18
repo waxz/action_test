@@ -79,10 +79,25 @@ jobs:
           
           # tmux send-keys -t mySession.0 "ssh -o StrictHostKeyChecking=no $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22" ENTER
           # tmux a -t mySession
+
+
+          
           mkdir /var/run/sshd
           chmod 0755 /var/run/sshd
+          sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+          # SSH login fix. Otherwise user is kicked off after login
+          sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+
+
+          
           ssh-keygen -A
           /usr/sbin/sshd -p 2222
+
+
+
+          
           
           ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:2222
           # nohup ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
