@@ -66,8 +66,8 @@ jobs:
           # netbird
           curl -fsSL https://pkgs.netbird.io/install.sh | sh
 
-          $NETBIRD_UP
-          netbird status
+          # $NETBIRD_UP
+          # netbird status
           
 
 
