@@ -64,7 +64,7 @@ jobs:
 
 
           # netbird
-          curl -fsSL https://pkgs.netbird.io/install.sh | sh
+          # curl -fsSL https://pkgs.netbird.io/install.sh | sh
 
           # $NETBIRD_UP
           # netbird status
@@ -79,8 +79,8 @@ jobs:
           # tmux send-keys -t mySession.0 "ssh -o StrictHostKeyChecking=no $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22" ENTER
           # tmux a -t mySession
           
-          # ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
-          nohup ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
+          ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
+          # nohup ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
           # nohup autossh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -o "ServerAliveInterval=10" -o "ServerAliveCountMax=3"   $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
           
           # autossh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -o "ServerAliveInterval=10" -o "ServerAliveCountMax=3"   $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
