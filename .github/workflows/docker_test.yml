@@ -34,7 +34,7 @@ jobs:
         shell: bash
         run: |
           echo github.workspace ${{ github.workspace }}
-          apt-get install openssh-server tmux autossh
+          apt-get update && apt-get install openssh-server tmux autossh sudo
     
           adduser --disabled-password --gecos "" "$MY_SSH_USER"
           usermod -a -G sudo "$MY_SSH_USER"
