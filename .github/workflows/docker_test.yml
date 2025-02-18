@@ -104,7 +104,7 @@ jobs:
 
           
           ssh-keygen -A
-          /usr/sbin/sshd -v -p 2222
+          /usr/sbin/sshd -p 2222
 
 
 
