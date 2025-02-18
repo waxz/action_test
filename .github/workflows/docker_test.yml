@@ -34,11 +34,11 @@ jobs:
         shell: bash
         run: |
           echo github.workspace ${{ github.workspace }}
-          sudo apt-get install openssh-server tmux autossh
+          apt-get install openssh-server tmux autossh
     
-          sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
-          sudo usermod -a -G sudo "$MY_SSH_USER"
-          sudo usermod -a -G docker "$MY_SSH_USER"
+          adduser --disabled-password --gecos "" "$MY_SSH_USER"
+          usermod -a -G sudo "$MY_SSH_USER"
+          usermod -a -G docker "$MY_SSH_USER"
           
           echo $MY_SSH_USER:$MY_SSH_PSW | sudo chpasswd
 
@@ -46,14 +46,14 @@ jobs:
 
 
           # wget https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /tmp/.tmux.conf
-          sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
-          sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
+          wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
+          wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
           
-          sudo wget -q https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
+          wget -q https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
           
-          # sudo chmod +x  /bin/cloudflared
+          # chmod +x  /bin/cloudflared
           
-          # sudo cp /tmp/.tmux.conf* /home/$MY_SSH_USER/       
+          # cp /tmp/.tmux.conf* /home/$MY_SSH_USER/       
           
 
 
@@ -88,8 +88,8 @@ jobs:
           
           # touch $file   
           echo xx >> $file
-          sudo bash -c "echo rm $file >> /bin/quit-ssj.sh"
-          sudo chmod +x /bin/quit-ssj.sh
+          bash -c "echo rm $file >> /bin/quit-ssj.sh"
+          chmod +x /bin/quit-ssj.sh
           
           echo "waiting on file $file ......"   
           echo "run quit-ssj.sh to exit"   
