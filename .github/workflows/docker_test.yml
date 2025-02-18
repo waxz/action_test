@@ -38,7 +38,8 @@ jobs:
     
           adduser --disabled-password --gecos "" "$MY_SSH_USER"
           usermod -a -G sudo "$MY_SSH_USER"
-          usermod -a -G docker "$MY_SSH_USER"
+         
+          # usermod -a -G docker "$MY_SSH_USER"
           
           echo $MY_SSH_USER:$MY_SSH_PSW | sudo chpasswd
 
