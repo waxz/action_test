@@ -107,9 +107,24 @@ jobs:
           
           # tmux send-keys -t mySession.0 "ssh -o StrictHostKeyChecking=no $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22" ENTER
           # tmux a -t mySession
+
+
+          file=/tmp/blocker.txt
+          
+          # touch $file   
+          echo xx >> $file
+          sudo bash -c "echo rm $file >> /bin/quit-ssj.sh"
+          sudo chmod +x /bin/quit-ssj.sh
+
+
           
           # ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
+
+
+          echo $MY_SSH_PSW | sudo -S sleep 1 && sudo su - "$MY_SSH_USER"
           nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
+
+          
           # nohup autossh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -o "ServerAliveInterval=10" -o "ServerAliveCountMax=3"   $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
           
           # autossh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -o "ServerAliveInterval=10" -o "ServerAliveCountMax=3"   $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
@@ -117,12 +132,7 @@ jobs:
           
           echo run ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no   -J $MY_SSHJ_NS@ssh-j.com $MY_SSH_USER@$MY_SSHJ_HOST
          
-          file=/tmp/blocker.txt
-          
-          # touch $file   
-          echo xx >> $file
-          sudo bash -c "echo rm $file >> /bin/quit-ssj.sh"
-          sudo chmod +x /bin/quit-ssj.sh
+
           
           echo "waiting on file $file ......"   
           echo "run quit-ssj.sh to exit"   
