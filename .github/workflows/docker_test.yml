@@ -19,7 +19,8 @@ jobs:
         - 2222
       volumes:
         - /home/runner:/home/runner 
-        - /tmp:/tmp
+        - /tmp:/tmp 
+        - /etc/ssh/sshd_config:/etc/ssh/sshd_config
         
 
 
@@ -84,22 +85,23 @@ jobs:
           
           mkdir /var/run/sshd
           chmod 0755 /var/run/sshd
-          sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-          
+          # sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+          # sed -i '/^#PasswordAuthentication/s/#//' /etc/ssh/sshd_config
+          # sed -i '/^PasswordAuthentication/s/no/yes/' /etc/ssh/sshd_config
+          # sed -i '/^#PubkeyAuthentication/s/#//' /etc/ssh/sshd_config
+          # sed -i '/^PubkeyAuthentication/s/no/yes/' /etc/ssh/sshd_config
 
-          sed -i '/^#PasswordAuthentication/s/#//' /etc/ssh/sshd_config
-          sed -i '/^PasswordAuthentication/s/no/yes/' /etc/ssh/sshd_config
           
-          sed -i '/^#PubkeyAuthentication/s/#//' /etc/ssh/sshd_config
-          sed -i '/^PubkeyAuthentication/s/no/yes/' /etc/ssh/sshd_config
+          # SSH login fix. Otherwise user is kicked off after login
+          # sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+
+
+
 
 
           cat /etc/ssh/sshd_config
           
-          
-          # SSH login fix. Otherwise user is kicked off after login
-          sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-
 
 
           
