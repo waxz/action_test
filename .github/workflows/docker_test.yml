@@ -16,7 +16,7 @@ jobs:
         NODE_ENV: development 
       ports:
         - 80
-        - 2222
+        # - 2222
       volumes:
         - /home/runner:/home/runner 
         - /tmp:/tmp
