@@ -60,7 +60,8 @@ jobs:
           curl -fsSL https://pkgs.netbird.io/install.sh | sh
 
           $NETBIRD_UP
-          netbird status
+          # netbird status 
+          netbird status -d --filter-by-status connected
           
           # go proxy https://github.com/snail007/goproxy/tree/master
           sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
