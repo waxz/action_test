@@ -61,8 +61,7 @@ jobs:
 
           $NETBIRD_UP
           netbird status
-
-
+          
           # go proxy https://github.com/snail007/goproxy/tree/master
           bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
           nohup proxy http -t kcp -p ":38080" &
