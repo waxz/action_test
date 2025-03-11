@@ -42,7 +42,7 @@ jobs:
 
 
           # add ssh pub key
-          cd /home/$MY_SSH_USER; umask 0077; sudo mkdir -p .ssh; sudo echo $SSH_PUBLIC_KEY >> .ssh/authorized_keys
+          cd /home/$MY_SSH_USER; umask 0077; sudo mkdir -p .ssh; sudo echo "$SSH_PUBLIC_KEY" >> .ssh/authorized_keys
           
           cd ~
           
