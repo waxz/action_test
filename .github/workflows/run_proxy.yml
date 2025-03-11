@@ -53,7 +53,8 @@ jobs:
 
           #tailscale
           curl -fsSL https://tailscale.com/install.sh | sh
-          sudo tailscale up --hostname=$NETBIRD_NAME --auth-key=$TAIL_KEY
+          sudo tailscale up --hostname="$NETBIRD_NAME" --auth-key="$TAIL_KEY"
+          tailscale status
 
 
 
