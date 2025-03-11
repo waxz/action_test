@@ -136,7 +136,7 @@ jobs:
           MinutesIter="1"
           MinutesIter="${MinutesIter//[$'\t\r\n ']}"
           
-          while [  -s "$file" ] && [ $MinutesIter -ne 350 ]; do sleep 60; ((MinutesIter++)) ; done
+          while [  -s "$file" ] && [ $MinutesIter -ne 3500 ]; do sleep 6; ((MinutesIter++)) ; done
 
           echo "exited......"
           
