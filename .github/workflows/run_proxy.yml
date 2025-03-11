@@ -55,13 +55,7 @@ jobs:
           # netbird
           curl -fsSL https://pkgs.netbird.io/install.sh | sh
 
-          { # try
-          sh -c "$NETBIRD_UP" &&
-          } || { # catch
-          # netbird status 
-          netbird status -d --filter-by-status connected
-          
-          }
+          {sh -c "$NETBIRD_UP" && } || {netbird status -d --filter-by-status connected }
           # netbird status 
           netbird status -d --filter-by-status connected
 
