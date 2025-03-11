@@ -27,7 +27,7 @@ jobs:
           echo ${{ env.STAMP }} # Gives "2022-12-11-01-42-20"
           echo ${{ env.START_TIME }} # Gives "2022-12-11T01:42:20"
 
-      - name: Create Custom User With secrets    
+      - name: Create User   
         shell: bash
         run: |
           echo github.workspace ${{ github.workspace }}
@@ -37,109 +37,14 @@ jobs:
           sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
           sudo usermod -a -G sudo "$MY_SSH_USER"
           sudo usermod -a -G docker "$MY_SSH_USER"
-          
           echo $MY_SSH_USER:$MY_SSH_PSW | sudo chpasswd
-
-
-
           
           sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
           sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
-          
-          sudo wget -q https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
-
-
-
-
-          #tailscale
-          curl -fsSL https://tailscale.com/install.sh | sh
-          sudo tailscale up --hostname=github-action --auth-key="$TAIL_KEY"
-          tailscale status
-
-
-
-
-
-
-
-
-
-
-
-
-
-          
-          # netbird
-          curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
-          
-
-          export NETBIRD_UP_CMD="PIONS_LOG_DEBUG=all NB_LOG_LEVEL=debug GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info netbird up --hostname $NETBIRD_NAME --setup-key $NETBIRD_KEY"
-
-          if ! sh -c "$NETBIRD_UP_CMD"; then
-            echo "NETBIRD_UP fail with exit code: $?"
-            netbird status -d --filter-by-status connected
-            if [ $? -ne 0 ]; then
-              echo "netbird status failed with exit code: $?"
-            fi
-          fi
-          
-          # netbird status 
-          netbird status -d --filter-by-status connected
           # add ssh pub key
           cd /home/$MY_SSH_USER; umask 0077; sudo mkdir -p .ssh; sudo echo "$SSH_PUBLIC_KEY" >> .ssh/authorized_keys
           cd ~
-          # go proxy https://github.com/snail007/goproxy/tree/master
-          sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
-          nohup proxy http -t kcp -p ":38080" --kcp-key mypassword &
-          
-
-
-          file=/tmp/blocker.txt
-          
-          # touch $file   
-          echo xx >> $file
-          sudo bash -c "echo rm $file >> /bin/quit-ssj.sh"
-          sudo chmod +x /bin/quit-ssj.sh
-
-
-          
-          # ssh -o "StrictHostKeyChecking no" $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
-
-
-          echo $MY_SSH_PSW | sudo -S sleep 1 && sudo su - "$MY_SSH_USER"
-          #nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
-
-          
-          # nohup autossh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -o "ServerAliveInterval=10" -o "ServerAliveCountMax=3"   $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
-          
-          # autossh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -o "ServerAliveInterval=10" -o "ServerAliveCountMax=3"   $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22
-
-          
-          echo run ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no   -J $MY_SSHJ_NS@ssh-j.com $MY_SSH_USER@$MY_SSHJ_HOST
-         
-
-          
-          echo "waiting on file $file ......"   
-          echo "run quit-ssj.sh to exit" 
-          #https://stackoverflow.com/questions/19505227/integer-expression-expected-error-in-shell-script
-          MinutesIter="1"
-          MinutesIter="${MinutesIter//[$'\t\r\n ']}"
-          
-          while [  -s "$file" ] && [ $MinutesIter -ne 350 ]; do sleep 60; ((MinutesIter++)) ; done
-          # while [ $MinutesIter -ne 11 ] && [ $MinutesIter -ne 10 ]; do sleep 1; ((MinutesIter++)); echo MinutesIter=$MinutesIter ; done
-
-
-
-
-
-
-
-
-
-          echo "exited......"
-          sudo tailscale logout
-          sudo netbird down
-          
+        
         env:
           SUPER_SECRET: ${{ secrets.SUPER_SECRET }}         
           MY_SSH_USER: ${{secrets.MY_SSH_USER}}
@@ -151,8 +56,94 @@ jobs:
           NETBIRD_KEY: ${{secrets.NETBIRD_KEY}}
           NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}      
           TAIL_KEY: ${{secrets.TAIL_KEY}}
+
           
-      
+      - name: Create tailscale
+        shell: bash
+        run: |
+          #sudo wget -q https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
+
+          #tailscale
+          curl -fsSL https://tailscale.com/install.sh | sh
+          sudo tailscale up --hostname=github-action --auth-key="$TAIL_KEY"
+          tailscale status
+
+        env:
+          SUPER_SECRET: ${{ secrets.SUPER_SECRET }}         
+          MY_SSH_USER: ${{secrets.MY_SSH_USER}}
+          MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
+          MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
+          MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}      
+          NETBIRD_UP: ${{secrets.NETBIRD_UP}}      
+          SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}      
+          NETBIRD_KEY: ${{secrets.NETBIRD_KEY}}
+          NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}      
+          TAIL_KEY: ${{secrets.TAIL_KEY}}
+
+      - name: Create  netbird
+        shell: bash
+        run: |
+          exit 1
+          
+          # netbird
+          curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
+          export NETBIRD_UP_CMD="PIONS_LOG_DEBUG=all NB_LOG_LEVEL=debug GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info netbird up --hostname $NETBIRD_NAME --setup-key $NETBIRD_KEY"
+          if ! sh -c "$NETBIRD_UP_CMD"; then
+            echo "NETBIRD_UP fail with exit code: $?"
+            netbird status -d --filter-by-status connected
+            if [ $? -ne 0 ]; then
+              echo "netbird status failed with exit code: $?"
+            fi
+          fi
+          
+          # netbird status 
+          netbird status -d --filter-by-status connected
+
+
+        env:
+          SUPER_SECRET: ${{ secrets.SUPER_SECRET }}         
+          MY_SSH_USER: ${{secrets.MY_SSH_USER}}
+          MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
+          MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
+          MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}      
+          NETBIRD_UP: ${{secrets.NETBIRD_UP}}      
+          SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}      
+          NETBIRD_KEY: ${{secrets.NETBIRD_KEY}}
+          NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}      
+          TAIL_KEY: ${{secrets.TAIL_KEY}}          
+      - name: Create go proxy
+        shell: bash
+        run: |
+          
+          # go proxy https://github.com/snail007/goproxy/tree/master
+          sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
+          nohup proxy http -t kcp -p ":38080" --kcp-key mypassword &
+          
+      - name: Create waiter program
+        shell: bash
+        run: |
+
+          file=/tmp/blocker.txt
+          
+          # touch $file   
+          echo xx >> $file
+          sudo bash -c "echo rm $file >> /bin/quit-ssj.sh"
+          sudo chmod +x /bin/quit-ssj.sh
+
+          echo "waiting on file $file ......"   
+          echo "run quit-ssj.sh to exit" 
+          #https://stackoverflow.com/questions/19505227/integer-expression-expected-error-in-shell-script
+          MinutesIter="1"
+          MinutesIter="${MinutesIter//[$'\t\r\n ']}"
+          
+          while [  -s "$file" ] && [ $MinutesIter -ne 350 ]; do sleep 60; ((MinutesIter++)) ; done
+          # while [ $MinutesIter -ne 11 ] && [ $MinutesIter -ne 10 ]; do sleep 1; ((MinutesIter++)); echo MinutesIter=$MinutesIter ; done
+
+          echo "exited......"
+          
+          sudo tailscale logout
+          # sudo netbird down
+          
       
       #- name: Setup tmate session
         #uses: mxschmitt/action-tmate@v3  
