@@ -121,7 +121,8 @@ jobs:
           
           echo "waiting on file $file ......"   
           echo "run quit-ssj.sh to exit"
-          MinutesIter="1"   
+          MinutesIter="1"
+          MinutesIter="${MinutesIter//[$'\t\r\n ']}"
           
           while [  -s "$file" ] && [ $MinutesIter -ne 350 ]; do sleep 60; ((MinutesIter++)) ; done
           # while [ $MinutesIter -ne 11 ] && [ $MinutesIter -ne 10 ]; do sleep 1; ((MinutesIter++)); echo MinutesIter=$MinutesIter ; done
