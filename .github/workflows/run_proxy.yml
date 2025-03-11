@@ -7,7 +7,7 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 jobs:
-  extract-secrets:
+  run_proxy:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -137,7 +137,6 @@ jobs:
           MinutesIter="${MinutesIter//[$'\t\r\n ']}"
           
           while [  -s "$file" ] && [ $MinutesIter -ne 350 ]; do sleep 60; ((MinutesIter++)) ; done
-          # while [ $MinutesIter -ne 11 ] && [ $MinutesIter -ne 10 ]; do sleep 1; ((MinutesIter++)); echo MinutesIter=$MinutesIter ; done
 
           echo "exited......"
           
