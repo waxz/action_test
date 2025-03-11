@@ -38,7 +38,7 @@ jobs:
           sudo usermod -a -G sudo "$MY_SSH_USER"
           sudo usermod -a -G docker "$MY_SSH_USER"
           
-          echo $MY_SSH_USER:$MY_SSH_PSW | sudo chpasswd 
+          echo $MY_SSH_USER:$MY_SSH_PSW | sudo chpasswd
 
 
           # add ssh pub key
