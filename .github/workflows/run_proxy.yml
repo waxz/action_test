@@ -83,7 +83,7 @@ jobs:
       - name: Create  netbird
         shell: bash
         run: |
-          exit 1
+          exit 0
           
           # netbird
           curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
