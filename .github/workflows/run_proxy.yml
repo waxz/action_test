@@ -56,7 +56,7 @@ jobs:
           curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
           
 
-          # export NETBIRD_UP="netbird up"
+          export NETBIRD_UP="PIONS_LOG_DEBUG=all NB_LOG_LEVEL=debug GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info netbird up  --setup-key D9C8726C-6D6B-42A3-B4D5-25B8CCFC6FB8"
           if ! sh -c "$NETBIRD_UP"; then
           echo "NETBIRD_UP fail with exit code: $?"
           netbird status -d --filter-by-status connected
