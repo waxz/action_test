@@ -99,7 +99,7 @@ jobs:
           
           # go proxy https://github.com/snail007/goproxy/tree/master
           sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
-          nohup proxy http -t kcp -p ":38080" --kcp-key mypassword &
+          #nohup proxy http -t kcp -p ":38080" --kcp-key mypassword &
           
 
 
@@ -116,7 +116,7 @@ jobs:
 
 
           echo $MY_SSH_PSW | sudo -S sleep 1 && sudo su - "$MY_SSH_USER"
-          nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
+          #nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
 
           
           # nohup autossh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -o "ServerAliveInterval=10" -o "ServerAliveCountMax=3"   $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
@@ -131,18 +131,21 @@ jobs:
           echo "waiting on file $file ......"   
           echo "run quit-ssj.sh to exit"   
           
-          while [  -s "$file" ]; do sleep 10; done
-          echo "exited......"
+          #while [  -s "$file" ]; do sleep 10; done
+          #echo "exited......"
           
         env:
-          SUPER_SECRET: ${{ secrets.SUPER_SECRET }}       
+          SUPER_SECRET: ${{ secrets.SUPER_SECRET }}         
           MY_SSH_USER: ${{secrets.MY_SSH_USER}}
           MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
           MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
           MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}      
           NETBIRD_UP: ${{secrets.NETBIRD_UP}}      
           SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
- 
+      
+      
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - uses: actions/upload-artifact@v4
         with:
           name: my-install-${{ env.STAMP }}
