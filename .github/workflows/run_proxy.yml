@@ -56,7 +56,8 @@ jobs:
           curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
           
 
-          export NETBIRD_UP_CMD="PIONS_LOG_DEBUG=all NB_LOG_LEVEL=debug GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info netbird up  --setup-key $NETBIRD_KEY"
+          export NETBIRD_UP_CMD="PIONS_LOG_DEBUG=all NB_LOG_LEVEL=debug GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info netbird up --hostname $NETBIRD_NAME --setup-key $NETBIRD_KEY"
+
           if ! sh -c "$NETBIRD_UP_CMD"; then
             echo "NETBIRD_UP fail with exit code: $?"
             netbird status -d --filter-by-status connected
@@ -116,6 +117,8 @@ jobs:
           NETBIRD_UP: ${{secrets.NETBIRD_UP}}      
           SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}      
           NETBIRD_KEY: ${{secrets.NETBIRD_KEY}}
+          NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}
+          
       
       
       #- name: Setup tmate session
