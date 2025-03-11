@@ -106,7 +106,7 @@ jobs:
           MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
           MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}      
           NETBIRD_UP: ${{secrets.NETBIRD_UP}}      
-          SSH_PUBLIC_KEY: ${{SSH_PUBLIC_KEY}}
+          SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
  
       - uses: actions/upload-artifact@v4
         with:
