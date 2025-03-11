@@ -55,7 +55,14 @@ jobs:
           # netbird
           curl -fsSL https://pkgs.netbird.io/install.sh | sh
 
-          {sh -c "$NETBIRD_UP" && } || {netbird status -d --filter-by-status connected }
+          # errorCode=$(sh -c "$NETBIRD_UP")
+
+          
+          if ! sh -c "$NETBIRD_UP"; then  
+          echo "NETBIRD_UP fail"
+          netbird status -d --filter-by-status connected
+          fi
+          
           # netbird status 
           netbird status -d --filter-by-status connected
 
