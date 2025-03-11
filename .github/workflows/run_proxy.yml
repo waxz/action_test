@@ -42,11 +42,10 @@ jobs:
 
 
           # add ssh pub key
-          sudo bash -c "cd /home/$MY_SSH_USER; umask 0077; mkdir -p .ssh; echo $SSH_PUBLIC_KEY >> .ssh/authorized_keys"
-
+          cd /home/$MY_SSH_USER; umask 0077; sudo mkdir -p .ssh; sudo echo $SSH_PUBLIC_KEY >> .ssh/authorized_keys
           
-
-
+          cd ~
+          
           sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
           sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
           
