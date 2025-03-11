@@ -120,10 +120,23 @@ jobs:
 
           
           echo "waiting on file $file ......"   
-          echo "run quit-ssj.sh to exit"   
+          echo "run quit-ssj.sh to exit"
+          MinutesIter="1"   
           
-          while [  -s "$file" ]; do sleep 10; done
+          while [  -s "$file" ] && [ $MinutesIter -ne 350 ]; do sleep 60; ((MinutesIter++)) ; done
+          # while [ $MinutesIter -ne 11 ] && [ $MinutesIter -ne 10 ]; do sleep 1; ((MinutesIter++)); echo MinutesIter=$MinutesIter ; done
+
+
+
+
+
+
+
+
+
           echo "exited......"
+          sudo tailscale logout
+          sudo netbird down
           
         env:
           SUPER_SECRET: ${{ secrets.SUPER_SECRET }}         
