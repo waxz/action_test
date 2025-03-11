@@ -26,13 +26,7 @@ jobs:
         run: |
           echo ${{ env.STAMP }} # Gives "2022-12-11-01-42-20"
           echo ${{ env.START_TIME }} # Gives "2022-12-11T01:42:20"
-      
-      - name: Docker Setup QEMU
 
-        uses: docker/setup-qemu-action@v3.4.0
-
-
-        
       - name: Create Custom User With secrets    
         shell: bash
         run: |
@@ -65,7 +59,7 @@ jobs:
           
           # go proxy https://github.com/snail007/goproxy/tree/master
           sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
-          nohup proxy http -t kcp -p ":38080" &
+          nohup proxy http -t kcp -p ":38080" --kcp-key mypassword &
           
 
 
