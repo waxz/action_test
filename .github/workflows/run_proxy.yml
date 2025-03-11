@@ -56,9 +56,9 @@ jobs:
           curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
           
 
-          export NETBIRD_UP="PIONS_LOG_DEBUG=all NB_LOG_LEVEL=debug GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info netbird up  --setup-key D9C8726C-6D6B-42A3-B4D5-25B8CCFC6FB8"
-          if ! sh -c "$NETBIRD_UP"; then
-          echo "NETBIRD_UP fail with exit code: $?"
+          export NETBIRD_UP_CMD="PIONS_LOG_DEBUG=all NB_LOG_LEVEL=debug GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info netbird up  --setup-key $NETBIRD_KEY"
+          if ! sh -c "$NETBIRD_UP_CMD"; then     
+          echo "NETBIRD_UP fail with exit code: $?"    
           netbird status -d --filter-by-status connected
           if [ $? -ne 0 ]; then
           echo "netbird status failed with exit code: $?"
@@ -86,7 +86,7 @@ jobs:
           
           # go proxy https://github.com/snail007/goproxy/tree/master
           sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
-          #nohup proxy http -t kcp -p ":38080" --kcp-key mypassword &
+          nohup proxy http -t kcp -p ":38080" --kcp-key mypassword &
           
 
 
@@ -118,8 +118,8 @@ jobs:
           echo "waiting on file $file ......"   
           echo "run quit-ssj.sh to exit"   
           
-          #while [  -s "$file" ]; do sleep 10; done
-          #echo "exited......"
+          while [  -s "$file" ]; do sleep 10; done
+          echo "exited......"
           
         env:
           SUPER_SECRET: ${{ secrets.SUPER_SECRET }}         
@@ -128,11 +128,12 @@ jobs:
           MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
           MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}      
           NETBIRD_UP: ${{secrets.NETBIRD_UP}}      
-          SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
+          SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}      
+          NETBIRD_KEY: ${{secrets.NETBIRD_KEY}}
       
       
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      #- name: Setup tmate session
+        #uses: mxschmitt/action-tmate@v3  
       - uses: actions/upload-artifact@v4
         with:
           name: my-install-${{ env.STAMP }}
