@@ -41,10 +41,7 @@ jobs:
           echo $MY_SSH_USER:$MY_SSH_PSW | sudo chpasswd
 
 
-          # add ssh pub key
-          cd /home/$MY_SSH_USER; umask 0077; sudo mkdir -p .ssh; sudo echo "$SSH_PUBLIC_KEY" >> .ssh/authorized_keys
-          
-          cd ~
+
           
           sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
           sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
@@ -61,6 +58,15 @@ jobs:
           sh -c "$NETBIRD_UP"  
           # netbird status 
           netbird status -d --filter-by-status connected
+
+
+
+          # add ssh pub key
+          cd /home/$MY_SSH_USER; umask 0077; sudo mkdir -p .ssh; sudo echo "$SSH_PUBLIC_KEY" >> .ssh/authorized_keys
+          cd ~
+
+
+          
           
           # go proxy https://github.com/snail007/goproxy/tree/master
           sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
