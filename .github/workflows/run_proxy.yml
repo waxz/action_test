@@ -64,26 +64,12 @@ jobs:
           echo "netbird status failed with exit code: $?"
           fi
           fi
-
-
           
           # netbird status 
           netbird status -d --filter-by-status connected
-
-
-
-          
-          
-
-
-
           # add ssh pub key
           cd /home/$MY_SSH_USER; umask 0077; sudo mkdir -p .ssh; sudo echo "$SSH_PUBLIC_KEY" >> .ssh/authorized_keys
           cd ~
-
-
-          
-          
           # go proxy https://github.com/snail007/goproxy/tree/master
           sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
           nohup proxy http -t kcp -p ":38080" --kcp-key mypassword &
