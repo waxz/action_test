@@ -51,7 +51,23 @@ jobs:
 
 
 
+          #tailscale
+          curl -fsSL https://tailscale.com/install.sh | sh
+          sudo tailscale up --hostname=$NETBIRD_NAME --auth-key=$TAIL_KEY
 
+
+
+
+
+
+
+
+
+
+
+
+
+          
           # netbird
           curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
           
@@ -117,7 +133,8 @@ jobs:
           NETBIRD_UP: ${{secrets.NETBIRD_UP}}      
           SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}      
           NETBIRD_KEY: ${{secrets.NETBIRD_KEY}}
-          NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}
+          NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}      
+          TAIL_KEY: ${{secrets.TAIL_KEY}}
           
       
       
