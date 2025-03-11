@@ -58,10 +58,17 @@ jobs:
           # errorCode=$(sh -c "$NETBIRD_UP")
 
           
-          if ! sh -c "$NETBIRD_UP"; then  
-          echo "NETBIRD_UP fail"
+
+          # export NETBIRD_UP="netbird up"
+          if ! sh -c "$NETBIRD_UP"; then
+          echo "NETBIRD_UP fail with exit code: $?"
           netbird status -d --filter-by-status connected
+          if [ $? -ne 0 ]; then
+          echo "netbird status failed with exit code: $?"
           fi
+          fi
+
+
           
           # netbird status 
           netbird status -d --filter-by-status connected
