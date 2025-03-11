@@ -38,7 +38,12 @@ jobs:
           sudo usermod -a -G sudo "$MY_SSH_USER"
           sudo usermod -a -G docker "$MY_SSH_USER"
           
-          echo $MY_SSH_USER:$MY_SSH_PSW | sudo chpasswd
+          echo $MY_SSH_USER:$MY_SSH_PSW | sudo chpasswd 
+
+
+          # add ssh pub key
+          sudo bash -c 'cd /home/$MY_SSH_USER; umask 0077; mkdir -p .ssh; cat $SSH_PUBLIC_KEY >> .ssh/authorized_keys && echo "Key copied"'
+          
 
 
           sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
@@ -100,7 +105,8 @@ jobs:
           MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
           MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
           MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}      
-          NETBIRD_UP: ${{secrets.NETBIRD_UP}}
+          NETBIRD_UP: ${{secrets.NETBIRD_UP}}      
+          SSH_PUBLIC_KEY: ${{SSH_PUBLIC_KEY}}
  
       - uses: actions/upload-artifact@v4
         with:
