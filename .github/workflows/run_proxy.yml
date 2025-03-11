@@ -54,6 +54,16 @@ jobs:
 
           # netbird
           curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
+
+
+          sudo systemctl stop netbird
+          sudo systemctl disable netbird
+          sudo rm -rf /usr/local/bin/netbird
+          sudo rm -rf /etc/netbird
+          sudo rm -rf /var/lib/netbird
+          sudo apt remove netbird -y
+
+          curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
           sudo apt update
           sudo apt install netbird -y
 
