@@ -120,7 +120,8 @@ jobs:
 
           
           echo "waiting on file $file ......"   
-          echo "run quit-ssj.sh to exit"
+          echo "run quit-ssj.sh to exit" 
+          #https://stackoverflow.com/questions/19505227/integer-expression-expected-error-in-shell-script
           MinutesIter="1"
           MinutesIter="${MinutesIter//[$'\t\r\n ']}"
           
