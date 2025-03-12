@@ -42,6 +42,8 @@ jobs:
         sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
         sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
         # add ssh pub key
+        nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
+
         cd /home/$MY_SSH_USER; umask 0077; sudo mkdir -p .ssh; sudo echo "$SSH_PUBLIC_KEY" >> .ssh/authorized_keys
         cd ~
 
@@ -64,7 +66,7 @@ jobs:
 
         #tailscale
         sudo ufw allow 41641/udp
-        
+
         curl -fsSL https://tailscale.com/install.sh | sh
 
         echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
@@ -132,7 +134,7 @@ jobs:
         
         file=/tmp/blocker.txt
 
-        # touch $file   
+        # touch $file
         echo xx >> $file
         sudo bash -c "echo rm $file >> /bin/quit-waiter.sh"
         sudo chmod +x /bin/quit-waiter.sh
