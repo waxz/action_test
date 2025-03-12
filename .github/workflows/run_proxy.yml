@@ -63,6 +63,8 @@ jobs:
         #sudo wget -q https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
 
         #tailscale
+        sudo ufw allow 41641/udp
+        
         curl -fsSL https://tailscale.com/install.sh | sh
 
         echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
