@@ -132,11 +132,11 @@ jobs:
 
         # touch $file   
         echo xx >> $file
-        sudo bash -c "echo rm $file >> /bin/quit-ssj.sh"
-        sudo chmod +x /bin/quit-ssj.sh
+        sudo bash -c "echo rm $file >> /bin/quit-waiter.sh"
+        sudo chmod +x /bin/quit-waiter.sh
 
         echo "waiting on file $file ......"
-        echo "run quit-ssj.sh to exit"
+        echo "run quit-waiter.sh to exit"
         #https://stackoverflow.com/questions/19505227/integer-expression-expected-error-in-shell-script
         MinutesIter="1"
         MinutesIter="${MinutesIter//[$'\t\r\n ']}"
