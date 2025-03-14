@@ -39,6 +39,10 @@ jobs:
         sudo usermod -a -G docker "$MY_SSH_USER"
         echo $MY_SSH_USER:$MY_SSH_PSW | sudo chpasswd
 
+        sudo echo 'export UID=$(id -u)' >> /home/$MY_SSH_USER/.bashrc
+        sudo echo 'export GID=$(id -g)' >> /home/$MY_SSH_USER/.bashrc
+        
+        
         sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
         sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
         # add ssh pub key
