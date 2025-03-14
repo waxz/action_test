@@ -36,10 +36,12 @@ jobs:
 
         sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
         sudo usermod -a -G sudo "$MY_SSH_USER"
-        sudo usermod -a -G docker "$MY_SSH_USER"
+        sudo usermod -a -G docker "$MY_SSH_USER"     
         echo $MY_SSH_USER:$MY_SSH_PSW | sudo chpasswd
-        
+
+        echo '# UID' | sudo tee -a /home/$MY_SSH_USER/.bashrc > /dev/null
         echo 'export UID=$(id -u)' | sudo tee -a /home/$MY_SSH_USER/.bashrc > /dev/null
+        echo '# GID' | sudo tee -a /home/$MY_SSH_USER/.bashrc > /dev/null
         echo 'export GID=$(id -g)' | sudo tee -a /home/$MY_SSH_USER/.bashrc > /dev/null
 
 
