@@ -49,7 +49,7 @@ jobs:
         cat << 'EOF' | sudo tee -a /home/$MY_SSH_USER/.bashrc
         export UID=$(id -u)
         export GID=$(id -g)
-        export PATH=$PATH:/home/$MY_SSH_USER/.local/bin
+        export PATH=$PATH:~/.local/bin
         EOF
 
         
@@ -164,6 +164,8 @@ jobs:
         echo xx >> $file
         sudo bash -c "echo rm $file >> /bin/quit-waiter.sh"
         sudo chmod +x /bin/quit-waiter.sh
+        sudo chown $MY_SSH_USER:$MY_SSH_USER /bin/quit-waiter.sh
+        
 
         echo "waiting on file $file ......"
         echo "run quit-waiter.sh to exit"
