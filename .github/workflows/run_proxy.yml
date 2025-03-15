@@ -46,7 +46,7 @@ jobs:
 
 
         # https://stackoverflow.com/questions/820517/bashrc-at-ssh-login
-        cat << EOF | sudo tee -a /home/$MY_SSH_USER/.bashrc
+        cat << 'EOF' | sudo tee -a /home/$MY_SSH_USER/.bashrc
         export UID=$(id -u)
         export GID=$(id -g)
         export PATH=$PATH:/home/$MY_SSH_USER/.local/bin
