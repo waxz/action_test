@@ -62,19 +62,11 @@ jobs:
         alias quit-waiter="rm $file && exit"
         EOF
 
-
-
-
         cat << EOF | sudo tee -a /home/$MY_SSH_USER/.bash_profile
         if [ -f ~/.bashrc ]; then
           . ~/.bashrc
         fi
         EOF
-
-
-
-
-
 
         sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
         sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
@@ -82,14 +74,13 @@ jobs:
         nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
 
         # add ssh pub key
-        cd /home/$MY_SSH_USER
-        sudo mkdir -m 0700 -p .ssh
-        sudo echo "$SSH_PUBLIC_KEY" >> .ssh/authorized_keys
-        sudo chmod 600 .ssh/authorized_keys  
-        sudo chown $MY_SSH_USER:$MY_SSH_USER .ssh
-        sudo chown $MY_SSH_USER:$MY_SSH_USER .ssh/authorized_keys
-
-        # cd ~
+        export HOME=/home/$MY_SSH_USER
+        sudo mkdir -p $HOME/.ssh
+        sudo echo "$SSH_PUBLIC_KEY" >> $HOME/.ssh/authorized_keys
+        sudo chown $MY_SSH_USER:$MY_SSH_USER $HOME/.ssh
+        sudo chown $MY_SSH_USER:$MY_SSH_USER $HOME/.ssh/authorized_keys
+        sudo chmod 600 $HOME/.ssh/authorized_keys
+        sudo chmod 700 $HOME/.ssh
 
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
