@@ -81,7 +81,7 @@ jobs:
         # add ssh pub key
         nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
 
-        # cd /home/$MY_SSH_USER;sudo mkdir -p .ssh; sudo echo "$SSH_PUBLIC_KEY" >> .ssh/authorized_keys; sudo chown $MY_SSH_USER:$MY_SSH_USER .ssh/authorized_keys;sudo chmod 600 .ssh/authorized_keys  
+        cd /home/$MY_SSH_USER;sudo mkdir -p .ssh; sudo echo "$SSH_PUBLIC_KEY" >> .ssh/authorized_keys; sudo chown $MY_SSH_USER:$MY_SSH_USER .ssh/authorized_keys;sudo chmod 664 .ssh/authorized_keys  
 
         # cd ~
 
