@@ -44,8 +44,11 @@ jobs:
         # echo '# GID' | sudo tee -a /home/$MY_SSH_USER/.bashrc > /dev/null
         # echo 'export GID=$(id -g)' | sudo tee -a /home/$MY_SSH_USER/.bashrc > /dev/null
 
-        
 
+        file=/tmp/blocker.txt
+        # touch $file
+        echo xx >> $file
+        sudo chown $MY_SSH_USER:$MY_SSH_USER $file
 
 
         # https://stackoverflow.com/questions/820517/bashrc-at-ssh-login
@@ -53,8 +56,13 @@ jobs:
         export UID=$(id -u)
         export GID=$(id -g)
         export PATH=$PATH:~/.local/bin
-        alias quit-waiter="quit-waiter.sh && exit"
         EOF
+
+        cat << EOF | sudo tee -a /home/$MY_SSH_USER/.bashrc
+        alias quit-waiter="rm $file && exit"
+        EOF
+
+
 
 
         cat << EOF | sudo tee -a /home/$MY_SSH_USER/.bash_profile
@@ -164,13 +172,6 @@ jobs:
         
         file=/tmp/blocker.txt
 
-        # touch $file
-        echo xx >> $file
-
-        sudo bash -c "echo rm $file >> /bin/quit-waiter.sh"
-        sudo chmod +x /bin/quit-waiter.sh
-        sudo chown $MY_SSH_USER:$MY_SSH_USER /bin/quit-waiter.sh
-        sudo chown $MY_SSH_USER:$MY_SSH_USER $file
 
 
         echo "waiting on file $file ......"
