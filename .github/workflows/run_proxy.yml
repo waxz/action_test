@@ -85,7 +85,6 @@ jobs:
         cd /home/$MY_SSH_USER
         sudo mkdir -m 0700 -p .ssh
         sudo echo "$SSH_PUBLIC_KEY" >> .ssh/authorized_keys
-        sudo chmod 700 .ssh
         sudo chmod 600 .ssh/authorized_keys  
         sudo chown $MY_SSH_USER:$MY_SSH_USER .ssh
         sudo chown $MY_SSH_USER:$MY_SSH_USER .ssh/authorized_keys
