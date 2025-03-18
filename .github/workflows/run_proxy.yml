@@ -162,7 +162,7 @@ jobs:
         
         # go proxy https://github.com/snail007/goproxy/tree/master
         sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
-        nohup proxy http -t kcp -p ":38080" --kcp-key mypassword --kcp-mode="fast3" &
+        nohup proxy http -t kcp -m -p ":38080" --kcp-key mypassword --kcp-mode="fast3" &
 
     - name: Create waiter program
       shell: bash
