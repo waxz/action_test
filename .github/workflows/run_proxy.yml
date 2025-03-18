@@ -55,7 +55,7 @@ jobs:
         cat << 'EOF' | sudo tee -a /home/$MY_SSH_USER/.bashrc
         export UID=$(id -u)
         export GID=$(id -g)
-        export PATH=$PATH:~/.local/bin
+        export PATH=$PATH:~/.local/bin:~/.cargo/bin  
         export XDG_CONFIG_HOME=~/.config
         EOF
 
