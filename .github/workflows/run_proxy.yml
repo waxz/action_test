@@ -129,7 +129,7 @@ jobs:
     - name: Create  netbird
       shell: bash
       run: |
-        #exit 0
+        exit 0
 
         # netbird
         curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
@@ -160,22 +160,18 @@ jobs:
       shell: bash
       run: |
         
-        cargo install bore-cli
+        # cargo install bore-cli
 
         # go proxy https://github.com/snail007/goproxy/tree/master
         sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
         nohup proxy http -t kcp -m -p ":38080" --kcp-key mypassword --kcp-mode="fast3" &
         nohup proxy http -t tcp -p "0.0.0.0:38081" &
-        nohup bore local 38081 --to bore.pub -p 38081 &
+        # nohup bore local 38081 --to bore.pub -p 38081 &
 
     - name: Create waiter program
       shell: bash
       run: |
-        
         file=/tmp/blocker.txt
-
-
-
         echo "waiting on file $file ......"
         echo "run quit-waiter.sh to exit"
         #https://stackoverflow.com/questions/19505227/integer-expression-expected-error-in-shell-script
@@ -183,11 +179,10 @@ jobs:
         MinutesIter="${MinutesIter//[$'\t\r\n ']}"
 
         while [  -s "$file" ] && [ $MinutesIter -ne 3500 ]; do sleep 6; ((MinutesIter++)) ; done
-
         echo "exited......"
 
         sudo tailscale logout
-        sudo netbird down
+        #sudo netbird down
       #- name: Setup tmate session
       #uses: mxschmitt/action-tmate@v3  
     - uses: actions/upload-artifact@v4
