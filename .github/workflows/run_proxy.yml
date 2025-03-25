@@ -182,13 +182,24 @@ jobs:
         EOF
         sysctl -p /etc/sysctl.d/99-custom.conf
 
+
+        # https://v2.gost.run/simple-obfs/
+        wget https://github.com/ginuerzh/gost/releases/download/v2.12.0/gost_2.12.0_linux_amd64.tar.gz -O gost_linux.tar.gz
+        tar xvf ./gost_linux.tar.gz
+
+
         # go proxy https://github.com/snail007/goproxy/tree/master
 
-
         sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
+
+        # run proxy
         nohup proxy http -t kcp -m -p ":38080" --kcp-key mypassword --kcp-mode="fast3" &
         nohup proxy http -t tcp -p "0.0.0.0:38081" &
         nohup ./server_linux_amd64 -t ":38081" -l ":4000" -mode fast3 -nocomp -sockbuf 16777217 -dscp 46 &
+        nohup ./gost -L=ss+ohttp://chacha20:123456@:38082 &
+
+
+
         # nohup bore local 38081 --to bore.pub -p 38081 &
 
     - name: Create waiter program
