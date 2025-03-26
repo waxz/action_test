@@ -241,13 +241,14 @@ jobs:
         sudo sysctl -w net.core.wmem_max=7500000
 
         # run proxy
-        nohup tor &
         nohup proxy http -t kcp -m -p ":38080" --kcp-key mypassword --kcp-mode="fast3" &
         nohup proxy http -t tcp -p "0.0.0.0:38081" &
         nohup kcptun_server -t ":38081" -l ":4000" -mode fast3 -nocomp -sockbuf 16777217 -dscp 46 &
         nohup gost -L=ss+ohttp://chacha20:123456@:38082 &
         nohup gost -L=mws://:38083 &
-        nohup gost -L=mws://:38084 -F=socks5://:9060 &
+
+        #nohup tor &
+        #nohup gost -L=mws://:38084 -F=socks5://:9060 &
 
 
 
