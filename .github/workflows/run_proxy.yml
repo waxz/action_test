@@ -249,6 +249,8 @@ jobs:
 
         #nohup tor &
         #nohup gost -L=mws://:38084 -F=socks5://:9060 &
+        #nohup gost -L=relay+wss://:38084 &
+
 
 
 
@@ -272,7 +274,15 @@ jobs:
         while [[ ! $cloudflared_url == *"https"* ]]; do sleep 6; cloudflared_url=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com"); done
         echo cloudflared_url $cloudflared_url
 
-        while [  -s "$file" ] && [ $MinutesIter -ne 3500 ]; do sleep 6; ((MinutesIter++)); mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m $cloudflared_url -h test.mosquitto.org ; done
+        start_time=$(date +%s)
+        end_time=$((start_time+6*3600-100))
+        echo start_time: $start_time, end_time: $end_time
+        while  [ $start_time -lt $end_time ]; do sleep 6; start_time=$(date +%s); echo start_time: $start_time, end_time: $end_time ; done
+
+
+
+        while [  -s "$file" ] && [ $start_time -lt $end_time ]; do sleep 5; start_time=$(date +%s); mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m $cloudflared_url -h test.mosquitto.org ; done
+
         echo "exited......"
 
         sudo tailscale logout
