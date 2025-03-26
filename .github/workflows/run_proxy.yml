@@ -209,6 +209,7 @@ jobs:
         nohup gost -L=ss+ohttp://chacha20:123456@:38082 &
         nohup gost -L=mws://:38083 &
 
+        nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
 
 
         # nohup bore local 38081 --to bore.pub -p 38081 &
@@ -223,11 +224,18 @@ jobs:
         MinutesIter="1"
         MinutesIter="${MinutesIter//[$'\t\r\n ']}"
 
-        while [  -s "$file" ] && [ $MinutesIter -ne 3500 ]; do sleep 6; ((MinutesIter++)) ; done
+        # publish cloudflared url
+        cloudflared_url=""
+        while [[ ! $cloudflared_url == *"https"* ]]; do sleep 6; cloudflared_url=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com"); done
+        echo cloudflared_url $cloudflared_url
+
+        while [  -s "$file" ] && [ $MinutesIter -ne 3500 ]; do sleep 6; ((MinutesIter++)); mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m $cloudflared_url -h test.mosquitto.org ; done
         echo "exited......"
 
         sudo tailscale logout
         sudo netbird down
+      env:
+        MQTT_TUNNEL_TOPIC: ${{ secrets.MQTT_TUNNEL_TOPIC }}
       #- name: Setup tmate session
       #uses: mxschmitt/action-tmate@v3  
     - uses: actions/upload-artifact@v4
