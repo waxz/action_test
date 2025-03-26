@@ -31,7 +31,11 @@ jobs:
       shell: bash
       run: |
         echo github.workspace ${{ github.workspace }}
-        sudo apt-get install -y openssh-server tmux mosquitto mosquitto-clients
+
+        sudo add-apt-repository "deb [arch=amd64] https://deb.torproject.org/torproject.org ubuntu main"
+
+        sudo apt update
+        sudo apt-get install -y openssh-server tmux mosquitto mosquitto-clients tor
         #autossh
 
         sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
@@ -69,6 +73,25 @@ jobs:
         fi
         EOF
 
+
+        # setup tor
+
+        hashpass=$(tor --hash-password "$TOR_PASSWORD")
+        sudo sed -i "s/.*HashedControlPassword.*/HashedControlPassword $hashpass/" /etc/tor/torrc
+
+        cat << EOF | sudo tee -a /etc/tor/torrc
+        SocksPort 0.0.0.0:9060
+        ControlPort 0.0.0.0:9061
+        CookieAuthentication 0
+
+        ExcludeNodes {cn},{hk},{mo},{kp},{ir},{sy},{pk},{cu},{vn}
+        MiddleNodes {GE},{IT},{HU},{AT},{HR},{RO},{PL},{FR},{FI},{SE},{IS},{NO},{IE},{EE},{DK},{LT},{CZ},{BE},{GR},{RS},{BG},{TR},{ES},{NL}
+        ExitNodes {GE},{IT},{HU},{AT},{HR},{RO},{PL},{FR},{FI},{SE},{IS},{NO},{IE},{EE},{DK},{LT},{CZ},{BE},{GR},{RS},{BG},{TR},{ES},{NL}
+
+        EOF
+
+
+
         sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
         sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
 
@@ -94,6 +117,7 @@ jobs:
         NETBIRD_KEY: ${{secrets.NETBIRD_KEY}}
         NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}
         TAIL_KEY: ${{secrets.TAIL_KEY}}
+        TOR_PASSWORD: ${{secrets.TOR_PASSWORD}}
 
     - name: Create tailscale
       shell: bash
@@ -165,6 +189,9 @@ jobs:
       run: |
         
         # cargo install bore-cli
+
+
+
         # https://github.com/xtaci/kcptun
         curl -L  https://raw.githubusercontent.com/xtaci/kcptun/master/download.sh | sh
         mv kcptun-linux-amd64-*.tar.gz kcptun.tar.gz
@@ -185,7 +212,7 @@ jobs:
         sysctl -p /etc/sysctl.d/99-custom.conf
 
 
-        # https://v2.gost.run/simple-obfs/
+        # gost https://v2.gost.run/simple-obfs/
         wget https://github.com/ginuerzh/gost/releases/download/v2.12.0/gost_2.12.0_linux_amd64.tar.gz -O gost_linux.tar.gz
         tar xvf ./gost_linux.tar.gz
         sudo mv ./gost /bin/
@@ -195,19 +222,22 @@ jobs:
 
         sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
 
-
+        # cloudflared
         sudo wget -q https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
         sudo chmod +x /bin/cloudflared
-
-
-
+        sudo sysctl -w net.core.rmem_max=7500000
+        sudo sysctl -w net.core.wmem_max=7500000
 
         # run proxy
+        nohup tor &
         nohup proxy http -t kcp -m -p ":38080" --kcp-key mypassword --kcp-mode="fast3" &
         nohup proxy http -t tcp -p "0.0.0.0:38081" &
         nohup kcptun_server -t ":38081" -l ":4000" -mode fast3 -nocomp -sockbuf 16777217 -dscp 46 &
         nohup gost -L=ss+ohttp://chacha20:123456@:38082 &
         nohup gost -L=mws://:38083 &
+        nohup gost -L=mws://:38084 -F=socks5://:9060 &
+
+
 
         nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
 
