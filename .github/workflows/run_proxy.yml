@@ -31,7 +31,7 @@ jobs:
       shell: bash
       run: |
         echo github.workspace ${{ github.workspace }}
-        sudo apt-get install -y openssh-server tmux
+        sudo apt-get install -y openssh-server tmux mosquitto mosquitto-clients
         #autossh
 
         sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
@@ -98,10 +98,9 @@ jobs:
     - name: Create tailscale
       shell: bash
       run: |
-        #sudo wget -q https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
-
+        
         #tailscale
-        sudo ufw allow 41641/udp
+        #sudo ufw allow 41641/udp
 
         curl -fsSL https://tailscale.com/install.sh | sh
 
@@ -170,6 +169,9 @@ jobs:
         curl -L  https://raw.githubusercontent.com/xtaci/kcptun/master/download.sh | sh
         mv kcptun-linux-amd64-*.tar.gz kcptun.tar.gz
         tar xvf ./kcptun.tar.gz
+        sudo mv ./server_linux_amd64 /bin/kcptun_server
+        sudo mv ./client_linux_amd64 /bin/kcptun_client
+
         ulimit -n 65535
         # https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/kernel_administration_guide/working_with_sysctl_and_kernel_tunables#modifying_files_in_etc_sysctl_d
 
@@ -186,17 +188,26 @@ jobs:
         # https://v2.gost.run/simple-obfs/
         wget https://github.com/ginuerzh/gost/releases/download/v2.12.0/gost_2.12.0_linux_amd64.tar.gz -O gost_linux.tar.gz
         tar xvf ./gost_linux.tar.gz
+        sudo mv ./gost /bin/
 
 
         # go proxy https://github.com/snail007/goproxy/tree/master
 
         sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
 
+
+        sudo wget -q https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
+        sudo chmod +x /bin/cloudflared
+
+
+
+
         # run proxy
         nohup proxy http -t kcp -m -p ":38080" --kcp-key mypassword --kcp-mode="fast3" &
         nohup proxy http -t tcp -p "0.0.0.0:38081" &
-        nohup ./server_linux_amd64 -t ":38081" -l ":4000" -mode fast3 -nocomp -sockbuf 16777217 -dscp 46 &
-        nohup ./gost -L=ss+ohttp://chacha20:123456@:38082 &
+        nohup kcptun_server -t ":38081" -l ":4000" -mode fast3 -nocomp -sockbuf 16777217 -dscp 46 &
+        nohup gost -L=ss+ohttp://chacha20:123456@:38082 &
+        nohup gost -L=mws://:38083 &
 
 
 
