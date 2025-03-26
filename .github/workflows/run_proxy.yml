@@ -31,11 +31,23 @@ jobs:
       shell: bash
       run: |
         echo github.workspace ${{ github.workspace }}
+        UBUNTU_RELEASE=$(bash <(cat /etc/os-release; echo 'echo ${VERSION_ID/*, /}'))
+        UBUNTU_CODENAME=$(bash <(cat /etc/os-release; echo 'echo ${UBUNTU_CODENAME/*, /}'))
+        ARCH=$(dpkg --print-architecture)
 
-        sudo add-apt-repository -y ppa:torproject/ppa
+        # https://support.torproject.org/apt/tor-deb-repo/
+        sudo apt install -y apt-transport-https
+
+        cat << EOF | sudo tee -a /etc/apt/sources.list.d/tor.list
+        deb     [signed-by=/usr/share/keyrings/deb.torproject.org-keyring.gpg] https://deb.torproject.org/torproject.org $UBUNTU_CODENAME main
+        deb-src [signed-by=/usr/share/keyrings/deb.torproject.org-keyring.gpg] https://deb.torproject.org/torproject.org $UBUNTU_CODENAME main
+        EOF
+
+        wget -qO- https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc | gpg --dearmor | sudo tee /usr/share/keyrings/deb.torproject.org-keyring.gpg >/dev/null
 
         sudo apt update
-        sudo apt-get install -y openssh-server tmux mosquitto mosquitto-clients tor
+
+        sudo apt-get install -y openssh-server tmux mosquitto mosquitto-clients tor deb.torproject.org-keyring
         #autossh
 
         sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
