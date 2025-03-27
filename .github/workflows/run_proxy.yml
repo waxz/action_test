@@ -275,7 +275,7 @@ jobs:
         echo cloudflared_url $cloudflared_url
 
         start_time=$(date +%s)
-        end_time=$((start_time+6*3600-100))
+        end_time=$((start_time+6*3600-300))
         echo start_time: $start_time, end_time: $end_time
         #while  [ $start_time -lt $end_time ]; do sleep 6; start_time=$(date +%s); echo start_time: $start_time, end_time: $end_time ; done
 
