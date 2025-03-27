@@ -245,7 +245,7 @@ jobs:
         nohup proxy http -t tcp -p "0.0.0.0:38081" &
         nohup kcptun_server -t ":38081" -l ":4000" -mode fast3 -nocomp -sockbuf 16777217 -dscp 46 &
         nohup gost -L=ss+ohttp://chacha20:123456@:38082 &
-        nohup gost -L=mws://:38083 &
+        nohup gost -L=mws://:38083?enableCompression=true?keepAlive=1 &
 
         #nohup tor &
         #nohup gost -L=mws://:38084 -F=socks5://:9060 &
