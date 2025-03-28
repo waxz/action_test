@@ -264,7 +264,7 @@ jobs:
 
 
         nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
-        nohup localtonet authtoken $LOCALNET_AUTHTOKEN > localtonet.out 2>&1 &
+        nohup bash -c "while true; do timeout 1740s localtonet authtoken $LOCALNET_AUTHTOKEN  ;done"  > localtonet.out 2>&1 &
 
 
 
