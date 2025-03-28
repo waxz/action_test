@@ -47,7 +47,7 @@ jobs:
 
         sudo apt update
 
-        sudo apt-get install -y openssh-server tmux iperf mosquitto mosquitto-clients tor deb.torproject.org-keyring
+        sudo apt-get install -y openssh-server tmux iperf mosquitto mosquitto-clients wireguard-tools tor deb.torproject.org-keyring
         #autossh
 
         sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
@@ -229,6 +229,15 @@ jobs:
         tar xvf ./gost_linux.tar.gz
         sudo mv ./gost /bin/
 
+        # https://localtonet.com/download
+        # https://localtonet.com/documents/linux
+        wget https://localtonet.com/download/localtonet-linux-x64.zip
+        unzip ./localtonet-linux-x64.zip
+        chmod +x ./localtonet
+        sudo mv ./localtonet /bin/
+
+
+
 
         # go proxy https://github.com/snail007/goproxy/tree/master
 
@@ -255,9 +264,13 @@ jobs:
 
 
         nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
+        nohup localtonet authtoken LOCALNET_AUTHTOKEN > localtonet.out 2>&1 &
+
 
 
         # nohup bore local 38081 --to bore.pub -p 38081 &
+      env:
+        LOCALNET_AUTHTOKEN: ${{ secrets.LOCALNET_AUTHTOKEN }}
 
     - name: Create waiter program
       shell: bash
