@@ -47,7 +47,7 @@ jobs:
 
         sudo apt update
 
-        sudo apt-get install -y openssh-server tmux iperf mosquitto mosquitto-clients wireguard-tools tor deb.torproject.org-keyring
+        sudo apt-get install -y openssh-server tmux iperf jq mosquitto mosquitto-clients wireguard-tools tor deb.torproject.org-keyring
         #autossh
 
         sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
@@ -264,12 +264,20 @@ jobs:
 
 
         nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
+
+
         cat << EOF | sudo tee -a /bin/run_localtonet.sh
-        timeout 1740s localtonet authtoken $LOCALNET_AUTHTOKEN
+        curl 'https://localtonet.com/api/StopTunnel/1189750'  --header 'Authorization: Bearer $LOCALNET_AUTHTOKEN'
+        timeout 1740s localtonet authtoken $LOCALNET_AUTHTOKEN &
+
+        hasError=$(curl 'https://localtonet.com/api/StopTunnel/1189750'  --header 'Authorization: Bearer $LOCALNET_AUTHTOKEN' | jq -r ".hasError")
+
+        while [[  $hasError]]; do hasError=$(curl 'https://localtonet.com/api/StopTunnel/1189750'  --header 'Authorization: Bearer $LOCALNET_AUTHTOKEN' | jq -r ".hasError") ;done
+        sleep 1700
         EOF
         sudo chmod +x /bin/run_localtonet.sh
-        
-        #nohup bash -c "while true; do timeout 1740s localtonet authtoken $LOCALNET_AUTHTOKEN  ;done"  > localtonet.out 2>&1 &
+
+        nohup bash -c "while true; do /bin/run_localtonet.sh  ;done"  > localtonet.out 2>&1 &
 
 
 
