@@ -265,19 +265,23 @@ jobs:
 
         nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
 
-
         cat << EOF | sudo tee -a /bin/run_localtonet.sh
+        LOCALNET_AUTHTOKEN=$LOCALNET_AUTHTOKEN
+
+        EOF
+
+        cat << 'EOF' | sudo tee -a /bin/run_localtonet.sh
         curl 'https://localtonet.com/api/StopTunnel/1189750'  --header 'Authorization: Bearer $LOCALNET_AUTHTOKEN'
         timeout 1740s localtonet authtoken $LOCALNET_AUTHTOKEN &
 
         hasError=$(curl 'https://localtonet.com/api/StopTunnel/1189750'  --header 'Authorization: Bearer $LOCALNET_AUTHTOKEN' | jq -r ".hasError")
 
-        while [[  $hasError]]; do hasError=$(curl 'https://localtonet.com/api/StopTunnel/1189750'  --header 'Authorization: Bearer $LOCALNET_AUTHTOKEN' | jq -r ".hasError") ;done
-        sleep 1700
+        while [[  $hasError ]]; do hasError=$(curl 'https://localtonet.com/api/StopTunnel/1189750'  --header 'Authorization: Bearer $LOCALNET_AUTHTOKEN' | jq -r ".hasError") ;done
+        sleep 1730
         EOF
         sudo chmod +x /bin/run_localtonet.sh
 
-        nohup bash -c "while true; do /bin/run_localtonet.sh  ;done"  > localtonet.out 2>&1 &
+        nohup bash -c "while true; /bin/run_localtonet.sh  ;done"  > localtonet.out 2>&1 &
 
 
 
