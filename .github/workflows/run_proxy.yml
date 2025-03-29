@@ -281,7 +281,7 @@ jobs:
         EOF
         sudo chmod +x /bin/run_localtonet.sh
 
-        nohup bash -c "while true; /bin/run_localtonet.sh  ;done"  > localtonet.out 2>&1 &
+        nohup bash -c "while true; do /bin/run_localtonet.sh  ;done"  > localtonet.out 2>&1 &
 
 
 
