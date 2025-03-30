@@ -291,7 +291,7 @@ jobs:
         echo connectionStatus: $connectionStatus
 
         while [[  $hasError == "true" ]]; do sleep 5; echo "StartTunnel/$tunnelId" ; hasError=$(curl "https://localtonet.com/api/StartTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API" | jq -r ".hasError") ;done
-        sleep 10
+        sleep 1740
         connectionStatus=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].connectionStatus')
         echo connectionStatus: $connectionStatus
         echo "start wait"
