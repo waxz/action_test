@@ -264,6 +264,10 @@ jobs:
 
 
         nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
+        nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io; done " > pinggy.out 2>&1 &
+
+
+
 
         cat << EOF | sudo tee -a /bin/run_localtonet.sh
         LOCALNET_AUTHTOKEN=$LOCALNET_AUTHTOKEN
@@ -308,6 +312,7 @@ jobs:
       env:
         LOCALNET_AUTHTOKEN: ${{ secrets.LOCALNET_AUTHTOKEN }}
         LOCALNET_API: ${{ secrets.LOCALNET_API }}
+        PINGGY_TOKEN: ${{ secrets.PINGGY_TOKEN }}
 
     - name: Create waiter program
       shell: bash
@@ -321,8 +326,12 @@ jobs:
 
         # publish cloudflared url
         cloudflared_url=""
-        while [[ ! $cloudflared_url == *"https"* ]]; do sleep 6; cloudflared_url=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com"); done
+        pinggy_url=""
+
+        while [[ ! $cloudflared_url == *"https"* ]]; do sleep 1; cloudflared_url=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com"); done
         echo cloudflared_url $cloudflared_url
+        while [[ ! $pinggy_url == *"tcp"* ]]; do sleep 1; pinggy_url=$(cat pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+"); done
+        echo pinggy_url $pinggy_url
 
         start_time=$(date +%s)
         end_time=$((start_time+6*3600-300))
@@ -331,7 +340,23 @@ jobs:
 
 
 
-        while [  -s "$file" ] && [ $start_time -lt $end_time ]; do sleep 5; start_time=$(date +%s); mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m $cloudflared_url -h test.mosquitto.org ; done
+        while [  -s "$file" ] && [ $start_time -lt $end_time ]; 
+        do sleep 5; 
+        start_time=$(date +%s); 
+        cloudflared_url=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
+        pinggy_url=$(cat pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
+
+
+        JSON_STRING=$( jq -n \
+                  --arg cloudflared_url "$cloudflared_url" \
+                  --arg pinggy_url "$pinggy_url" \
+                  '{cloudflared_url: $cloudflared_url, pinggy_url: $pinggy_url}' )
+
+
+
+        mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m $JSON_STRING -h test.mosquitto.org ; 
+
+        done
 
         echo "exited......"
 
