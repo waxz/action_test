@@ -264,7 +264,7 @@ jobs:
 
 
         nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
-        nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io; done " > pinggy.out 2>&1 &
+        nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io;truncate -s 0 pinggy.out;  done " > pinggy.out 2>&1 &
 
 
 
@@ -304,7 +304,7 @@ jobs:
         EOF
         sudo chmod +x /bin/run_localtonet.sh
 
-        nohup bash -c "while true; do /bin/run_localtonet.sh  ;done"  > localtonet.out 2>&1 &
+        nohup bash -c "while true; do /bin/run_localtonet.sh ; truncate -s 0 localtonet.out ;done"  > localtonet.out 2>&1 &
 
 
 
