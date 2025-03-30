@@ -272,18 +272,26 @@ jobs:
         EOF
 
         cat << 'EOF' | sudo tee -a /bin/run_localtonet.sh
-
         connectionStatus=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].connectionStatus')
         tunnelId=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].id')
-        if [[  $connectionStatus == "true" ]]; then curl "https://localtonet.com/api/StopTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API"; fi
+        echo LOCALNET_AUTHTOKEN: $LOCALNET_AUTHTOKEN
+        echo LOCALNET_API: $LOCALNET_API
+        echo connectionStatus: $connectionStatus
+        echo tunnelId: $tunnelId
+
+        if [[  $connectionStatus == "true" ]]; then echo "StopTunnel/$tunnelId" ;curl "https://localtonet.com/api/StopTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API"; fi
 
 
-        timeout 1740s localtonet authtoken $LOCALNET_AUTHTOKEN &
+        timeout 1740s localtonet authtoken $LOCALNET_AUTHTOKEN > localtonet.log &
 
-        hasError=$(curl "https://localtonet.com/api/StopTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API" | jq -r ".hasError")
+        hasError=$(curl "https://localtonet.com/api/StartTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API" | jq -r ".hasError")
         connectionStatus=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header 'Authorization: Bearer $LOCALNET_API' | jq -r '.result[0].connectionStatus')
 
-        while [[  $hasError == "true" ]]; do hasError=$(curl "https://localtonet.com/api/StopTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API" | jq -r ".hasError") ;done
+        echo hasError: $hasError
+        echo connectionStatus: $connectionStatus
+
+        while [[  $hasError == "true" ]]; do sleep 5; echo "StartTunnel/$tunnelId" ; hasError=$(curl "https://localtonet.com/api/StartTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API" | jq -r ".hasError") ;done
+        sleep 10
         while [[  $connectionStatus == "true" ]]; do connectionStatus=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].connectionStatus'); sleep 5  ;done
 
         EOF
