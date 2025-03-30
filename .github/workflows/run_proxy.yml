@@ -264,7 +264,7 @@ jobs:
 
 
         nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
-        nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io  > pinggy.out ;truncate -s 0 pinggy.out;  done " > pinggy.nohup.out 2>&1 &
+        nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io  > pinggy.out ;flock -x  pinggy.out  truncate -s 0 pinggy.out;  done " > pinggy.nohup.out 2>&1 &
 
 
 
@@ -330,7 +330,7 @@ jobs:
 
         while [[ ! $cloudflared_url == *"https"* ]]; do sleep 1; cloudflared_url=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com"); done
         echo cloudflared_url $cloudflared_url
-        while [[ ! $pinggy_url == *"tcp"* ]]; do sleep 1; pinggy_url=$(cat pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+"); done
+        while [[ ! $pinggy_url == *"tcp"* ]]; do sleep 1; pinggy_url=$(flock -s  pinggy.out  cat  pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+"); done
         echo pinggy_url $pinggy_url
 
         JSON_STRING=$( jq -n \
@@ -353,7 +353,7 @@ jobs:
         do sleep 5; 
         start_time=$(date +%s); 
         cloudflared_url=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
-        pinggy_url=$(cat pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
+        pinggy_url=$(flock -s  pinggy.out  cat  pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
 
 
         JSON_STRING=$( jq -n \
