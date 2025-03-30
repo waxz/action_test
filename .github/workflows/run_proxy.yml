@@ -267,27 +267,36 @@ jobs:
 
         cat << EOF | sudo tee -a /bin/run_localtonet.sh
         LOCALNET_AUTHTOKEN=$LOCALNET_AUTHTOKEN
+        LOCALNET_API=$LOCALNET_API
 
         EOF
 
         cat << 'EOF' | sudo tee -a /bin/run_localtonet.sh
-        curl 'https://localtonet.com/api/StopTunnel/1189750'  --header 'Authorization: Bearer $LOCALNET_AUTHTOKEN'
+
+        connectionStatus=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].connectionStatus')
+        tunnelId=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].id')
+        if [[  $connectionStatus == "true" ]]; then curl "https://localtonet.com/api/StopTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API"; fi
+
+
         timeout 1740s localtonet authtoken $LOCALNET_AUTHTOKEN &
 
-        hasError=$(curl 'https://localtonet.com/api/StopTunnel/1189750'  --header 'Authorization: Bearer $LOCALNET_AUTHTOKEN' | jq -r ".hasError")
+        hasError=$(curl "https://localtonet.com/api/StopTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API" | jq -r ".hasError")
+        connectionStatus=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header 'Authorization: Bearer $LOCALNET_API' | jq -r '.result[0].connectionStatus')
 
-        while [[  $hasError ]]; do hasError=$(curl 'https://localtonet.com/api/StopTunnel/1189750'  --header 'Authorization: Bearer $LOCALNET_AUTHTOKEN' | jq -r ".hasError") ;done
-        sleep 1730
+        while [[  $hasError == "true" ]]; do hasError=$(curl "https://localtonet.com/api/StopTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API" | jq -r ".hasError") ;done
+        while [[  $connectionStatus == "true" ]]; do connectionStatus=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].connectionStatus'); sleep 5  ;done
+
         EOF
         sudo chmod +x /bin/run_localtonet.sh
 
-        nohup bash -c "while true; do /bin/run_localtonet.sh  ;done"  > localtonet.out 2>&1 &
+        # nohup bash -c "while true; do /bin/run_localtonet.sh  ;done"  > localtonet.out 2>&1 &
 
 
 
         # nohup bore local 38081 --to bore.pub -p 38081 &
       env:
         LOCALNET_AUTHTOKEN: ${{ secrets.LOCALNET_AUTHTOKEN }}
+        LOCALNET_API: ${{ secrets.LOCALNET_API }}
 
     - name: Create waiter program
       shell: bash
