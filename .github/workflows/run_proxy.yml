@@ -264,7 +264,7 @@ jobs:
 
 
         nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
-        nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io;truncate -s 0 pinggy.out;  done " > pinggy.out 2>&1 &
+        nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io  > pinggy.out ;truncate -s 0 pinggy.out;  done " > pinggy.nohup.out 2>&1 &
 
 
 
@@ -364,7 +364,7 @@ jobs:
 
 
 
-        mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING" -h test.mosquitto.org ; 
+        mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING" -h broker.emqx.io ; 
 
         done
 
