@@ -333,6 +333,15 @@ jobs:
         while [[ ! $pinggy_url == *"tcp"* ]]; do sleep 1; pinggy_url=$(cat pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+"); done
         echo pinggy_url $pinggy_url
 
+        JSON_STRING=$( jq -n \
+                  --arg cloudflared_url "$cloudflared_url" \
+                  --arg pinggy_url "$pinggy_url" \
+                  '{cloudflared_url: $cloudflared_url, pinggy_url: $pinggy_url}' )
+
+        echo JSON_STRING $JSON_STRING
+
+
+
         start_time=$(date +%s)
         end_time=$((start_time+6*3600-300))
         echo start_time: $start_time, end_time: $end_time
@@ -354,7 +363,8 @@ jobs:
 
 
 
-        mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m $JSON_STRING -h test.mosquitto.org ; 
+
+        mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING" -h test.mosquitto.org ; 
 
         done
 
