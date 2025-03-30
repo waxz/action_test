@@ -364,7 +364,7 @@ jobs:
 
 
 
-        mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING" -h broker.emqx.io ; 
+        mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING" -h test.mosquitto.org; 
 
         done
 
