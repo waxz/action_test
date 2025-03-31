@@ -352,8 +352,26 @@ jobs:
         while [  -s "$file" ] && [ $start_time -lt $end_time ]; 
         do sleep 5; 
         start_time=$(date +%s); 
-        cloudflared_url=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
-        pinggy_url=$(flock -s  pinggy.out  cat  pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
+
+
+        if [ -s cloudflared.out ]; then
+        cloudflared_url_new=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
+        if [ -z "$cloudflared_url_new" ]; then
+            echo "No cloudflared URL found";
+        else
+            cloudflared_url=$cloudflared_url_new
+        fi
+        fi
+        if [ -s pinggy.out ]; then
+        pinggy_url_new=$(flock -s  pinggy.out  cat  pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
+        if [ -z "$pinggy_url_new" ]; then
+            echo "No pinggy URL found";
+        else
+            pinggy_url=$pinggy_url_new
+        fi
+        fi
+
+
 
 
         JSON_STRING=$( jq -n \
@@ -361,10 +379,17 @@ jobs:
                   --arg pinggy_url "$pinggy_url" \
                   '{cloudflared_url: $cloudflared_url, pinggy_url: $pinggy_url}' )
 
+        if [ $? -ne 0 ]; then
+        echo "Failed to create JSON string"
+        fi
+
 
 
 
         mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING" -h test.mosquitto.org; 
+        if [ $? -ne 0 ]; then
+        echo "Failed to publish message to MQTT broker"
+        fi
 
         done
 
