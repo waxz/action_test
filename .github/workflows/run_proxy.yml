@@ -272,11 +272,13 @@ jobs:
 
 
         cat << 'EOF' | sudo tee -a /bin/kill_cloudflared.sh
-        ps -AL -o pid,cmd | grep -v grep  | grep -E "[0-9] cloudflared tunnel" | awk '{print $1}' | xargs -I {} /bin/bash -c ' kill  -TERM  -{}'
+        ps -A -o pid,cmd | grep -v grep | grep -E "[0-9] cloudflared tunnel" | awk '{print $1}' | sort -u | xargs -I {} /bin/bash -c 'kill -TERM {}'
+
         EOF
         sudo chmod +x /bin/kill_cloudflared.sh
         cat << 'EOF' | sudo tee -a /bin/kill_pinggy.sh
-        ps -AL -o pid,cmd | grep -v grep  | grep -E "pinggy.io$" | awk '{print $1}' | xargs -I {} /bin/bash -c ' kill  -TERM  {}'
+
+        ps -AL -o pid,cmd | grep -v grep  | grep -E "pinggy.io$" | awk '{print $1}' | sort -u | xargs -I {} /bin/bash -c 'kill -TERM {}'
         EOF
         sudo chmod +x /bin/kill_pinggy.sh
 
