@@ -349,10 +349,7 @@ jobs:
 
 
 
-        while [  -s "$file" ] && [ $start_time -lt $end_time ]; 
-        do sleep 5; 
-        start_time=$(date +%s); 
-
+        cat << EOF | sudo tee -a /bin/loop_task.sh
 
         if [ -s cloudflared.out ]; then
         cloudflared_url_new=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
@@ -390,6 +387,23 @@ jobs:
         if [ $? -ne 0 ]; then
         echo "Failed to publish message to MQTT broker"
         fi
+
+
+        EOF
+        sudo chmod +x /bin/loop_task.sh
+
+
+
+        while [  -s "$file" ] && [ $start_time -lt $end_time ]; 
+        do sleep 5; 
+        start_time=$(date +%s); 
+         
+
+        if ! sh -c "/bin/loop_task.sh"; then
+          echo "/bin/loop_task.sh fail with exit code: $?"
+        fi
+
+
 
         done
 
