@@ -349,7 +349,7 @@ jobs:
 
 
 
-        cat << EOF | sudo tee -a /bin/loop_task.sh
+        cat << 'EOF' | sudo tee -a /bin/loop_task.sh
 
         if [ -s cloudflared.out ]; then
         cloudflared_url_new=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
