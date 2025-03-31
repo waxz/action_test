@@ -306,13 +306,13 @@ jobs:
 
         nohup bash -c "while true; do /bin/run_localtonet.sh ; truncate -s 0 localtonet.out ;done"  > localtonet.out 2>&1 &
 
+        nohup $PIPING_CMD &
 
-
-        # nohup bore local 38081 --to bore.pub -p 38081 &
       env:
         LOCALNET_AUTHTOKEN: ${{ secrets.LOCALNET_AUTHTOKEN }}
         LOCALNET_API: ${{ secrets.LOCALNET_API }}
         PINGGY_TOKEN: ${{ secrets.PINGGY_TOKEN }}
+        PIPING_CMD: ${{secrets.PIPING_CMD}}
 
     - name: Create waiter program
       shell: bash
@@ -400,44 +400,6 @@ jobs:
 
         /bin/loop_task.sh || true;
 
-         
-
-        if [ -s cloudflared.out ]; then
-        cloudflared_url_new=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
-        if [ -z "$cloudflared_url_new" ]; then
-            echo "No cloudflared URL found";
-        else
-            cloudflared_url=$cloudflared_url_new
-        fi
-        fi
-        if [ -s pinggy.out ]; then
-        pinggy_url_new=$(flock -s  pinggy.out  cat  pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
-        if [ -z "$pinggy_url_new" ]; then
-            echo "No pinggy URL found";
-        else
-            pinggy_url=$pinggy_url_new
-        fi
-        fi
-
-
-
-
-        JSON_STRING=$( jq -n \
-                  --arg cloudflared_url "$cloudflared_url" \
-                  --arg pinggy_url "$pinggy_url" \
-                  '{cloudflared_url: $cloudflared_url, pinggy_url: $pinggy_url}' )
-
-        if [ $? -ne 0 ]; then
-        echo "Failed to create JSON string"
-        fi
-
-
-
-
-        mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING" -h test.mosquitto.org; 
-        if [ $? -ne 0 ]; then
-        echo "Failed to publish message to MQTT broker"
-        fi
 
 
         done
