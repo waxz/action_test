@@ -103,6 +103,13 @@ jobs:
         EOF
 
 
+        cat << EOF | sudo tee -a /etc/mosquitto/mosquitto.conf
+        listener 1883 0.0.0.0
+        allow_anonymous true
+        EOF
+        sudo systemctl restart mosquitto
+
+
 
         sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
         sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
@@ -263,7 +270,21 @@ jobs:
 
 
 
-        nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
+
+        cat << 'EOF' | sudo tee -a /bin/kill_cloudflared.sh
+        ps -AL -o pid,cmd | grep -v grep  | grep -E "[0-9] cloudflared tunnel" | awk '{print $1}' | xargs -I {} /bin/bash -c ' kill  -TERM  -{}'
+        EOF
+        sudo chmod +x /bin/kill_cloudflared.sh
+        cat << 'EOF' | sudo tee -a /bin/kill_pinggy.sh
+        ps -AL -o pid,cmd | grep -v grep  | grep -E "pinggy.io$" | awk '{print $1}' | xargs -I {} /bin/bash -c ' kill  -TERM  {}'
+        EOF
+        sudo chmod +x /bin/kill_pinggy.sh
+
+
+        #nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
+        nohup bash -c "while true; do cloudflared tunnel --url localhost:38083   > cloudflared.out 2>&1 ;flock -x  cloudflared.out  truncate -s 0 cloudflared.out;  done " > cloudflared.nohup.out 2>&1 &
+
+
         nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io  > pinggy.out ;flock -x  pinggy.out  truncate -s 0 pinggy.out;  done " > pinggy.nohup.out 2>&1 &
 
 
@@ -352,7 +373,7 @@ jobs:
         cat << 'EOF' | sudo tee -a /bin/loop_task.sh
 
         if [ -s cloudflared.out ]; then
-        cloudflared_url_new=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
+        cloudflared_url_new=$(flock -s  cloudflared.out   cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
         if [ -z "$cloudflared_url_new" ]; then
             echo "No cloudflared URL found";
         else
@@ -381,12 +402,14 @@ jobs:
         fi
 
 
+        mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING"; 
 
 
         mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING" -h test.mosquitto.org; 
         if [ $? -ne 0 ]; then
         echo "Failed to publish message to MQTT broker"
         fi
+
 
 
         EOF
