@@ -85,6 +85,12 @@ jobs:
         fi
         EOF
 
+        # setup sshd
+        sudo sed -i "s/.*AllowTcpForwarding .*/AllowTcpForwarding yes/" /etc/ssh/sshd_config
+        sudo sed -i "s/.*GatewayPorts .*/GatewayPorts yes/" /etc/ssh/sshd_config
+
+        sudo systemctl restart ssh
+
 
         # setup tor
 
@@ -118,15 +124,23 @@ jobs:
 
         cargo install bore-cli
         nohup bore local 22 --to bore.pub -p $BORE_PORT > bore.out 2>&1 &
+        curl -sSf https://sshx.io/get | sh
+        nohup sshx > sshx.out 2>&1 &
+
+
 
 
         # add ssh pub key
         export HOME=/home/$MY_SSH_USER
         sudo mkdir -p $HOME/.ssh
         sudo echo "$SSH_PUBLIC_KEY" >> $HOME/.ssh/authorized_keys
+        sudo echo "$SSH_PUBLIC_KEY" >> $HOME/.ssh/id_ed25519.pub
+        sudo echo "$SSH_PRIVATE_KEY" >> $HOME/.ssh/id_ed25519
+
         sudo chown $MY_SSH_USER:$MY_SSH_USER $HOME/.ssh
-        sudo chown $MY_SSH_USER:$MY_SSH_USER $HOME/.ssh/authorized_keys
-        sudo chmod 600 $HOME/.ssh/authorized_keys
+        sudo chown $MY_SSH_USER:$MY_SSH_USER $HOME/.ssh/*
+
+        sudo chmod 600 $HOME/.ssh/*
         sudo chmod 700 $HOME/.ssh
 
       env:
@@ -137,6 +151,8 @@ jobs:
         MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}
         NETBIRD_UP: ${{secrets.NETBIRD_UP}}
         SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
+        SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
         NETBIRD_KEY: ${{secrets.NETBIRD_KEY}}
         NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}
         TAIL_KEY: ${{secrets.TAIL_KEY}}
@@ -396,13 +412,20 @@ jobs:
         fi
         fi
 
+        sshx_url=$(flock -s  sshx.out  cat  sshx.out | grep -oE "https://sshx\.io/s/\S+");
+        # remove color code
+        sshx_url=$(echo $sshx_url | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g');
 
 
+
+        UP_TIME=$(uptime -p)
 
         JSON_STRING=$( jq -n \
                   --arg cloudflared_url "$cloudflared_url" \
                   --arg pinggy_url "$pinggy_url" \
-                  '{cloudflared_url: $cloudflared_url, pinggy_url: $pinggy_url}' )
+                  --arg up_time "$UP_TIME" \
+                  --arg sshx_url "$sshx_url"\
+                  '{up_time: $up_time, sshx_url: $sshx_url, cloudflared_url: $cloudflared_url, pinggy_url: $pinggy_url}' )
 
         if [ $? -ne 0 ]; then
         echo "Failed to create JSON string"
