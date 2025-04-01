@@ -154,6 +154,12 @@ jobs:
         sudo chmod 600 $HOME/.ssh/*
         sudo chmod 700 $HOME/.ssh
 
+
+
+        # github
+        git clone git@github.com:waxz/self-host-reader.git
+        nohup self-host-reader/start-readeck.sh    > reader.out 2>&1 &
+
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
         MY_SSH_USER: ${{secrets.MY_SSH_USER}}
@@ -468,7 +474,12 @@ jobs:
 
         done
 
-        echo "exited......"
+        echo "commit github update"
+        cd self-host-reader/
+        sudo git add --all
+        sudo git commit -m "update"
+        git push origin main
+
 
         sudo tailscale logout
         sudo netbird down
