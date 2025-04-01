@@ -125,7 +125,11 @@ jobs:
 
         nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
 
-        cargo install bore-cli
+        #cargo install bore-cli
+        wget https://github.com/ekzhang/bore/releases/download/v0.5.2/bore-v0.5.2-x86_64-unknown-linux-musl.tar.gz  -O bore.tar.gz
+        tar xvf ./bore.tar.gz
+        sudo mv ./bore /bin/
+
         nohup bore local 22 --to bore.pub -p $BORE_PORT > bore.out 2>&1 &
         curl -sSf https://sshx.io/get | sh
         nohup sshx > sshx.out 2>&1 &
@@ -250,11 +254,11 @@ jobs:
 
 
         # https://github.com/xtaci/kcptun
-        curl -L  https://raw.githubusercontent.com/xtaci/kcptun/master/download.sh | sh
-        mv kcptun-linux-amd64-*.tar.gz kcptun.tar.gz
-        tar xvf ./kcptun.tar.gz
-        sudo mv ./server_linux_amd64 /bin/kcptun_server
-        sudo mv ./client_linux_amd64 /bin/kcptun_client
+        # curl -L  https://raw.githubusercontent.com/xtaci/kcptun/master/download.sh | sh
+        # mv kcptun-linux-amd64-*.tar.gz kcptun.tar.gz
+        # tar xvf ./kcptun.tar.gz
+        # sudo mv ./server_linux_amd64 /bin/kcptun_server
+        # sudo mv ./client_linux_amd64 /bin/kcptun_client
 
         ulimit -n 65535
         # https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/kernel_administration_guide/working_with_sysctl_and_kernel_tunables#modifying_files_in_etc_sysctl_d
@@ -297,7 +301,9 @@ jobs:
         # run proxy
         nohup proxy http -t kcp -m -p ":38080" --kcp-key mypassword --kcp-mode="fast3" &
         nohup proxy http -t tcp -p "0.0.0.0:38081" &
-        nohup kcptun_server -t ":38081" -l ":4000" -mode fast3 -nocomp -sockbuf 16777217 -dscp 46 &
+
+        #nohup kcptun_server -t ":38081" -l ":4000" -mode fast3 -nocomp -sockbuf 16777217 -dscp 46 &
+
         nohup gost -L=ss+ohttp://chacha20:123456@:38082 &
         nohup gost -L=mws://:38083?enableCompression=true?keepAlive=1 &
 
