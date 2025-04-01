@@ -91,6 +91,9 @@ jobs:
 
         sudo systemctl restart ssh
 
+        # set git
+        git config --global user.name "$MY_SSH_USER"
+
 
         # setup tor
 
@@ -131,6 +134,14 @@ jobs:
 
 
         # add ssh pub key
+        sudo mkdir -p $HOME/.ssh
+        sudo echo "$SSH_PUBLIC_KEY" >> $HOME/.ssh/authorized_keys
+        sudo echo "$SSH_PUBLIC_KEY" >> $HOME/.ssh/id_ed25519.pub
+        sudo echo "$SSH_PRIVATE_KEY" >> $HOME/.ssh/id_ed25519
+        sudo chmod 600 $HOME/.ssh/*
+        sudo chmod 700 $HOME/.ssh
+
+
         export HOME=/home/$MY_SSH_USER
         sudo mkdir -p $HOME/.ssh
         sudo echo "$SSH_PUBLIC_KEY" >> $HOME/.ssh/authorized_keys
