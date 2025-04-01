@@ -116,6 +116,10 @@ jobs:
 
         nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
 
+        cargo install bore-cli
+        nohup bore local 22 --to bore.pub -p $BORE_PORT > bore.out 2>&1 &
+
+
         # add ssh pub key
         export HOME=/home/$MY_SSH_USER
         sudo mkdir -p $HOME/.ssh
@@ -137,6 +141,7 @@ jobs:
         NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}
         TAIL_KEY: ${{secrets.TAIL_KEY}}
         TOR_PASSWORD: ${{secrets.TOR_PASSWORD}}
+        BORE_PORT: ${{secrets.BORE_PORT}}
 
     - name: Create tailscale
       shell: bash
@@ -207,7 +212,7 @@ jobs:
       shell: bash
       run: |
         
-        # cargo install bore-cli
+
 
 
 
