@@ -333,6 +333,8 @@ jobs:
 
         nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io  > pinggy.out ;flock -x  pinggy.out  truncate -s 0 pinggy.out;  done " > pinggy.nohup.out 2>&1 &
 
+        nohup bash -c "while true; do ssh -p 443 -R0:localhost:22 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_SSH_TOKEN+tcp@free.pinggy.io  > pinggy_ssh.out ;flock -x  pinggy_ssh.out  truncate -s 0 pinggy_ssh.out;  done " > pinggy_ssh.nohup.out 2>&1 &
+
 
 
 
@@ -380,6 +382,7 @@ jobs:
         LOCALNET_API: ${{ secrets.LOCALNET_API }}
         PINGGY_TOKEN: ${{ secrets.PINGGY_TOKEN }}
         PIPING_CMD: ${{secrets.PIPING_CMD}}
+        PINGGY_SSH_TOKEN: ${{secrets.PINGGY_SSH_TOKEN}}
 
     - name: Create waiter program
       shell: bash
@@ -394,16 +397,20 @@ jobs:
         # publish cloudflared url
         cloudflared_url=""
         pinggy_url=""
+        pinggy_ssh_url=""
 
         while [[ ! $cloudflared_url == *"https"* ]]; do sleep 1; cloudflared_url=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com"); done
         echo cloudflared_url $cloudflared_url
         while [[ ! $pinggy_url == *"tcp"* ]]; do sleep 1; pinggy_url=$(flock -s  pinggy.out  cat  pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+"); done
         echo pinggy_url $pinggy_url
+        while [[ ! $pinggy_ssh_url == *"tcp"* ]]; do sleep 1; pinggy_ssh_url=$(flock -s  pinggy_ssh.out  cat  pinggy_ssh.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+"); done
+        echo pinggy_ssh_url $pinggy_ssh_url
 
         JSON_STRING=$( jq -n \
                   --arg cloudflared_url "$cloudflared_url" \
                   --arg pinggy_url "$pinggy_url" \
-                  '{cloudflared_url: $cloudflared_url, pinggy_url: $pinggy_url}' )
+                  --arg pinggy_ssh_url "$pinggy_ssh_url" \
+                  '{cloudflared_url: $cloudflared_url, pinggy_url: $pinggy_url, pinggy_ssh_url: $pinggy_ssh_url}' )
 
         echo JSON_STRING $JSON_STRING
 
@@ -434,6 +441,14 @@ jobs:
             pinggy_url=$pinggy_url_new
         fi
         fi
+        if [ -s pinggy_ssh.out ]; then
+        pinggy_url_new=$(flock -s  pinggy_ssh.out  cat  pinggy_ssh.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
+        if [ -z "$pinggy_ssh_url_new" ]; then
+            echo "No pinggy URL found";
+        else
+            pinggy_ssh_url=$pinggy_ssh_url_new
+        fi
+        fi
 
         sshx_url=$(flock -s  sshx.out  cat  sshx.out | grep -oE "https://sshx\.io/s/\S+");
         # remove color code
@@ -448,7 +463,8 @@ jobs:
                   --arg pinggy_url "$pinggy_url" \
                   --arg up_time "$UP_TIME" \
                   --arg sshx_url "$sshx_url"\
-                  '{up_time: $up_time, sshx_url: $sshx_url, cloudflared_url: $cloudflared_url, pinggy_url: $pinggy_url}' )
+                  --arg pinggy_ssh_url "$pinggy_ssh_url" \
+                  '{up_time: $up_time, sshx_url: $sshx_url, cloudflared_url: $cloudflared_url, pinggy_url: $pinggy_url, pinggy_ssh_url: $pinggy_ssh_url}' )
 
         if [ $? -ne 0 ]; then
         echo "Failed to create JSON string"
