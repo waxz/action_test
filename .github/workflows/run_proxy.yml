@@ -161,8 +161,8 @@ jobs:
 
 
         # github
-        cd /tmp && git clone git@github.com:waxz/self-host-reader.git
-        nohup bash -c "cd /tmp/self-host-reader && ./start-readeck.sh" > reader.out 2>&1 &
+        git clone git@github.com:waxz/self-host-reader.git /tmp/self-host-reader
+        nohup /tmp/self-host-reader/run_readeck.sh > reader.out 2>&1 &
 
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
@@ -498,8 +498,8 @@ jobs:
 
         echo "commit github update"
         cd /tmp/self-host-reader/
-        sudo git add --all
-        sudo git commit -m "update"
+        git add --all
+        git commit -m "update"
         git push origin main
 
 
