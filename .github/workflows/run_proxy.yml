@@ -93,7 +93,7 @@ jobs:
 
         # set git
         git config --global user.name "$MY_SSH_USER"
-
+        git config --global user.email "$MY_SSH_USER@github.com"
 
         # setup tor
 
@@ -442,7 +442,7 @@ jobs:
         fi
         fi
         if [ -s pinggy_ssh.out ]; then
-        pinggy_url_new=$(flock -s  pinggy_ssh.out  cat  pinggy_ssh.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
+        pinggy_ssh_url_new=$(flock -s  pinggy_ssh.out  cat  pinggy_ssh.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
         if [ -z "$pinggy_ssh_url_new" ]; then
             echo "No pinggy URL found";
         else
