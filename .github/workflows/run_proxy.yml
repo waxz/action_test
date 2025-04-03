@@ -204,6 +204,8 @@ jobs:
         #cat <<< $GH_TOKEN | gh auth login --with-token
         #echo $GH_TOKEN | gh auth login --hostname github.com git_protocol ssh --with-token
         echo "$GH_TOKEN_ENV" | gh auth login --with-token
+        gh run list --workflow=run_proxy.yml
+
 
 
 
@@ -546,18 +548,16 @@ jobs:
 
 
         done
-
-        echo "commit github update"
-        cd /tmp/self-host-reader/
-        git add --all
-        git commit -m "update"
-        git push origin main
-
-
         sudo tailscale logout
         sudo netbird down
 
         gh workflow run .github/workflows/run_proxy.yml
+        gh run list --workflow=run_proxy.yml
+
+
+
+        echo "commit github update"
+        cd /tmp/self-host-reader/ && git add --all && git commit -m "update" && git push origin main
 
       env:
         MQTT_TUNNEL_TOPIC: ${{ secrets.MQTT_TUNNEL_TOPIC }}
