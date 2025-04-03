@@ -7,9 +7,9 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-  #schedule:
-  # https://github.com/orgs/community/discussions/13454#discussioncomment-11159669
-  #- cron: '47 */1 * * *'
+    #schedule:
+    # https://github.com/orgs/community/discussions/13454#discussioncomment-11159669
+    #- cron: '47 */1 * * *'
 
 jobs:
   run_proxy:
@@ -203,7 +203,7 @@ jobs:
         sudo tar xvf gh.tar.gz --strip-components=1  -C  /usr/local
         #cat <<< $GH_TOKEN | gh auth login --with-token
         #echo $GH_TOKEN | gh auth login --hostname github.com git_protocol ssh --with-token
-        echo "$GH_TOKEN" | gh auth login --with-token
+        echo "$GH_TOKEN_ENV" | gh auth login --with-token
 
 
 
@@ -225,7 +225,7 @@ jobs:
         TAIL_KEY: ${{secrets.TAIL_KEY}}
         TOR_PASSWORD: ${{secrets.TOR_PASSWORD}}
         BORE_PORT: ${{secrets.BORE_PORT}}
-        GH_TOKEN: ${{secrets.GH_TOKEN}}
+        GH_TOKEN_ENV: ${{secrets.GH_TOKEN}}
 
     - name: Create tailscale
       if: env.run_tasks == 'true'
