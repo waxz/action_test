@@ -6,6 +6,11 @@ name: run_proxy
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
+  schedule:
+  # https://github.com/orgs/community/discussions/13454#discussioncomment-11159669
+  - cron: '47 */1 * * *'
+
 jobs:
   run_proxy:
     runs-on: ubuntu-latest
@@ -14,20 +19,45 @@ jobs:
         working-directory: ${{ github.workspace }}
 
     steps:
+    - name: Check if it's 0/6/12/18
+      run: |
+        current_hour=$(TZ='Asia/Shanghai' date +'%H')
+        echo "Current hour in PST: $current_hour"
+          
+        if [ "$current_hour" == "00" ]; then
+          echo "It's 8 AM PST! Running tasks..."
+          echo "run_tasks=true" >> $GITHUB_ENV
+        fi
+        if [ "$current_hour" == "06" ]; then
+          echo "It's 8 AM PST! Running tasks..."
+          echo "run_tasks=true" >> $GITHUB_ENV
+        fi
+        if [ "$current_hour" == "12" ]; then
+          echo "It's 8 AM PST! Running tasks..."
+          echo "run_tasks=true" >> $GITHUB_ENV
+        fi
+        if [ "$current_hour" == "18" ]; then
+          echo "It's 8 AM PST! Running tasks..."
+          echo "run_tasks=true" >> $GITHUB_ENV
+        fi                            
     - name: Checkout Code
+      if: env.run_tasks == 'true'
       uses: actions/checkout@v3
 
     - name: Set current date as env variable
+      if: env.run_tasks == 'true'
       run: |
         echo "START_TIME=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
         echo "STAMP=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
 
     - name: Echo current date
+      if: env.run_tasks == 'true'
       run: |
         echo ${{ env.STAMP }} # Gives "2022-12-11-01-42-20"
         echo ${{ env.START_TIME }} # Gives "2022-12-11T01:42:20"
 
     - name: Create User
+      if: env.run_tasks == 'true'
       shell: bash
       run: |
         echo github.workspace ${{ github.workspace }}
@@ -181,6 +211,7 @@ jobs:
         BORE_PORT: ${{secrets.BORE_PORT}}
 
     - name: Create tailscale
+      if: env.run_tasks == 'true'
       shell: bash
       run: |
         
@@ -216,6 +247,7 @@ jobs:
         TAIL_KEY: ${{secrets.TAIL_KEY}}
 
     - name: Create  netbird
+      if: env.run_tasks == 'true'
       shell: bash
       run: |
         #exit 0
@@ -246,6 +278,7 @@ jobs:
         NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}
         TAIL_KEY: ${{secrets.TAIL_KEY}}
     - name: Create go proxy
+      if: env.run_tasks == 'true'
       shell: bash
       run: |
         
@@ -385,6 +418,7 @@ jobs:
         PINGGY_SSH_TOKEN: ${{secrets.PINGGY_SSH_TOKEN}}
 
     - name: Create waiter program
+      if: env.run_tasks == 'true'
       shell: bash
       run: |
         file=/tmp/blocker.txt
@@ -510,6 +544,7 @@ jobs:
       #- name: Setup tmate session
       #uses: mxschmitt/action-tmate@v3  
     - uses: actions/upload-artifact@v4
+      if: env.run_tasks == 'true'
       with:
         name: my-install-${{ env.STAMP }}
         path: /tmp/install/*
