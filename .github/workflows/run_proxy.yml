@@ -557,7 +557,10 @@ jobs:
 
 
         echo "commit github update"
-        cd /tmp/self-host-reader/ && git add --all && git commit -m "update" && git push origin main
+        cd /tmp/self-host-reader/ 
+        git add --all
+        git commit -m "update"
+        git push origin main
 
       env:
         MQTT_TUNNEL_TOPIC: ${{ secrets.MQTT_TUNNEL_TOPIC }}
