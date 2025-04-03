@@ -198,6 +198,15 @@ jobs:
 
 
         # github
+        cli_url=$(curl -L   -H "Accept: application/vnd.github+json"   https://api.github.com/repos/cli/cli/releases | jq -r ".[0].assets[] | .browser_download_url" | grep "linux_amd64.tar.gz")
+        wget -q $cli_url -O gh.tar.gz
+        sudo tar xvf gh.tar.gz --strip-components=1  -C  /usr/local
+        #cat <<< $GH_TOKEN | gh auth login --with-token
+        #echo $GH_TOKEN | gh auth login --hostname github.com git_protocol ssh --with-token
+        echo "$GH_TOKEN" | gh auth login --with-token
+
+
+
         git clone git@github.com:waxz/self-host-reader.git /tmp/self-host-reader
         nohup /tmp/self-host-reader/run_readeck.sh > reader.out 2>&1 &
 
@@ -216,6 +225,7 @@ jobs:
         TAIL_KEY: ${{secrets.TAIL_KEY}}
         TOR_PASSWORD: ${{secrets.TOR_PASSWORD}}
         BORE_PORT: ${{secrets.BORE_PORT}}
+        GH_TOKEN: ${{secrets.GH_TOKEN}}
 
     - name: Create tailscale
       if: env.run_tasks == 'true'
@@ -546,6 +556,9 @@ jobs:
 
         sudo tailscale logout
         sudo netbird down
+
+        gh workflow run .github/workflows/run_proxy.yml
+
       env:
         MQTT_TUNNEL_TOPIC: ${{ secrets.MQTT_TUNNEL_TOPIC }}
       #- name: Setup tmate session
