@@ -21,25 +21,32 @@ jobs:
     steps:
     - name: Check if it's 0/6/12/18
       run: |
+        ehco "event name is:" ${{ github.event_name }}
+
         current_hour=$(TZ='Asia/Shanghai' date +'%H')
         echo "Current hour in PST: $current_hour"
           
         if [ "$current_hour" == "00" ]; then
-          echo "It's 8 AM PST! Running tasks..."
+          echo "run task on schedule"
           echo "run_tasks=true" >> $GITHUB_ENV
         fi
         if [ "$current_hour" == "06" ]; then
-          echo "It's 8 AM PST! Running tasks..."
+          echo "run task on schedule"
           echo "run_tasks=true" >> $GITHUB_ENV
         fi
         if [ "$current_hour" == "12" ]; then
-          echo "It's 8 AM PST! Running tasks..."
+          echo "run task on schedule"
           echo "run_tasks=true" >> $GITHUB_ENV
         fi
         if [ "$current_hour" == "18" ]; then
-          echo "It's 8 AM PST! Running tasks..."
+          echo "run task on schedule"
           echo "run_tasks=true" >> $GITHUB_ENV
-        fi                            
+        fi
+        if [ ! "${{ github.event_name }}" == "schedule" ]; then
+          echo "run task on ${{ github.event_name }}"
+          echo "run_tasks=true" >> $GITHUB_ENV
+        fi
+
     - name: Checkout Code
       if: env.run_tasks == 'true'
       uses: actions/checkout@v3
