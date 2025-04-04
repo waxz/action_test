@@ -175,25 +175,26 @@ jobs:
 
 
         # add ssh pub key
-        sudo mkdir -p $HOME/.ssh
-        sudo echo "$SSH_PUBLIC_KEY" >> $HOME/.ssh/authorized_keys
-        sudo echo "$SSH_PUBLIC_KEY" >> $HOME/.ssh/id_ed25519.pub
-        sudo echo "$SSH_PRIVATE_KEY" >> $HOME/.ssh/id_ed25519
-        sudo chmod 600 $HOME/.ssh/*
-        sudo chmod 700 $HOME/.ssh
+        export USER_HOME=$HOME
+        sudo mkdir -p $USER_HOME/.ssh
+        sudo echo "$SSH_PUBLIC_KEY" >> $USER_HOME/.ssh/authorized_keys
+        sudo echo "$SSH_PUBLIC_KEY" >> $USER_HOME/.ssh/id_ed25519.pub
+        sudo echo "$SSH_PRIVATE_KEY" >> $USER_HOME/.ssh/id_ed25519
+        sudo chmod 600 $USER_HOME/.ssh/*
+        sudo chmod 700 $USER_HOME/.ssh
 
 
-        export HOME=/home/$MY_SSH_USER
-        sudo mkdir -p $HOME/.ssh
-        sudo echo "$SSH_PUBLIC_KEY" >> $HOME/.ssh/authorized_keys
-        sudo echo "$SSH_PUBLIC_KEY" >> $HOME/.ssh/id_ed25519.pub
-        sudo echo "$SSH_PRIVATE_KEY" >> $HOME/.ssh/id_ed25519
+        export USER_HOME=/home/$MY_SSH_USER
+        sudo mkdir -p $USER_HOME/.ssh
+        sudo echo "$SSH_PUBLIC_KEY" >> $USER_HOME/.ssh/authorized_keys
+        sudo echo "$SSH_PUBLIC_KEY" >> $USER_HOME/.ssh/id_ed25519.pub
+        sudo echo "$SSH_PRIVATE_KEY" >> $USER_HOME/.ssh/id_ed25519
 
-        sudo chown $MY_SSH_USER:$MY_SSH_USER $HOME/.ssh
-        sudo chown $MY_SSH_USER:$MY_SSH_USER $HOME/.ssh/*
+        sudo chown $MY_SSH_USER:$MY_SSH_USER $USER_HOME/.ssh
+        sudo chown $MY_SSH_USER:$MY_SSH_USER $USER_HOME/.ssh/*
 
-        sudo chmod 600 $HOME/.ssh/*
-        sudo chmod 700 $HOME/.ssh
+        sudo chmod 600 $USER_HOME/.ssh/*
+        sudo chmod 700 $USER_HOME/.ssh
 
 
 
