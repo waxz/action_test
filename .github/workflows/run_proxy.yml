@@ -270,7 +270,7 @@ jobs:
       if: env.run_tasks == 'true'
       shell: bash
       run: |
-        #exit 0
+        exit 0
 
         # netbird
         curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
@@ -550,7 +550,7 @@ jobs:
 
         done
         sudo tailscale logout
-        sudo netbird down
+        #sudo netbird down
 
         gh workflow run .github/workflows/run_proxy.yml
         gh run list --workflow=run_proxy.yml
