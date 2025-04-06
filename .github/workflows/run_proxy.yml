@@ -207,6 +207,10 @@ jobs:
         echo "$GH_TOKEN_ENV" | gh auth login --with-token
         gh run list --workflow=run_proxy.yml
 
+        # nginx auth
+        sudo apt install -y apache2-utils
+        sudo htpasswd -b /etc/nginx/.htpasswd $MY_SSH_USER $MY_SSH_PSW
+
 
 
 
@@ -217,7 +221,7 @@ jobs:
 
         export QUARTZ_PORT=8002
         export QUARTZ_CONTENT=/tmp/self-host-reader/notes
-        export QUARTZ_DOMAIN=quartz-private
+        export QUARTZ_DOMAIN=quartz
         nohup /tmp/quartz/run_quartz.sh > /tmp/$QUARTZ_DOMAIN.out 2>&1 &
 
         export QUARTZ_PORT=8003
@@ -579,6 +583,7 @@ jobs:
 
         echo "commit github update"
         (cd /tmp/self-host-reader/ && git add --all && git commit -m "update" && git push origin main ) || true
+        (cd /tmp/quartz/ && git add --all && git commit -m "update" && git push origin main ) || true
 
       env:
         MQTT_TUNNEL_TOPIC: ${{ secrets.MQTT_TUNNEL_TOPIC }}
