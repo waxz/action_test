@@ -159,6 +159,7 @@ jobs:
 
         sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
         sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
+        sudo cp /home/$MY_SSH_USER/.tmux* ~/
 
         nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
 
@@ -211,6 +212,8 @@ jobs:
         sudo apt install -y apache2-utils
         if [ ! -f /etc/nginx/.htpasswd ]; then sudo htpasswd -bcB -C 10 /etc/nginx/.htpasswd $MY_SSH_USER $MY_SSH_PSW ; else sudo htpasswd -bB -C 10 /etc/nginx/.htpasswd $MY_SSH_USER $MY_SSH_PSW ;fi
 
+        # npm
+        npm install -g pnpm
 
 
 
@@ -233,6 +236,12 @@ jobs:
         nohup /tmp/quartz/run_quartz.sh > /tmp/$QUARTZ_DOMAIN.out 2>&1 &        
         sleep 5
         cat /tmp/$QUARTZ_DOMAIN.out
+
+        export MDE_PORT=8004
+        export MDE_CONTENT=/tmp/self-host-reader/notes
+        export MDE_DOMAIN=mdeditor
+        git clone git@github.com:waxz/markdown-editor.git /tmp/markdown-editor
+        nohup /tmp/markdown-editor/run_editor.sh > /tmp/markdown-editor.out 2>&1 &        
 
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
