@@ -202,7 +202,7 @@ jobs:
 
 
         # github
-        cli_url=$(curl -L   -H "Accept: application/vnd.github+json"   https://api.github.com/repos/cli/cli/releases | jq -r ".[0].assets[] | .browser_download_url" | grep "linux_amd64.tar.gz")
+        cli_url=$(curl -L   -H "Accept: application/vnd.github+json"   https://api.github.com/repos/cli/cli/releases | jq -r ".[0].assets[] | .browser_download_url" | grep "linux_amd64.tar.gz") || cli_url="https://github.com/cli/cli/releases/download/v2.69.0/gh_2.69.0_linux_amd64.tar.gz"
         wget -q $cli_url -O /tmp/gh.tar.gz
         sudo tar xvf /tmp/gh.tar.gz --strip-components=1  -C  /usr/local
         #cat <<< $GH_TOKEN | gh auth login --with-token
