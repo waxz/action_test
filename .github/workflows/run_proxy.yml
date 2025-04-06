@@ -164,9 +164,9 @@ jobs:
         nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
 
         #cargo install bore-cli
-        wget https://github.com/ekzhang/bore/releases/download/v0.5.2/bore-v0.5.2-x86_64-unknown-linux-musl.tar.gz  -O bore.tar.gz
-        tar xvf ./bore.tar.gz
-        sudo mv ./bore /bin/
+        wget https://github.com/ekzhang/bore/releases/download/v0.5.2/bore-v0.5.2-x86_64-unknown-linux-musl.tar.gz  -O /tmp/bore.tar.gz
+        mkdir -p /tmp/bore && tar xvf /tmp/bore.tar.gz -C /tmp/bore
+        sudo mv /tmp/bore/bore /bin/
 
         nohup bore local 22 --to bore.pub -p $BORE_PORT > /tmp/bore.out 2>&1 &
         curl -sSf https://sshx.io/get | sh
@@ -203,8 +203,8 @@ jobs:
 
         # github
         cli_url=$(curl -L   -H "Accept: application/vnd.github+json"   https://api.github.com/repos/cli/cli/releases | jq -r ".[0].assets[] | .browser_download_url" | grep "linux_amd64.tar.gz")
-        wget -q $cli_url -O gh.tar.gz
-        sudo tar xvf gh.tar.gz --strip-components=1  -C  /usr/local
+        wget -q $cli_url -O /tmp/gh.tar.gz
+        sudo tar xvf /tmp/gh.tar.gz --strip-components=1  -C  /usr/local
         #cat <<< $GH_TOKEN | gh auth login --with-token
         #echo $GH_TOKEN | gh auth login --hostname github.com git_protocol ssh --with-token
         echo "$GH_TOKEN_ENV" | gh auth login --with-token
@@ -372,16 +372,16 @@ jobs:
 
 
         # gost https://v2.gost.run/simple-obfs/
-        wget -q https://github.com/ginuerzh/gost/releases/download/v2.12.0/gost_2.12.0_linux_amd64.tar.gz -O gost_linux.tar.gz
-        tar xvf ./gost_linux.tar.gz
-        sudo mv ./gost /bin/
+        wget -q https://github.com/ginuerzh/gost/releases/download/v2.12.0/gost_2.12.0_linux_amd64.tar.gz -O /tmp/gost_linux.tar.gz
+        mkdir -p /tmp/gost && tar xvf /tmp/gost_linux.tar.gz -C /tmp/gost
+        sudo mv /tmp/gost/gost /bin/
 
         # https://localtonet.com/download
         # https://localtonet.com/documents/linux
-        wget -q https://localtonet.com/download/localtonet-linux-x64.zip
-        unzip ./localtonet-linux-x64.zip
-        chmod +x ./localtonet
-        sudo mv ./localtonet /bin/
+        wget -q https://localtonet.com/download/localtonet-linux-x64.zip -O /tmp/localtonet-linux-x64.zip
+        unzip /tmp/localtonet-linux-x64.zip -d /tmp/localtonet
+        chmod +x /tmp/localtonet/localtonet
+        sudo mv /tmp/localtonet/localtonet /bin/
 
 
 
@@ -453,7 +453,7 @@ jobs:
         if [[  $connectionStatus == "true" ]]; then echo "StopTunnel/$tunnelId" ;curl "https://localtonet.com/api/StopTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API"; fi
 
 
-        timeout 1740s localtonet authtoken $LOCALNET_AUTHTOKEN > localtonet.log &
+        timeout 1740s localtonet authtoken $LOCALNET_AUTHTOKEN > /tmp/localtonet.log &
 
         hasError=$(curl "https://localtonet.com/api/StartTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API" | jq -r ".hasError")
         connectionStatus=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].status')
