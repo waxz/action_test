@@ -209,7 +209,8 @@ jobs:
 
         # nginx auth
         sudo apt install -y apache2-utils
-        sudo htpasswd -bcB -C 10 /etc/nginx/.htpasswd $MY_SSH_USER $MY_SSH_PSW
+        if [ ! -f /etc/nginx/.htpasswd ]; then sudo htpasswd -bcB -C 10 /etc/nginx/.htpasswd $MY_SSH_USER $MY_SSH_PSW ; else sudo htpasswd -bB -C 10 /etc/nginx/.htpasswd $MY_SSH_USER $MY_SSH_PSW ;fi
+
 
 
 
@@ -223,11 +224,15 @@ jobs:
         export QUARTZ_CONTENT=/tmp/self-host-reader/notes
         export QUARTZ_DOMAIN=quartz
         nohup /tmp/quartz/run_quartz.sh > /tmp/$QUARTZ_DOMAIN.out 2>&1 &
+        sleep 5
+        cat /tmp/$QUARTZ_DOMAIN.out
 
         export QUARTZ_PORT=8003
         export QUARTZ_CONTENT=/tmp/quartz/content
         export QUARTZ_DOMAIN=quartz-public
         nohup /tmp/quartz/run_quartz.sh > /tmp/$QUARTZ_DOMAIN.out 2>&1 &        
+        sleep 5
+        cat /tmp/$QUARTZ_DOMAIN.out
 
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
