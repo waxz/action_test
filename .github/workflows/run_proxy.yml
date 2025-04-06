@@ -171,6 +171,8 @@ jobs:
         nohup bore local 22 --to bore.pub -p $BORE_PORT > /tmp/bore.out 2>&1 &
         curl -sSf https://sshx.io/get | sh
         nohup sshx > /tmp/sshx.out 2>&1 &
+        sleep 5
+        cat /tmp/sshx.out
 
 
 
