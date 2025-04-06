@@ -167,9 +167,9 @@ jobs:
         tar xvf ./bore.tar.gz
         sudo mv ./bore /bin/
 
-        nohup bore local 22 --to bore.pub -p $BORE_PORT > bore.out 2>&1 &
+        nohup bore local 22 --to bore.pub -p $BORE_PORT > /tmp/bore.out 2>&1 &
         curl -sSf https://sshx.io/get | sh
-        nohup sshx > sshx.out 2>&1 &
+        nohup sshx > /tmp/sshx.out 2>&1 &
 
 
 
@@ -211,7 +211,19 @@ jobs:
 
 
         git clone git@github.com:waxz/self-host-reader.git /tmp/self-host-reader
-        nohup /tmp/self-host-reader/run_readeck.sh > reader.out 2>&1 &
+        nohup /tmp/self-host-reader/run_readeck.sh > /tmp/reader.out 2>&1 &
+
+        git clone git@github.com:waxz/quartz.git /tmp/quartz
+
+        export QUARTZ_PORT=8002
+        export QUARTZ_CONTENT=/tmp/self-host-reader/notes
+        export QUARTZ_DOMAIN=quartz-private
+        nohup /tmp/quartz/run_quartz.sh > /tmp/$QUARTZ_DOMAIN.out 2>&1 &
+
+        export QUARTZ_PORT=8003
+        export QUARTZ_CONTENT=/tmp/quartz/content
+        export QUARTZ_DOMAIN=quartz-public
+        nohup /tmp/quartz/run_quartz.sh > /tmp/$QUARTZ_DOMAIN.out 2>&1 &        
 
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
@@ -270,21 +282,24 @@ jobs:
       if: env.run_tasks == 'true'
       shell: bash
       run: |
-        exit 0
+        #exit 0
 
         # netbird
         curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
         export NETBIRD_UP_CMD="PIONS_LOG_DEBUG=all NB_LOG_LEVEL=debug GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info netbird up --hostname $NETBIRD_NAME --setup-key $NETBIRD_KEY"
-        if ! sh -c "$NETBIRD_UP_CMD"; then
-          echo "NETBIRD_UP fail with exit code: $?"
-          netbird status -d --filter-by-status connected
-          if [ $? -ne 0 ]; then
-            echo "netbird status failed with exit code: $?"
-          fi
+        $NETBIRD_UP_CMD || true
+
+        if dpkg -s netbird &>/dev/null; then
+        echo 'netbird is installed'
+        netbird status -d --filter-by-status connected
+        fi
+        if which netbird &>/dev/null; then
+        echo 'netbird is installed'
+        netbird status -d --filter-by-status connected
         fi
 
+
         # netbird status
-        netbird status -d --filter-by-status connected
 
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
@@ -380,13 +395,13 @@ jobs:
         sudo chmod +x /bin/kill_pinggy.sh
 
 
-        #nohup cloudflared tunnel --url localhost:38083  > cloudflared.out 2>&1 &
-        nohup bash -c "while true; do cloudflared tunnel --url localhost:38083   > cloudflared.out 2>&1 ;flock -x  cloudflared.out  truncate -s 0 cloudflared.out;  done " > cloudflared.nohup.out 2>&1 &
+        #nohup cloudflared tunnel --url localhost:38083  > /tmp/cloudflared.out 2>&1 &
+        nohup bash -c "while true; do cloudflared tunnel --url localhost:38083   > /tmp/cloudflared.out 2>&1 ;flock -x  /tmp/cloudflared.out  truncate -s 0 /tmp/cloudflared.out;  done " > /tmp/cloudflared.nohup.out 2>&1 &
 
 
-        nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io  > pinggy.out ;flock -x  pinggy.out  truncate -s 0 pinggy.out;  done " > pinggy.nohup.out 2>&1 &
+        nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io  > /tmp/pinggy.out ;flock -x  /tmp/pinggy.out  truncate -s 0 /tmp/pinggy.out;  done " > /tmp/pinggy.nohup.out 2>&1 &
 
-        nohup bash -c "while true; do ssh -p 443 -R0:localhost:22 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_SSH_TOKEN+tcp@free.pinggy.io  > pinggy_ssh.out ;flock -x  pinggy_ssh.out  truncate -s 0 pinggy_ssh.out;  done " > pinggy_ssh.nohup.out 2>&1 &
+        nohup bash -c "while true; do ssh -p 443 -R0:localhost:22 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_SSH_TOKEN+tcp@free.pinggy.io  > /tmp/pinggy_ssh.out ;flock -x  /tmp/pinggy_ssh.out  truncate -s 0 /tmp/pinggy_ssh.out;  done " > /tmp/pinggy_ssh.nohup.out 2>&1 &
 
 
 
@@ -426,7 +441,7 @@ jobs:
         EOF
         sudo chmod +x /bin/run_localtonet.sh
 
-        nohup bash -c "while true; do /bin/run_localtonet.sh ; truncate -s 0 localtonet.out ;done"  > localtonet.out 2>&1 &
+        nohup bash -c "while true; do /bin/run_localtonet.sh ; truncate -s 0 /tmp/localtonet.out ;done"  > /tmp/localtonet.out 2>&1 &
 
         nohup $PIPING_CMD &
 
@@ -453,11 +468,11 @@ jobs:
         pinggy_url=""
         pinggy_ssh_url=""
 
-        while [[ ! $cloudflared_url == *"https"* ]]; do sleep 1; cloudflared_url=$(cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com"); done
+        while [[ ! $cloudflared_url == *"https"* ]]; do sleep 1; cloudflared_url=$(cat /tmp/cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com"); done
         echo cloudflared_url $cloudflared_url
-        while [[ ! $pinggy_url == *"tcp"* ]]; do sleep 1; pinggy_url=$(flock -s  pinggy.out  cat  pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+"); done
+        while [[ ! $pinggy_url == *"tcp"* ]]; do sleep 1; pinggy_url=$(flock -s  /tmp/pinggy.out  cat  /tmp/pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+"); done
         echo pinggy_url $pinggy_url
-        while [[ ! $pinggy_ssh_url == *"tcp"* ]]; do sleep 1; pinggy_ssh_url=$(flock -s  pinggy_ssh.out  cat  pinggy_ssh.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+"); done
+        while [[ ! $pinggy_ssh_url == *"tcp"* ]]; do sleep 1; pinggy_ssh_url=$(flock -s  /tmp/pinggy_ssh.out  cat  /tmp/pinggy_ssh.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+"); done
         echo pinggy_ssh_url $pinggy_ssh_url
 
         JSON_STRING=$( jq -n \
@@ -479,24 +494,24 @@ jobs:
 
         cat << 'EOF' | sudo tee -a /bin/loop_task.sh
 
-        if [ -s cloudflared.out ]; then
-        cloudflared_url_new=$(flock -s  cloudflared.out   cat cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
+        if [ -s /tmp/cloudflared.out ]; then
+        cloudflared_url_new=$(flock -s  /tmp/cloudflared.out   cat /tmp/cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
         if [ -z "$cloudflared_url_new" ]; then
             echo "No cloudflared URL found";
         else
             cloudflared_url=$cloudflared_url_new
         fi
         fi
-        if [ -s pinggy.out ]; then
-        pinggy_url_new=$(flock -s  pinggy.out  cat  pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
+        if [ -s /tmp/pinggy.out ]; then
+        pinggy_url_new=$(flock -s  /tmp/pinggy.out  cat  /tmp/pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
         if [ -z "$pinggy_url_new" ]; then
             echo "No pinggy URL found";
         else
             pinggy_url=$pinggy_url_new
         fi
         fi
-        if [ -s pinggy_ssh.out ]; then
-        pinggy_ssh_url_new=$(flock -s  pinggy_ssh.out  cat  pinggy_ssh.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
+        if [ -s /tmp/pinggy_ssh.out ]; then
+        pinggy_ssh_url_new=$(flock -s  /tmp/pinggy_ssh.out  cat  /tmp/pinggy_ssh.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
         if [ -z "$pinggy_ssh_url_new" ]; then
             echo "No pinggy URL found";
         else
@@ -504,7 +519,7 @@ jobs:
         fi
         fi
 
-        sshx_url=$(flock -s  sshx.out  cat  sshx.out | grep -oE "https://sshx\.io/s/\S+");
+        sshx_url=$(flock -s  /tmp/sshx.out  cat  /tmp/sshx.out | grep -oE "https://sshx\.io/s/\S+");
         # remove color code
         sshx_url=$(echo $sshx_url | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g');
 
@@ -549,8 +564,15 @@ jobs:
 
 
         done
+
+        if which tailscale &>/dev/null; then
+        echo 'tailscale logout'
         sudo tailscale logout
-        #sudo netbird down
+        fi
+        if which netbird &>/dev/null; then
+        echo 'netbird down'
+        sudo netbird down
+        fi
 
         gh workflow run .github/workflows/run_proxy.yml
         gh run list --workflow=run_proxy.yml
