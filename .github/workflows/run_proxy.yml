@@ -254,7 +254,11 @@ jobs:
         #tailscale
         #sudo ufw allow 41641/udp
 
-        curl -fsSL https://tailscale.com/install.sh | sh
+        exec_fail=false
+        curl -fsSL https://tailscale.com/install.sh | sh || exec_fail=true
+        while $exec_fail; do curl -fsSL https://tailscale.com/install.sh | sh || exec_fail=true ; sleep 5; done
+
+
 
         echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
         echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
@@ -289,7 +293,13 @@ jobs:
         #exit 0
 
         # netbird
-        curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
+
+
+        exec_fail=false
+        curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash || exec_fail=true
+        while $exec_fail; do curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash || exec_fail=true ; sleep 5; done
+
+
         export NETBIRD_UP_CMD="PIONS_LOG_DEBUG=all NB_LOG_LEVEL=debug GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info netbird up --hostname $NETBIRD_NAME --setup-key $NETBIRD_KEY"
         $NETBIRD_UP_CMD || true
 
