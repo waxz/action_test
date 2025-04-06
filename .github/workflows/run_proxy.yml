@@ -209,7 +209,7 @@ jobs:
 
         # nginx auth
         sudo apt install -y apache2-utils
-        sudo htpasswd -b /etc/nginx/.htpasswd $MY_SSH_USER $MY_SSH_PSW
+        sudo htpasswd -bcB -C 10 /etc/nginx/.htpasswd $MY_SSH_USER $MY_SSH_PSW
 
 
 
