@@ -256,7 +256,7 @@ jobs:
 
         exec_fail=false
         curl -fsSL https://tailscale.com/install.sh | sh || exec_fail=true
-        while $exec_fail; do curl -fsSL https://tailscale.com/install.sh | sh || exec_fail=true ; sleep 5; sudo apt-get update ;done
+        while $exec_fail; do exec_fail=false; curl -fsSL https://tailscale.com/install.sh | sh || exec_fail=true ; sleep 5; sudo apt-get update ;done
 
 
 
@@ -297,7 +297,7 @@ jobs:
 
         exec_fail=false
         curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash || exec_fail=true
-        while $exec_fail; do curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash || exec_fail=true ; sleep 5; sudo apt-get update ; done
+        while $exec_fail; do exec_fail=false; curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash || exec_fail=true ; sleep 5; sudo apt-get update ; done
 
 
         export NETBIRD_UP_CMD="PIONS_LOG_DEBUG=all NB_LOG_LEVEL=debug GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info netbird up --hostname $NETBIRD_NAME --setup-key $NETBIRD_KEY"
