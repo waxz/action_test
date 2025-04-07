@@ -169,10 +169,8 @@ jobs:
         sudo mv /tmp/bore/bore /bin/
 
         nohup bore local 22 --to bore.pub -p $BORE_PORT > /tmp/bore.out 2>&1 &
-        curl -sSf https://sshx.io/get | sh
-        nohup sshx > /tmp/sshx.out 2>&1 &
-        sleep 5
-        cat /tmp/sshx.out
+
+
 
 
 
@@ -217,9 +215,26 @@ jobs:
         # npm
         npm install -g pnpm
 
+      env:
+        SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
+        MY_SSH_USER: ${{secrets.MY_SSH_USER}}
+        MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
+        MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
+        MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}
+        NETBIRD_UP: ${{secrets.NETBIRD_UP}}
+        SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
+        SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
-
-
+        NETBIRD_KEY: ${{secrets.NETBIRD_KEY}}
+        NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}
+        TAIL_KEY: ${{secrets.TAIL_KEY}}
+        TOR_PASSWORD: ${{secrets.TOR_PASSWORD}}
+        BORE_PORT: ${{secrets.BORE_PORT}}
+        GH_TOKEN_ENV: ${{secrets.GH_TOKEN}}
+    - name: run github project
+      if: env.run_tasks == 'true'
+      shell: bash
+      run: |
         git clone git@github.com:waxz/self-host-reader.git /tmp/self-host-reader
         nohup /tmp/self-host-reader/run_readeck.sh > /tmp/reader.out 2>&1 &
 
@@ -243,24 +258,16 @@ jobs:
         export MDE_CONTENT=/tmp/self-host-reader/notes
         export MDE_DOMAIN=mdeditor
         git clone git@github.com:waxz/markdown-editor.git /tmp/markdown-editor
-        nohup /tmp/markdown-editor/run_editor.sh > /tmp/markdown-editor.out 2>&1 &        
+        nohup /tmp/markdown-editor/run_editor.sh > /tmp/markdown-editor.out 2>&1 &  
 
-      env:
-        SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
-        MY_SSH_USER: ${{secrets.MY_SSH_USER}}
-        MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
-        MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
-        MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}
-        NETBIRD_UP: ${{secrets.NETBIRD_UP}}
-        SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
-        SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
-
-        NETBIRD_KEY: ${{secrets.NETBIRD_KEY}}
-        NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}
-        TAIL_KEY: ${{secrets.TAIL_KEY}}
-        TOR_PASSWORD: ${{secrets.TOR_PASSWORD}}
-        BORE_PORT: ${{secrets.BORE_PORT}}
-        GH_TOKEN_ENV: ${{secrets.GH_TOKEN}}
+    - name: run sshx
+      if: env.run_tasks == 'true'
+      shell: bash
+      run: |
+        curl -sSf https://sshx.io/get | sh
+        nohup sshx > /tmp/sshx.out 2>&1 &
+        sleep 5
+        cat /tmp/sshx.out
 
     - name: Create tailscale
       if: env.run_tasks == 'true'
