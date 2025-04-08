@@ -165,7 +165,7 @@ jobs:
 
         #cargo install bore-cli
         wget https://github.com/ekzhang/bore/releases/download/v0.5.2/bore-v0.5.2-x86_64-unknown-linux-musl.tar.gz  -O /tmp/bore.tar.gz
-        mkdir -p /tmp/bore && tar xvf /tmp/bore.tar.gz -C /tmp/bore
+        mkdir -p /tmp/bore && tar xf /tmp/bore.tar.gz -C /tmp/bore
         sudo mv /tmp/bore/bore /bin/
 
         nohup bore local 22 --to bore.pub -p $BORE_PORT > /tmp/bore.out 2>&1 &
@@ -200,9 +200,9 @@ jobs:
 
         url="https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz"
         wget -q $url -O /tmp/nvim.tar.gz 
-        sudo tar xvf /tmp/nvim.tar.gz --strip-components=1 -C /usr/local
+        sudo tar xf /tmp/nvim.tar.gz --strip-components=1 -C /usr/local
 
-        mkdir -p $HOMR/.config
+        mkdir -p $HOME/.config
         sudo mkdir -p $USER_HOME/.config
 
         git clone https://github.com/LazyVim/starter $HOME/.config/nvim
@@ -220,7 +220,7 @@ jobs:
         # github
         cli_url=$(curl -L   -H "Accept: application/vnd.github+json"   https://api.github.com/repos/cli/cli/releases | jq -r ".[0].assets[] | .browser_download_url" | grep "linux_amd64.tar.gz") || cli_url="https://github.com/cli/cli/releases/download/v2.69.0/gh_2.69.0_linux_amd64.tar.gz"
         wget -q $cli_url -O /tmp/gh.tar.gz
-        sudo tar xvf /tmp/gh.tar.gz --strip-components=1  -C  /usr/local
+        sudo tar xf /tmp/gh.tar.gz --strip-components=1  -C  /usr/local
         #cat <<< $GH_TOKEN | gh auth login --with-token
         #echo $GH_TOKEN | gh auth login --hostname github.com git_protocol ssh --with-token
         echo "$GH_TOKEN_ENV" | gh auth login --with-token
@@ -382,7 +382,7 @@ jobs:
         # https://github.com/xtaci/kcptun
         # curl -L  https://raw.githubusercontent.com/xtaci/kcptun/master/download.sh | sh
         # mv kcptun-linux-amd64-*.tar.gz kcptun.tar.gz
-        # tar xvf ./kcptun.tar.gz
+        # tar xf ./kcptun.tar.gz
         # sudo mv ./server_linux_amd64 /bin/kcptun_server
         # sudo mv ./client_linux_amd64 /bin/kcptun_client
 
@@ -401,7 +401,7 @@ jobs:
 
         # gost https://v2.gost.run/simple-obfs/
         wget -q https://github.com/ginuerzh/gost/releases/download/v2.12.0/gost_2.12.0_linux_amd64.tar.gz -O /tmp/gost_linux.tar.gz
-        mkdir -p /tmp/gost && tar xvf /tmp/gost_linux.tar.gz -C /tmp/gost
+        mkdir -p /tmp/gost && tar xf /tmp/gost_linux.tar.gz -C /tmp/gost
         sudo mv /tmp/gost/gost /bin/
 
         # https://localtonet.com/download
