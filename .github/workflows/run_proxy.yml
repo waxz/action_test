@@ -201,8 +201,13 @@ jobs:
         url="https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz"
         wget -q $url -O /tmp/nvim.tar.gz 
         sudo tar xvf /tmp/nvim.tar.gz --strip-components=1 -C /usr/local
-        git clone https://github.com/LazyVim/starter $HOMR/.config/nvim
-        sudo cp -r $HOMR/.config/nvim $USER_HOME/.config/nvim
+
+        mkdir -p $HOMR/.config
+        sudo mkdir -p $USER_HOME/.config
+
+        git clone https://github.com/LazyVim/starter $HOME/.config/nvim
+
+        sudo cp -r $HOME/.config/nvim $USER_HOME/.config/nvim
         sudo chown $MY_SSH_USER:$MY_SSH_USER $USER_HOME/.config/nvim
         sudo chown $MY_SSH_USER:$MY_SSH_USER $USER_HOME/.config/nvim/*
 
@@ -249,7 +254,7 @@ jobs:
       shell: bash
       run: |
         git clone git@github.com:waxz/action_test.git /tmp/action_test
-        
+
         git clone git@github.com:waxz/self-host-reader.git /tmp/self-host-reader
 
         nohup /tmp/self-host-reader/run_readeck.sh > /tmp/reader.out 2>&1 &
@@ -644,4 +649,3 @@ jobs:
         name: my-install-${{ env.STAMP }}
         path: /tmp/install/*
         compression-level: 9 # maximum compression
-
