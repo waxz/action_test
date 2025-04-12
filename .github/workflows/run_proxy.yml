@@ -233,6 +233,12 @@ jobs:
         # npm
         npm install -g pnpm
 
+        curl -fsSL https://code-server.dev/install.sh | sh
+        code-server --install-extension golang.Go
+        code-server --install-extension rust-lang.rust-analyzer
+        code-server --install-extension gydunhn.javascript-essentials
+        nohup PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030 > /tmp/coder.out 2>&1 &
+
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
         MY_SSH_USER: ${{secrets.MY_SSH_USER}}
