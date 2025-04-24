@@ -238,13 +238,14 @@ jobs:
         # npm
         npm install -g pnpm
 
-        curl -fsSL https://code-server.dev/install.sh | sh
-        code-server --install-extension golang.Go || true
-        code-server --install-extension rust-lang.rust-analyzer || true
-        code-server --install-extension gydunhn.javascript-essentials || true
-        nohup bash -c "PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030" > /tmp/coder.out 2>&1 &
-
-        wget  https://github.com/gitpod-io/openvscode-server/releases/download/openvscode-server-v1.98.0/openvscode-server-v1.98.0-linux-x64.tar.gz -O /tmp/ovs.tar.gz
+        # curl -fsSL https://code-server.dev/install.sh | sh
+        # code-server --install-extension golang.Go || true
+        # code-server --install-extension rust-lang.rust-analyzer || true
+        # code-server --install-extension gydunhn.javascript-essentials || true
+        # nohup bash -c "PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030" > /tmp/coder.out 2>&1 &
+        
+        ovs_url=$(curl -L -H "Accept: application/vnd.github+json" https://api.github.com/repos/gitpod-io/openvscode-server/releases | jq -r ".[0].assets[] | .browser_download_url" | grep linux-x64)
+        wget  $ovs_url -O /tmp/ovs.tar.gz
         mkdir /opt/ovs
         sudo tar xf /tmp/ovs.tar.gz --strip-components=1  -C /opt/ovs/
         # https://github.com/microsoft/vscode/issues/155969
@@ -254,8 +255,10 @@ jobs:
         /opt/ovs/bin/openvscode-server --install-extension golang.Go || true
         /opt/ovs/bin/openvscode-server --install-extension rust-lang.rust-analyzer || true
         /opt/ovs/bin/openvscode-server --install-extension gydunhn.javascript-essentials || true
+        /opt/ovs/bin/openvscode-server --install-extension ms-python.python || true
 
-        nohup bash -c "/opt/ovs/bin/openvscode-server --without-connection-token --port  3031 --host 0.0.0.0"  > /tmp/openvscode.out 2>&1 &
+
+        nohup bash -c "/opt/ovs/bin/openvscode-server --without-connection-token --port  3030 --host 0.0.0.0"  > /tmp/openvscode.out 2>&1 &
 
 
 
