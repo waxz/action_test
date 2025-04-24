@@ -239,9 +239,9 @@ jobs:
         npm install -g pnpm
 
         curl -fsSL https://code-server.dev/install.sh | sh
-        code-server --install-extension golang.Go
-        code-server --install-extension rust-lang.rust-analyzer
-        code-server --install-extension gydunhn.javascript-essentials
+        code-server --install-extension golang.Go || true
+        code-server --install-extension rust-lang.rust-analyzer || true
+        code-server --install-extension gydunhn.javascript-essentials || true
         nohup bash -c "PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030" > /tmp/coder.out 2>&1 &
 
       env:
