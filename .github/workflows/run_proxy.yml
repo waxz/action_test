@@ -243,7 +243,7 @@ jobs:
         # code-server --install-extension rust-lang.rust-analyzer || true
         # code-server --install-extension gydunhn.javascript-essentials || true
         # nohup bash -c "PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030" > /tmp/coder.out 2>&1 &
-        
+
         ovs_url=$(curl -L -H "Accept: application/vnd.github+json" https://api.github.com/repos/gitpod-io/openvscode-server/releases | jq -r ".[0].assets[] | .browser_download_url" | grep linux-x64)
         wget  $ovs_url -O /tmp/ovs.tar.gz
         mkdir /opt/ovs
@@ -251,7 +251,7 @@ jobs:
         # https://github.com/microsoft/vscode/issues/155969
         cat /opt/ovs/product.json | jq  '.extensionsGallery.serviceUrl|="https://marketplace.visualstudio.com/_apis/public/gallery"' | sudo tee  /opt/ovs/product.json
         cat /opt/ovs/product.json | jq  '.extensionsGallery.itemUrl|="https://marketplace.visualstudio.com/items"' | sudo tee  /opt/ovs/product.json
-        
+
         /opt/ovs/bin/openvscode-server --install-extension golang.Go || true
         /opt/ovs/bin/openvscode-server --install-extension rust-lang.rust-analyzer || true
         /opt/ovs/bin/openvscode-server --install-extension gydunhn.javascript-essentials || true
@@ -259,35 +259,24 @@ jobs:
 
 
         cat << 'EOF' | sudo tee -a /etc/nginx/locations/vscode.conf
-	      location /vscode/ {
-	
-		    # rewrite ^/vscode(/.*)$ $1 break;
-		
-		    proxy_pass http://127.0.0.1:3030;
-		
-		    # proxy_set_header Host $host:$server_port;  # Ensure Host contains port
-		    proxy_set_header Host $http_host;
-		
-		    proxy_set_header X-Real-IP $remote_addr;
-		
-		    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		
-		    proxy_set_header X-Forwarded-Proto $scheme;
-		    
-		    # Inform the backend that it's under `/vscode/`
-		
-		    proxy_set_header X-Script-Name /vscode;
-		
-		    proxy_set_header X-Forwarded-Prefix /vscode;
-		
-		    proxy_redirect off;
-		
-		    # websocket
-	      proxy_http_version 1.1;
+        location /vscode/ {
+
+        # rewrite ^/vscode(/.*)$ $1 break;
+        proxy_pass http://127.0.0.1:3030;
+        # proxy_set_header Host $host:$server_port;  # Ensure Host contains port
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # Inform the backend that it's under `/vscode/`
+        proxy_set_header X-Script-Name /vscode;
+        proxy_set_header X-Forwarded-Prefix /vscode;
+        proxy_redirect off;
+        # websocket
+        proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
         proxy_read_timeout 86400;
-	
         }
         EOF
         sudo nginx -t && sudo systemctl reload nginx
@@ -300,7 +289,6 @@ jobs:
         # pip install uv
         curl -LsSf https://astral.sh/uv/install.sh | sh
         uv self update
-
 
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
