@@ -258,6 +258,9 @@ jobs:
         /opt/ovs/bin/openvscode-server --install-extension ms-python.python || true
 
         # setup nginx
+
+        sudo unlink /etc/nginx/sites-enabled/default
+
         sudo mkdir -p /etc/nginx/locations
 
         cat << 'EOF' | sudo tee /etc/nginx/conf.d/default.conf
@@ -297,7 +300,7 @@ jobs:
         }
         EOF
 
-
+        sudo service nginx restart
         sudo nginx -t && sudo systemctl reload nginx
 
 
