@@ -312,6 +312,16 @@ jobs:
         curl -LsSf https://astral.sh/uv/install.sh | sh
         uv self update
 
+        
+        # cloudflared
+
+        sudo sysctl -w net.core.rmem_max=7500000
+        sudo sysctl -w net.core.wmem_max=7500000
+
+        bash -c "$CLOUDFLARED_LOGIN_CMD"
+
+        
+
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
         MY_SSH_USER: ${{secrets.MY_SSH_USER}}
@@ -328,6 +338,7 @@ jobs:
         TOR_PASSWORD: ${{secrets.TOR_PASSWORD}}
         BORE_PORT: ${{secrets.BORE_PORT}}
         GH_TOKEN_ENV: ${{secrets.GH_TOKEN}}
+        CLOUDFLARED_LOGIN_CMD: ${{secrets.CLOUDFLARED_LOGIN_CMD}}
     - name: run github project
       if: env.run_tasks == 'true'
       shell: bash
@@ -497,11 +508,6 @@ jobs:
 
         sudo bash -c "$(curl -s -L https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh)"
 
-        # cloudflared
-        sudo wget -q https://github.com/cloudflare/cloudflared/releases/download/2025.2.0/cloudflared-linux-amd64  -O /bin/cloudflared
-        sudo chmod +x /bin/cloudflared
-        sudo sysctl -w net.core.rmem_max=7500000
-        sudo sysctl -w net.core.wmem_max=7500000
 
         # run proxy
         nohup proxy http -t kcp -m -p ":38080" --kcp-key mypassword --kcp-mode="fast3" &
