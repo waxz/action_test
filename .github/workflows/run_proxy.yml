@@ -347,7 +347,7 @@ jobs:
         git clone git@github.com:waxz/self-host-reader.git /tmp/self-host-reader
         git clone git@github.com:waxz/quartz.git /tmp/quartz
         git clone git@github.com:waxz/markdown-editor.git /tmp/markdown-editor
-
+        git clone git@github.com:waxz/cf-deploy.git /tmp/cf-deploy
 
         export QUARTZ_PORT=8002
         export QUARTZ_CONTENT=/tmp/self-host-reader/notes
