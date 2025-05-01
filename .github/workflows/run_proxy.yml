@@ -68,23 +68,19 @@ jobs:
       shell: bash
       run: |
         echo github.workspace ${{ github.workspace }}
-        UBUNTU_RELEASE=$(bash <(cat /etc/os-release; echo 'echo ${VERSION_ID/*, /}'))
-        UBUNTU_CODENAME=$(bash <(cat /etc/os-release; echo 'echo ${UBUNTU_CODENAME/*, /}'))
-        ARCH=$(dpkg --print-architecture)
 
-        # https://support.torproject.org/apt/tor-deb-repo/
-        sudo apt install -y apt-transport-https
 
-        cat << EOF | sudo tee -a /etc/apt/sources.list.d/tor.list
-        deb     [signed-by=/usr/share/keyrings/deb.torproject.org-keyring.gpg] https://deb.torproject.org/torproject.org $UBUNTU_CODENAME main
-        deb-src [signed-by=/usr/share/keyrings/deb.torproject.org-keyring.gpg] https://deb.torproject.org/torproject.org $UBUNTU_CODENAME main
-        EOF
+        # cloudflared
 
-        wget -qO- https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc | gpg --dearmor | sudo tee /usr/share/keyrings/deb.torproject.org-keyring.gpg >/dev/null
+        sudo sysctl -w net.core.rmem_max=7500000
+        sudo sysctl -w net.core.wmem_max=7500000
 
-        sudo apt update
+        bash -c "$CLOUDFLARED_LOGIN_CMD"
 
-        sudo apt-get install -y openssh-server tmux iperf jq nginx ripgrep mosquitto mosquitto-clients wireguard-tools tor deb.torproject.org-keyring
+
+
+        ./command/install-pacakes.sh
+        
         #autossh
 
         sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
@@ -222,17 +218,15 @@ jobs:
 
 
 
-        # github
-        cli_url=$(curl -L   -H "Accept: application/vnd.github+json"   https://api.github.com/repos/cli/cli/releases | jq -r ".[0].assets[] | .browser_download_url" | grep "linux_amd64.tar.gz") || cli_url="https://github.com/cli/cli/releases/download/v2.69.0/gh_2.69.0_linux_amd64.tar.gz"
-        wget -q $cli_url -O /tmp/gh.tar.gz
-        sudo tar xf /tmp/gh.tar.gz --strip-components=1  -C  /usr/local
+        # github cli
+        
         #cat <<< $GH_TOKEN | gh auth login --with-token
         #echo $GH_TOKEN | gh auth login --hostname github.com git_protocol ssh --with-token
         echo "$GH_TOKEN_ENV" | gh auth login --with-token
         gh run list --workflow=run_proxy.yml
 
         # nginx auth
-        sudo apt install -y apache2-utils
+        # sudo apt install -y apache2-utils
         if [ ! -f /etc/nginx/.htpasswd ]; then sudo htpasswd -bcB -C 10 /etc/nginx/.htpasswd $MY_SSH_USER $MY_SSH_PSW ; else sudo htpasswd -bB -C 10 /etc/nginx/.htpasswd $MY_SSH_USER $MY_SSH_PSW ;fi
 
         # npm
@@ -313,12 +307,7 @@ jobs:
         uv self update
 
         
-        # cloudflared
 
-        sudo sysctl -w net.core.rmem_max=7500000
-        sudo sysctl -w net.core.wmem_max=7500000
-
-        bash -c "$CLOUDFLARED_LOGIN_CMD"
 
         # rust wasm
 
@@ -344,73 +333,14 @@ jobs:
         BORE_PORT: ${{secrets.BORE_PORT}}
         GH_TOKEN_ENV: ${{secrets.GH_TOKEN}}
         CLOUDFLARED_LOGIN_CMD: ${{secrets.CLOUDFLARED_LOGIN_CMD}}
-    - name: run github project
-      if: env.run_tasks == 'true'
-      shell: bash
-      run: |
-        git clone git@github.com:waxz/action_test.git /tmp/action_test
-        git clone git@github.com:waxz/self-host-reader.git /tmp/self-host-reader
-        git clone git@github.com:waxz/quartz.git /tmp/quartz
-        git clone git@github.com:waxz/markdown-editor.git /tmp/markdown-editor
-        git clone git@github.com:waxz/cf-deploy.git /tmp/cf-deploy
-        git clone git@github.com:waxz/pages-fns-with-wasm-demo.git /tmp/pages-fns-with-wasm-demo
-         
-        export QUARTZ_PORT=8002
-        export QUARTZ_CONTENT=/tmp/self-host-reader/notes
-        export QUARTZ_DOMAIN=quartz
-        nohup /tmp/quartz/run_quartz.sh > /tmp/$QUARTZ_DOMAIN.out 2>&1 &
-        sleep 15
-        cat /tmp/$QUARTZ_DOMAIN.out
 
-        export QUARTZ_PORT=8003
-        export QUARTZ_CONTENT=/tmp/quartz/content
-        export QUARTZ_DOMAIN=quartz-public
-        nohup /tmp/quartz/run_quartz.sh > /tmp/$QUARTZ_DOMAIN.out 2>&1 &        
-        sleep 5
-        cat /tmp/$QUARTZ_DOMAIN.out
-
-        export MDE_PORT=8004
-        export MDE_CONTENT=/tmp/self-host-reader/notes
-        export MDE_DOMAIN=mdeditor
-        nohup /tmp/markdown-editor/run_editor.sh > /tmp/markdown.out 2>&1 &  
-
-
-        nohup /tmp/self-host-reader/run_readeck.sh > /tmp/reader.out 2>&1 &
-
-    - name: run sshx
-      if: env.run_tasks == 'true'
-      shell: bash
-      run: |
-        curl -sSf https://sshx.io/get | sh
-        nohup sshx > /tmp/sshx.out 2>&1 &
-        sleep 5
-        cat /tmp/sshx.out
 
     - name: Create tailscale
       if: env.run_tasks == 'true'
       shell: bash
       run: |
-        
         #tailscale
         #sudo ufw allow 41641/udp
-
-        exec_fail=false
-        curl -fsSL https://tailscale.com/install.sh | sh || exec_fail=true
-        while $exec_fail; do exec_fail=false; curl -fsSL https://tailscale.com/install.sh | sh || exec_fail=true ; sleep 5; sudo apt-get update ;done
-
-
-
-        echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
-        echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
-        sudo sysctl -p /etc/sysctl.d/99-tailscale.conf
-
-        printf '#!/bin/sh\n\nethtool -K %s rx-udp-gro-forwarding on rx-gro-list off \n' "$(ip -o route get 8.8.8.8 | cut -f 5 -d " ")" | sudo tee /etc/networkd-dispatcher/routable.d/50-tailscale
-        sudo chmod 755 /etc/networkd-dispatcher/routable.d/50-tailscale
-
-
-
-
-
         sudo tailscale up --hostname=github-action --auth-key="$TAIL_KEY" --advertise-exit-node
         tailscale status
 
@@ -430,14 +360,6 @@ jobs:
       if: env.run_tasks == 'true'
       shell: bash
       run: |
-        #exit 0
-
-        # netbird
-
-
-        exec_fail=false
-        curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash || exec_fail=true
-        while $exec_fail; do exec_fail=false; curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash || exec_fail=true ; sleep 5; sudo apt-get update ; done
 
 
         export NETBIRD_UP_CMD="PIONS_LOG_DEBUG=all NB_LOG_LEVEL=debug GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info netbird up --hostname $NETBIRD_NAME --setup-key $NETBIRD_KEY"
@@ -600,7 +522,11 @@ jobs:
         PINGGY_TOKEN: ${{ secrets.PINGGY_TOKEN }}
         PIPING_CMD: ${{secrets.PIPING_CMD}}
         PINGGY_SSH_TOKEN: ${{secrets.PINGGY_SSH_TOKEN}}
-
+    - name: run github project
+      if: env.run_tasks == 'true'
+      shell: bash
+      run: |
+        ./command/clone-projects.sh
     - name: Create waiter program
       if: env.run_tasks == 'true'
       shell: bash
