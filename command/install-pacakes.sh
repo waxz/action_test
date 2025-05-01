@@ -49,3 +49,7 @@ sudo tar xf /tmp/gh.tar.gz --strip-components=1  -C  /usr/local
 
 # wasm
 curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+
+# 
+cargo install cargo-generate
