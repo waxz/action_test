@@ -45,3 +45,7 @@ cli_url=$(curl -L   -H "Accept: application/vnd.github+json"   https://api.githu
 wget -q $cli_url -O /tmp/gh.tar.gz
 sudo tar xf /tmp/gh.tar.gz --strip-components=1  -C  /usr/local
 
+
+
+# wasm
+curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
