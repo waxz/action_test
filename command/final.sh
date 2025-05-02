@@ -9,6 +9,7 @@ fi
 
 # onedriver
 cd /tmp/self-host-reader/ondriver/ && ./upload.sh
+cd /tmp/self-host-reader/ondriver/ && ./commit.sh
 
 # action
 cd /tmp/action_test && gh run list --workflow=run_proxy.yml
