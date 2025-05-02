@@ -246,7 +246,6 @@ jobs:
 
 
 
-        nohup bash -c "/opt/ovs/bin/openvscode-server --without-connection-token --port  3030 --host 0.0.0.0 --server-base-path  vscode"  > /tmp/openvscode.out 2>&1 &
 
 
 
