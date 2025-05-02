@@ -115,8 +115,7 @@ code-server --install-extension waderyan.nodejs-extension-pack || true
 code-server --install-extension donjayamanne.python-extension-pack || true
 code-server --install-extension swellaby.rust-pack || true
 
-nohup bash -c "PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030 -an "vscode" -w "Hello!!!"" > /tmp/coder.out 2>&1 &
-
+nohup bash -c 'PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030 -an "vscode" -w "Hello!!!"' > /tmp/coder.out 2>&1 &
 ovs_url=$(curl -L -H "Accept: application/vnd.github+json" https://api.github.com/repos/gitpod-io/openvscode-server/releases | jq -r ".[0].assets[] | .browser_download_url" | grep linux-x64)
 wget  $ovs_url -O /tmp/ovs.tar.gz
 mkdir /opt/ovs
