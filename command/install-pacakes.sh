@@ -133,4 +133,7 @@ cat /opt/ovs/product.json | jq  '.extensionsGallery.itemUrl|="https://marketplac
 # nohup bash -c "/opt/ovs/bin/openvscode-server --without-connection-token --port  3030 --host 0.0.0.0 --server-base-path  vscode"  > /tmp/openvscode.out 2>&1 &
 
 
-
+#veracrypt
+sudo add-apt-repository ppa:unit193/encryption -y
+sudo apt update
+sudo apt install veracrypt -y
