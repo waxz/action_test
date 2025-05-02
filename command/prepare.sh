@@ -8,7 +8,6 @@ strings=(
 .composer
 .config
 .docker
-.gitconfig
 .local
 .npm
 .nvm
