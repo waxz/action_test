@@ -17,7 +17,7 @@ strings=(
 .vscode-server
 .wget-hsts
 .yarnrc
-OneDriver
+OneDrive
 )
 
 for i in "${strings[@]}"; do
