@@ -127,49 +127,14 @@ jobs:
         fi
         EOF
 
-        # setup sshd
-        sudo sed -i "s/.*AllowTcpForwarding .*/AllowTcpForwarding yes/" /etc/ssh/sshd_config
-        sudo sed -i "s/.*GatewayPorts .*/GatewayPorts yes/" /etc/ssh/sshd_config
 
-
-        # sudo sed -i 's/.*PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
-        # sudo sed -i 's/.*PubkeyAuthentication.*/PubkeyAuthentication yes/' /etc/ssh/sshd_config
-        # sudo sed -i 's/.*PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
-
-        sudo systemctl restart ssh
 
         # set git
         git config --global user.name "$MY_SSH_USER"
         git config --global user.email "$MY_SSH_USER@github.com"
 
-        # setup tor
 
-        hashpass=$(tor --hash-password "$TOR_PASSWORD")
-        sudo sed -i "s/.*HashedControlPassword.*/HashedControlPassword $hashpass/" /etc/tor/torrc
-
-        cat << EOF | sudo tee -a /etc/tor/torrc
-        SocksPort 0.0.0.0:9060
-        ControlPort 0.0.0.0:9061
-        CookieAuthentication 0
-
-        ExcludeNodes {cn},{hk},{mo},{kp},{ir},{sy},{pk},{cu},{vn}
-        MiddleNodes {GE},{IT},{HU},{AT},{HR},{RO},{PL},{FR},{FI},{SE},{IS},{NO},{IE},{EE},{DK},{LT},{CZ},{BE},{GR},{RS},{BG},{TR},{ES},{NL}
-        ExitNodes {GE},{IT},{HU},{AT},{HR},{RO},{PL},{FR},{FI},{SE},{IS},{NO},{IE},{EE},{DK},{LT},{CZ},{BE},{GR},{RS},{BG},{TR},{ES},{NL}
-
-        EOF
-
-
-        cat << EOF | sudo tee -a /etc/mosquitto/mosquitto.conf
-        listener 1883 0.0.0.0
-        allow_anonymous true
-        EOF
-        sudo systemctl restart mosquitto
-
-
-
-        sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf -O /home/$MY_SSH_USER/.tmux.conf
-        sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.tmux.conf.local -O /home/$MY_SSH_USER/.tmux.conf.local
-        sudo cp /home/$MY_SSH_USER/.tmux* ~/
+        sudo cp $HOME/.tmux* /home/$MY_SSH_USER/
 
         nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
 
@@ -201,9 +166,7 @@ jobs:
         sudo chmod 700 $USER_HOME/.ssh
 
 
-        url="https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz"
-        wget -q $url -O /tmp/nvim.tar.gz 
-        sudo tar xf /tmp/nvim.tar.gz --strip-components=1 -C /usr/local
+
 
         mkdir -p $HOME/.config
         sudo mkdir -p $USER_HOME/.config
@@ -231,27 +194,9 @@ jobs:
         # sudo apt install -y apache2-utils
         if [ ! -f /etc/nginx/.htpasswd ]; then sudo htpasswd -bcB -C 10 /etc/nginx/.htpasswd $MY_SSH_USER $MY_SSH_PSW ; else sudo htpasswd -bB -C 10 /etc/nginx/.htpasswd $MY_SSH_USER $MY_SSH_PSW ;fi
 
-        # npm
-        npm install -g pnpm
 
-        # curl -fsSL https://code-server.dev/install.sh | sh
-        # code-server --install-extension golang.Go || true
-        # code-server --install-extension rust-lang.rust-analyzer || true
-        # code-server --install-extension gydunhn.javascript-essentials || true
-        # nohup bash -c "PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030" > /tmp/coder.out 2>&1 &
 
-        ovs_url=$(curl -L -H "Accept: application/vnd.github+json" https://api.github.com/repos/gitpod-io/openvscode-server/releases | jq -r ".[0].assets[] | .browser_download_url" | grep linux-x64)
-        wget  $ovs_url -O /tmp/ovs.tar.gz
-        mkdir /opt/ovs
-        sudo tar xf /tmp/ovs.tar.gz --strip-components=1  -C /opt/ovs/
-        # https://github.com/microsoft/vscode/issues/155969
-        cat /opt/ovs/product.json | jq  '.extensionsGallery.serviceUrl|="https://marketplace.visualstudio.com/_apis/public/gallery"' | sudo tee  /opt/ovs/product.json
-        cat /opt/ovs/product.json | jq  '.extensionsGallery.itemUrl|="https://marketplace.visualstudio.com/items"' | sudo tee  /opt/ovs/product.json
 
-        /opt/ovs/bin/openvscode-server --install-extension golang.Go || true
-        /opt/ovs/bin/openvscode-server --install-extension rust-lang.rust-analyzer || true
-        /opt/ovs/bin/openvscode-server --install-extension gydunhn.javascript-essentials || true
-        /opt/ovs/bin/openvscode-server --install-extension ms-python.python || true
 
         # setup nginx
 
@@ -303,10 +248,7 @@ jobs:
 
         nohup bash -c "/opt/ovs/bin/openvscode-server --without-connection-token --port  3030 --host 0.0.0.0 --server-base-path  vscode"  > /tmp/openvscode.out 2>&1 &
 
-        # python
-        # pip install uv
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-        uv self update
+
 
         
 
@@ -642,21 +584,11 @@ jobs:
 
         done
 
-        if which tailscale &>/dev/null; then
-        echo 'tailscale logout'
-        sudo tailscale logout|| true;
-        fi
-        if which netbird &>/dev/null; then
-        echo 'netbird down'
-        sudo netbird down|| true;
-        fi
 
-        gh workflow run .github/workflows/run_proxy.yml
-        gh run list --workflow=run_proxy.yml
 
-        echo "commit github update"
-        (cd /tmp/self-host-reader/ && git add --all && git commit -m "update" && git push origin main ) || true
-        (cd /tmp/quartz/ && git add --all && git commit -m "update" && git push origin main ) || true
+        ./command/final.sh
+
+
 
       env:
         MQTT_TUNNEL_TOPIC: ${{ secrets.MQTT_TUNNEL_TOPIC }}

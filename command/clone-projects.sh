@@ -5,6 +5,10 @@ git clone git@github.com:waxz/markdown-editor.git /tmp/markdown-editor
 git clone git@github.com:waxz/cf-deploy.git /tmp/cf-deploy
 git clone git@github.com:waxz/pages-fns-with-wasm-demo.git /tmp/pages-fns-with-wasm-demo
     
+# onedriver
+nohup bash -c "cd /tmp/self-host-reader/ondriver/ && ./download.sh " > /tmp/ondriver.out 2>&1 &
+
+
 export QUARTZ_PORT=8002
 export QUARTZ_CONTENT=/tmp/self-host-reader/notes
 export QUARTZ_DOMAIN=quartz
@@ -26,3 +30,5 @@ nohup /tmp/markdown-editor/run_editor.sh > /tmp/markdown.out 2>&1 &
 
 
 nohup /tmp/self-host-reader/run_readeck.sh > /tmp/reader.out 2>&1 &
+
+
