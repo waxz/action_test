@@ -5,18 +5,13 @@ ln -s /mnt/data $HOME/data
 strings=(
 .cache
 .cargo
-.composer
 .config
 .docker
 .local
-.npm
 .nvm
 .openvscode-server
 .rustup
-.ssh
 .vscode-server
-.wget-hsts
-.yarnrc
 OneDrive
 )
 
