@@ -84,12 +84,30 @@ jobs:
         sudo sysctl -w net.core.wmem_max=7500000
 
         bash -c "$CLOUDFLARED_LOGIN_CMD"
+
+        # setup gh
+        # github cli
+        # set git
+        git config --global user.name "$MY_SSH_USER"
+        git config --global user.email "$MY_SSH_USER@github.com"
+        
+        #cat <<< $GH_TOKEN | gh auth login --with-token
+        #echo $GH_TOKEN | gh auth login --hostname github.com git_protocol ssh --with-token
+        echo "$GH_TOKEN_ENV" | gh auth login --with-token
+        gh run list --workflow=run_proxy.yml
+
+
+        
+        ./command/clone-projects.sh
         ./command/run-proxy.sh
         ./command/prepare.sh
         ./command/install-pacakes.sh
       env:
         SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
         SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+        GH_TOKEN_ENV: ${{secrets.GH_TOKEN}}
+        MY_SSH_USER: ${{secrets.MY_SSH_USER}}
+        MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
         
     - name: Create User
       if: env.run_tasks == 'true'
@@ -139,9 +157,7 @@ jobs:
 
 
 
-        # set git
-        git config --global user.name "$MY_SSH_USER"
-        git config --global user.email "$MY_SSH_USER@github.com"
+
 
 
         sudo cp $HOME/.tmux* /home/$MY_SSH_USER/
@@ -193,12 +209,7 @@ jobs:
 
 
 
-        # github cli
-        
-        #cat <<< $GH_TOKEN | gh auth login --with-token
-        #echo $GH_TOKEN | gh auth login --hostname github.com git_protocol ssh --with-token
-        echo "$GH_TOKEN_ENV" | gh auth login --with-token
-        gh run list --workflow=run_proxy.yml
+
 
         # nginx auth
         # sudo apt install -y apache2-utils
@@ -413,11 +424,7 @@ jobs:
         PINGGY_TOKEN: ${{ secrets.PINGGY_TOKEN }}
         PIPING_CMD: ${{secrets.PIPING_CMD}}
         PINGGY_SSH_TOKEN: ${{secrets.PINGGY_SSH_TOKEN}}
-    - name: run github project
-      if: env.run_tasks == 'true'
-      shell: bash
-      run: |
-        ./command/clone-projects.sh
+
     - name: Create waiter program
       if: env.run_tasks == 'true'
       shell: bash
