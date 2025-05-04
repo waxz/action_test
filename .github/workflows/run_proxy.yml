@@ -102,6 +102,7 @@ jobs:
         GH_TOKEN_ENV: ${{secrets.GH_TOKEN}}
         MY_SSH_USER: ${{secrets.MY_SSH_USER}}
         MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
+        CLOUDFLARED_LOGIN_CMD: ${{secrets.CLOUDFLARED_LOGIN_CMD}}
         
     - name: Create User
       if: env.run_tasks == 'true'
