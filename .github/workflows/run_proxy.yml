@@ -85,11 +85,11 @@ jobs:
         sudo sysctl -w net.core.wmem_max=7500000
 
         bash -c "$CLOUDFLARED_LOGIN_CMD"
-
-
-
+        ./command/run-proxy.sh
         ./command/prepare.sh
         ./command/install-pacakes.sh
+        source ~/.bashrc
+        
         vc_mnt $MY_SSH_USER:$MY_SSH_PSW ./command/secret.vc /mnt/data/secret/ 1
         
         #autossh
@@ -337,14 +337,6 @@ jobs:
       if: env.run_tasks == 'true'
       shell: bash
       run: |
-        ./command/run-proxy.sh
-        
-
-
-
-
-
-
         cat << 'EOF' | sudo tee -a /bin/kill_cloudflared.sh
         ps -A -o pid,cmd | grep -v grep | grep -E "[0-9] cloudflared tunnel" | awk '{print $1}' | sort -u | xargs -I {} /bin/bash -c 'kill -TERM {}'
 
