@@ -55,7 +55,7 @@ source $HOME/.bashrc
 
 # create r2 rclone configure file
 if [ -f source /mnt/data/mydisk10/cloudflare/var.sh ]; then source /mnt/data/mydisk10/cloudflare/var.sh; fi
-if [ -f /mnt/data/mydisk10/cloudflare/create_rclone_config.sh ]; then source /mnt/data/mydisk10/cloudflare/create_rclone_config.sh; fi
+if [ -f /mnt/data/mydisk10/cloudflare/create_rclone_config.sh ]; then /mnt/data/mydisk10/cloudflare/create_rclone_config.sh; fi
 
 
 nohup bash -c "cd /tmp/self-host-reader/ondriver/ && ./download.sh " > /tmp/ondriver.out 2>&1 &
