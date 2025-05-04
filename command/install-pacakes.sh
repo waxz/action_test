@@ -174,3 +174,13 @@ vc_dmnt(){
 }
 
 EOF
+
+cat << EOF | sudo tee -a $HOME/.bash_profile
+if [ -f ~/.bashrc ]; then
+  . ~/.bashrc
+fi
+EOF
+
+
+
+
