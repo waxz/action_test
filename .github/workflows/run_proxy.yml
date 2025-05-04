@@ -62,8 +62,7 @@ jobs:
       run: |
         echo ${{ env.STAMP }} # Gives "2022-12-11-01-42-20"
         echo ${{ env.START_TIME }} # Gives "2022-12-11T01:42:20"
-
-    - name: Create User
+    - name: Install dependency
       if: env.run_tasks == 'true'
       shell: bash
       run: |
@@ -87,7 +86,12 @@ jobs:
         bash -c "$CLOUDFLARED_LOGIN_CMD"
         ./command/run-proxy.sh
         ./command/prepare.sh
-        ./command/install-pacakes.sh
+        ./command/install-pacakes.sh     
+    - name: Create User
+      if: env.run_tasks == 'true'
+      shell: bash
+      run: |
+
         source ~/.bashrc
         
         vc_mnt $MY_SSH_USER:$MY_SSH_PSW ./command/secret.vc /mnt/data/secret/ 1
