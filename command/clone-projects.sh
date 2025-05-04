@@ -6,6 +6,51 @@ git clone git@github.com:waxz/pages-fns-with-wasm-demo.git --depth 1  /tmp/pages
     
 # onedriver
 git clone git@github.com:waxz/self-host-reader.git --depth 1 /tmp/self-host-reader
+
+# encryption
+sudo add-apt-repository ppa:unit193/encryption -y
+sudo apt update
+sudo apt-fast install veracrypt -y
+
+
+
+cat << 'EOF' | tee -a $HOME/.bashrc
+
+vc_create() {
+  if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
+    echo "Please provide password, filename, and filesize. Usage: vc_create password filename filesize";
+  else
+    veracrypt --text --create "$2" --size "$3" --password "$1" --volume-type normal --encryption AES --hash sha-512 --filesystem ext4 --pim 0 --keyfiles "" --random-source ~/.bashrc;
+  fi
+}
+
+# Define the function for mounting a VeraCrypt volume
+vc_mnt() {
+  if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" ]]; then
+    echo "Please provide password, filename, mountpath and slot. Usage: vc_mnt password filename mountpath slot";
+  else
+    if [[ ! -d "$3" ]]; then mkdir -p "$3";fi;
+    veracrypt --text --mount "$2" "$3" --password "$1" --pim 0 --keyfiles "" --protect-hidden no --slot "$4" --verbose;
+  fi
+}
+
+vc_dmnt(){
+  if [[ -z "$1" ]]; then
+    echo "Please provide filename . Usage: vc_dmnt filename ";
+
+  else
+     veracrypt --dismount "$1"
+  fi
+}
+
+EOF
+
+cat << EOF | sudo tee -a $HOME/.bash_profile
+if [ -f ~/.bashrc ]; then
+  . ~/.bashrc
+fi
+EOF
+source $HOME/.bashrc
 /tmp/self-host-reader/secret/mount.sh
 
 # create r2 rclone configure file

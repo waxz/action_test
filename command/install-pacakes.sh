@@ -148,6 +148,8 @@ sudo add-apt-repository ppa:unit193/encryption -y
 sudo apt update
 sudo apt-fast install veracrypt -y
 
+
+
 cat << 'EOF' | tee -a $HOME/.bashrc
 
 vc_create() {
@@ -184,6 +186,7 @@ if [ -f ~/.bashrc ]; then
   . ~/.bashrc
 fi
 EOF
+source $HOME/.bashrc
 
 
 
@@ -191,4 +194,3 @@ EOF
 
 #r2 rclone
 sudo -v ; curl https://rclone.org/install.sh | sudo bash
-
