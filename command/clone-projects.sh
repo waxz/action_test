@@ -7,6 +7,12 @@ git clone git@github.com:waxz/pages-fns-with-wasm-demo.git --depth 1  /tmp/pages
 # onedriver
 git clone git@github.com:waxz/self-host-reader.git --depth 1 /tmp/self-host-reader
 /tmp/self-host-reader/secret/mount.sh
+
+# create r2 rclone configure file
+if [ -f source /mnt/data/mydisk10/cloudflare/var.sh ]; then source /mnt/data/mydisk10/cloudflare/var.sh; fi
+if [ -f /mnt/data/mydisk10/cloudflare/create_rclone_config.sh ]; then source /mnt/data/mydisk10/cloudflare/create_rclone_config.sh; fi
+
+
 nohup bash -c "cd /tmp/self-host-reader/ondriver/ && ./download.sh " > /tmp/ondriver.out 2>&1 &
 
 

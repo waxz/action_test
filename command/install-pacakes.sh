@@ -185,7 +185,6 @@ EOF
 
 
 
-#r2
+#r2 rclone
 sudo -v ; curl https://rclone.org/install.sh | sudo bash
-# source /mnt/data/mydisk10/cloudflare/var.sh
-# /mnt/data/mydisk10/cloudflare/create_rclone_config.sh
+
