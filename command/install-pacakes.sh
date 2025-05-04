@@ -2,12 +2,16 @@ UBUNTU_RELEASE=$(bash <(cat /etc/os-release; echo 'echo ${VERSION_ID/*, /}'))
 UBUNTU_CODENAME=$(bash <(cat /etc/os-release; echo 'echo ${UBUNTU_CODENAME/*, /}'))
 ARCH=$(dpkg --print-architecture)
 
+sudo add-apt-repository -y ppa:apt-fast/stable
+sudo apt-get update
+sudo apt-get install -y apt-fast
+
 
 # vscode
 curl -fsSL https://code-server.dev/install.sh | sh
 code-server --install-extension gydunhn.javascript-essentials || true
 code-server --install-extension golang.Go || true
-code-server--install-extension ms-vscode.cpptools-extension-pack|| true
+code-server --install-extension ms-vscode.cpptools-extension-pack|| true
 code-server --install-extension waderyan.nodejs-extension-pack || true
 code-server --install-extension donjayamanne.python-extension-pack || true
 code-server --install-extension swellaby.rust-pack || true
@@ -27,7 +31,7 @@ wget -qO- https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8C
 
 sudo apt update
 
-sudo apt-get install -y openssh-server tmux iperf jq nginx ripgrep mosquitto mosquitto-clients wireguard-tools apache2-utils tor deb.torproject.org-keyring ncdu
+sudo apt-fast install -y openssh-server tmux iperf jq nginx ripgrep mosquitto mosquitto-clients wireguard-tools apache2-utils tor deb.torproject.org-keyring ncdu
 
 
 # why fails
@@ -142,7 +146,7 @@ cat /opt/ovs/product.json | jq  '.extensionsGallery.itemUrl|="https://marketplac
 # https://docs.vultr.com/how-to-install-veracrypt-on-ubuntu-24-04
 sudo add-apt-repository ppa:unit193/encryption -y
 sudo apt update
-sudo apt install veracrypt -y
+sudo apt-fast install veracrypt -y
 
 cat << 'EOF' | tee -a $HOME/.bashrc
 
