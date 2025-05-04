@@ -144,7 +144,7 @@ sudo add-apt-repository ppa:unit193/encryption -y
 sudo apt update
 sudo apt install veracrypt -y
 
-cat << 'EOF' | tee -a ~/.bashrc
+cat << 'EOF' | tee -a $HOME/.bashrc
 
 vc_create() {
   if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
