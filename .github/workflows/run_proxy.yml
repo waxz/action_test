@@ -86,21 +86,14 @@ jobs:
         bash -c "$CLOUDFLARED_LOGIN_CMD"
 
         # setup gh
-        # github cli
-        # set git
         git config --global user.name "$MY_SSH_USER"
         git config --global user.email "$MY_SSH_USER@github.com"
         
-        #cat <<< $GH_TOKEN | gh auth login --with-token
-        #echo $GH_TOKEN | gh auth login --hostname github.com git_protocol ssh --with-token
         echo "$GH_TOKEN_ENV" | gh auth login --with-token
         gh run list --workflow=run_proxy.yml
-
-
-        
-        ./command/clone-projects.sh
-        ./command/run-proxy.sh
         ./command/prepare.sh
+        ./command/run-proxy.sh
+        ./command/clone-projects.sh
         ./command/install-pacakes.sh
       env:
         SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
