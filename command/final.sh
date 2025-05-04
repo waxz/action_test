@@ -7,6 +7,9 @@ if which netbird &>/dev/null; then
     sudo netbird down|| true;
 fi
 
+# veracrypt
+veracrypt -u
+
 # onedriver
 cd /tmp/self-host-reader/ondriver/ && ./upload.sh
 cd /tmp/self-host-reader/ondriver/ && ./commit.sh

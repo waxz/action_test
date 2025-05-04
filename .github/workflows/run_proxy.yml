@@ -90,6 +90,7 @@ jobs:
 
         ./command/prepare.sh
         ./command/install-pacakes.sh
+        vc_mnt $MY_SSH_USER:$MY_SSH_PSW /tmp/action_test/command/secret.vc /mnt/data/secret/ 1
         
         #autossh
 
