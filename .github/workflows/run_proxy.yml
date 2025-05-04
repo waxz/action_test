@@ -114,7 +114,7 @@ jobs:
       shell: bash
       run: |
 
-        source ~/.bashrc
+        source $HOME/.bashrc
         
         vc_mnt $MY_SSH_USER:$MY_SSH_PSW ./command/secret.vc /mnt/data/secret/ 1
         
