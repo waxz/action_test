@@ -79,6 +79,7 @@ jobs:
 
 
         # cloudflared
+        echo "run cloudflare tunnel"
 
         sudo sysctl -w net.core.rmem_max=7500000
         sudo sysctl -w net.core.wmem_max=7500000
@@ -107,9 +108,9 @@ jobs:
       shell: bash
       run: |
 
-        source $HOME/.bashrc
+        # source $HOME/.bashrc
         
-        vc_mnt $MY_SSH_USER:$MY_SSH_PSW ./command/secret.vc /mnt/data/secret/ 1
+        # vc_mnt $MY_SSH_USER:$MY_SSH_PSW ./command/secret.vc /mnt/data/secret/ 1
         
         #autossh
 
@@ -350,9 +351,9 @@ jobs:
       shell: bash
       run: |
         cat << 'EOF' | sudo tee -a /bin/kill_cloudflared.sh
-        ps -A -o pid,cmd | grep -v grep | grep -E "[0-9] cloudflared tunnel" | awk '{print $1}' | sort -u | xargs -I {} /bin/bash -c 'kill -TERM {}'
-
+        ps -A -o pid,cmd | grep -v grep | grep -E "[0-9] cloudflared tunnel --url localhost:38083" | awk '{print $1}' | sort -u | xargs -I {} /bin/bash -c 'kill -TERM {}'
         EOF
+        
         sudo chmod +x /bin/kill_cloudflared.sh
         cat << 'EOF' | sudo tee -a /bin/kill_pinggy.sh
 
@@ -375,7 +376,6 @@ jobs:
         cat << EOF | sudo tee -a /bin/run_localtonet.sh
         LOCALNET_AUTHTOKEN=$LOCALNET_AUTHTOKEN
         LOCALNET_API=$LOCALNET_API
-
         EOF
 
         cat << 'EOF' | sudo tee -a /bin/run_localtonet.sh
