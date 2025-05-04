@@ -19,7 +19,7 @@ for i in "${strings[@]}"; do
     s="$HOME/$i"
     d=/mnt/data/"$i"
     echo "$s -> $d"
-    if [ ! -p $s ]; then mkdir $s; fi
+    if [ ! -d $s ]; then mkdir $s; fi
     rsync -a $HOME/"$i"/ /mnt/data/"$i"/
     sudo rm -rf $HOME/"$i"/
     sudo ln -s /mnt/data/"$i" $HOME/"$i"
