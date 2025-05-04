@@ -2,6 +2,19 @@ UBUNTU_RELEASE=$(bash <(cat /etc/os-release; echo 'echo ${VERSION_ID/*, /}'))
 UBUNTU_CODENAME=$(bash <(cat /etc/os-release; echo 'echo ${UBUNTU_CODENAME/*, /}'))
 ARCH=$(dpkg --print-architecture)
 
+
+# vscode
+curl -fsSL https://code-server.dev/install.sh | sh
+code-server --install-extension gydunhn.javascript-essentials || true
+code-server --install-extension golang.Go || true
+code-server--install-extension ms-vscode.cpptools-extension-pack|| true
+code-server --install-extension waderyan.nodejs-extension-pack || true
+code-server --install-extension donjayamanne.python-extension-pack || true
+code-server --install-extension swellaby.rust-pack || true
+
+nohup bash -c 'PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030 -an "vscode" -w "Hello!!!"' > /tmp/coder.out 2>&1 &
+
+
 # https://support.torproject.org/apt/tor-deb-repo/
 sudo apt install -y apt-transport-https
 
@@ -107,15 +120,7 @@ sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.
 
 
 
-curl -fsSL https://code-server.dev/install.sh | sh
-code-server --install-extension gydunhn.javascript-essentials || true
-code-server --install-extension golang.Go || true
-code-server--install-extension ms-vscode.cpptools-extension-pack|| true
-code-server --install-extension waderyan.nodejs-extension-pack || true
-code-server --install-extension donjayamanne.python-extension-pack || true
-code-server --install-extension swellaby.rust-pack || true
 
-nohup bash -c 'PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030 -an "vscode" -w "Hello!!!"' > /tmp/coder.out 2>&1 &
 ovs_url=$(curl -L -H "Accept: application/vnd.github+json" https://api.github.com/repos/gitpod-io/openvscode-server/releases | jq -r ".[0].assets[] | .browser_download_url" | grep linux-x64)
 wget  $ovs_url -O /tmp/ovs.tar.gz
 mkdir /opt/ovs
