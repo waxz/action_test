@@ -6,6 +6,7 @@ git clone git@github.com:waxz/pages-fns-with-wasm-demo.git --depth 1  /tmp/pages
     
 # onedriver
 git clone git@github.com:waxz/self-host-reader.git --depth 1 /tmp/self-host-reader
+/tmp/self-host-reader/secret/mount.sh
 nohup bash -c "cd /tmp/self-host-reader/ondriver/ && ./download.sh " > /tmp/ondriver.out 2>&1 &
 
 
