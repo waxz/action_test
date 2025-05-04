@@ -86,7 +86,11 @@ jobs:
         bash -c "$CLOUDFLARED_LOGIN_CMD"
         ./command/run-proxy.sh
         ./command/prepare.sh
-        ./command/install-pacakes.sh     
+        ./command/install-pacakes.sh
+      env:
+        SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
+        SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+        
     - name: Create User
       if: env.run_tasks == 'true'
       shell: bash
