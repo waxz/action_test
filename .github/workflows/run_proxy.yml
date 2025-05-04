@@ -216,7 +216,8 @@ jobs:
 
         # setup nginx
 
-        sudo unlink /etc/nginx/sites-enabled/default
+        if [ -d /etc/nginx/sites-enabled/default ]; then sudo unlink /etc/nginx/sites-enabled/default; fi
+        
 
         sudo mkdir -p /etc/nginx/locations
 
