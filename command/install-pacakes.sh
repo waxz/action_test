@@ -15,6 +15,7 @@ code-server --install-extension ms-vscode.cpptools-extension-pack|| true
 code-server --install-extension waderyan.nodejs-extension-pack || true
 code-server --install-extension donjayamanne.python-extension-pack || true
 code-server --install-extension swellaby.rust-pack || true
+code-server --install-extension ms-vscode.vscode-typescript-next || true
 
 nohup bash -c 'PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030 -an "vscode" -w "Hello!!!"' > /tmp/coder.out 2>&1 &
 
