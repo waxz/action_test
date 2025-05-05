@@ -195,3 +195,13 @@ source $HOME/.bashrc
 
 #r2 rclone
 sudo -v ; curl https://rclone.org/install.sh | sudo bash
+
+
+
+# wasi
+rustc --print=target-list
+rustc --print=target-list | grep wasi
+rustup target add wasm32-wasip1
+rustup target add wasm32-wasip2
+rustup target add wasm32-wasip1-threads
+curl https://wasmtime.dev/install.sh -sSf | bash
