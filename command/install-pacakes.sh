@@ -9,13 +9,15 @@ sudo apt-get install -y apt-fast
 
 # vscode
 curl -fsSL https://code-server.dev/install.sh | sh
-code-server --install-extension gydunhn.javascript-essentials || true
-code-server --install-extension golang.Go || true
-code-server --install-extension ms-vscode.cpptools-extension-pack|| true
-code-server --install-extension waderyan.nodejs-extension-pack || true
-code-server --install-extension donjayamanne.python-extension-pack || true
-code-server --install-extension swellaby.rust-pack || true
-code-server --install-extension ms-vscode.vscode-typescript-next || true
+nohup bash -c " \
+code-server --install-extension gydunhn.javascript-essentials || true \
+code-server --install-extension golang.Go || true \
+code-server --install-extension ms-vscode.cpptools-extension-pack|| true \
+code-server --install-extension waderyan.nodejs-extension-pack || true \
+code-server --install-extension donjayamanne.python-extension-pack || true \
+code-server --install-extension swellaby.rust-pack || true \
+code-server --install-extension ms-vscode.vscode-typescript-next || true \
+" &
 
 nohup bash -c 'PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030 -an "vscode" -w "Hello!!!"' > /tmp/coder.out 2>&1 &
 
@@ -32,8 +34,13 @@ wget -qO- https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8C
 
 sudo apt update
 
-sudo apt-fast install -y openssh-server tmux iperf jq nginx ripgrep mosquitto mosquitto-clients wireguard-tools apache2-utils tor deb.torproject.org-keyring ncdu
-
+sudo apt-fast install -y openssh-server tmux iperf jq nginx ripgrep mosquitto mosquitto-clients wireguard-tools apache2-utils tor deb.torproject.org-keyring \
+ncdu binaryen gcc-multilib
+#veracrypt
+# https://docs.vultr.com/how-to-install-veracrypt-on-ubuntu-24-04
+sudo add-apt-repository ppa:unit193/encryption -y
+sudo apt update
+sudo apt-fast install veracrypt -y
 
 # why fails
 
@@ -128,28 +135,24 @@ sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.
 
 
 
-ovs_url=$(curl -L -H "Accept: application/vnd.github+json" https://api.github.com/repos/gitpod-io/openvscode-server/releases | jq -r ".[0].assets[] | .browser_download_url" | grep linux-x64)
-wget  $ovs_url -O /tmp/ovs.tar.gz
-mkdir /opt/ovs
-sudo tar xf /tmp/ovs.tar.gz --strip-components=1  -C /opt/ovs/
-# https://github.com/microsoft/vscode/issues/155969
-cat /opt/ovs/product.json | jq  '.extensionsGallery.serviceUrl|="https://marketplace.visualstudio.com/_apis/public/gallery"' | sudo tee  /opt/ovs/product.json
-cat /opt/ovs/product.json | jq  '.extensionsGallery.itemUrl|="https://marketplace.visualstudio.com/items"' | sudo tee  /opt/ovs/product.json
-/opt/ovs/bin/openvscode-server --install-extension gydunhn.javascript-essentials || true
-/opt/ovs/bin/openvscode-server --install-extension golang.Go || true
-/opt/ovs/bin/openvscode-server --install-extension ms-vscode.cpptools-extension-pack|| true
-/opt/ovs/bin/openvscode-server --install-extension waderyan.nodejs-extension-pack || true
-/opt/ovs/bin/openvscode-server --install-extension donjayamanne.python-extension-pack || true
-/opt/ovs/bin/openvscode-server --install-extension swellaby.rust-pack || true
+# ovs_url=$(curl -L -H "Accept: application/vnd.github+json" https://api.github.com/repos/gitpod-io/openvscode-server/releases | jq -r ".[0].assets[] | .browser_download_url" | grep linux-x64)
+# wget  $ovs_url -O /tmp/ovs.tar.gz
+# mkdir /opt/ovs
+# sudo tar xf /tmp/ovs.tar.gz --strip-components=1  -C /opt/ovs/
+# # https://github.com/microsoft/vscode/issues/155969
+# cat /opt/ovs/product.json | jq  '.extensionsGallery.serviceUrl|="https://marketplace.visualstudio.com/_apis/public/gallery"' | sudo tee  /opt/ovs/product.json
+# cat /opt/ovs/product.json | jq  '.extensionsGallery.itemUrl|="https://marketplace.visualstudio.com/items"' | sudo tee  /opt/ovs/product.json
+# /opt/ovs/bin/openvscode-server --install-extension gydunhn.javascript-essentials || true
+# /opt/ovs/bin/openvscode-server --install-extension golang.Go || true
+# /opt/ovs/bin/openvscode-server --install-extension ms-vscode.cpptools-extension-pack|| true
+# /opt/ovs/bin/openvscode-server --install-extension waderyan.nodejs-extension-pack || true
+# /opt/ovs/bin/openvscode-server --install-extension donjayamanne.python-extension-pack || true
+# /opt/ovs/bin/openvscode-server --install-extension swellaby.rust-pack || true
 
 # nohup bash -c "/opt/ovs/bin/openvscode-server --without-connection-token --port  3030 --host 0.0.0.0 --server-base-path  vscode"  > /tmp/openvscode.out 2>&1 &
 
 
-#veracrypt
-# https://docs.vultr.com/how-to-install-veracrypt-on-ubuntu-24-04
-sudo add-apt-repository ppa:unit193/encryption -y
-sudo apt update
-sudo apt-fast install veracrypt -y
+
 
 
 
@@ -205,7 +208,6 @@ https://raw.githubusercontent.com/skymethod/denoflare/v0.7.0/cli/cli.ts
 #r2 rclone
 sudo -v ; curl https://rclone.org/install.sh | sudo bash
 
-sudo apt-fast install -y gcc-multilib
 
 # wasi
 rustc --print=target-list
@@ -215,4 +217,3 @@ rustup target add wasm32-wasip2
 rustup target add wasm32-wasip1-threads
 curl https://wasmtime.dev/install.sh -sSf | bash
 
-sudo apt install -y binaryen
