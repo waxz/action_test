@@ -214,3 +214,5 @@ rustup target add wasm32-wasip1
 rustup target add wasm32-wasip2
 rustup target add wasm32-wasip1-threads
 curl https://wasmtime.dev/install.sh -sSf | bash
+
+sudo apt install -y binaryen
