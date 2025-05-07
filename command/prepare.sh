@@ -25,4 +25,11 @@ for i in "${strings[@]}"; do
     sudo ln -s /mnt/data/"$i" $HOME/"$i"
 done
 
+# add swap
+sudo swapoff /mnt/swapfile
+sudo rm /mnt/swapfile
+sudo fallocate -l 12G /mnt/swapfile
+sudo chmod 600 /mnt/swapfile
+sudo mkswap  /mnt/swapfile
+sudo swapon /mnt/swapfile
 
