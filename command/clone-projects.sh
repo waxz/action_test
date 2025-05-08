@@ -54,10 +54,13 @@ source $HOME/.bashrc
 /tmp/self-host-reader/secret/mount.sh
 
 # create r2 rclone configure file
-if [ -f source /mnt/data/mydisk10/cloudflare/var.sh ]; then source /mnt/data/mydisk10/cloudflare/var.sh; fi
-if [ -f /mnt/data/mydisk10/cloudflare/create_rclone_config.sh ]; then /mnt/data/mydisk10/cloudflare/create_rclone_config.sh; fi
+# if [ -f source /mnt/data/mydisk10/cloudflare/var.sh ]; then source /mnt/data/mydisk10/cloudflare/var.sh; fi
+# if [ -f /mnt/data/mydisk10/cloudflare/create_rclone_config.sh ]; then /mnt/data/mydisk10/cloudflare/create_rclone_config.sh; fi
 if [ -f  /mnt/data/mydisk10/cloudflare/rclone.conf ] ; then echo "copy  /mnt/data/mydisk10/cloudflare/rclone.conf" ; cp  /mnt/data/mydisk10/cloudflare/rclone.conf $HOME/.config/rclone ; fi
 
+cat << 'EOF' | tee -a $HOME/.bashrc
+source /mnt/data/mydisk10/cloudflare/var.sh
+EOF
 
 nohup bash -c "cd /tmp/self-host-reader/ondriver/ && ./download.sh " > /tmp/ondriver.out 2>&1 &
 

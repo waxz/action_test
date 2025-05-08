@@ -86,6 +86,11 @@ nohup bash -c "npm install -g pnpm" > /tmp/install.out 2>&1 &
 # pip install uv
 curl -LsSf https://astral.sh/uv/install.sh | sh
 uv self update
+mkdir -p /mnt/data/llm
+uv venv /mnt/data/llm/.venv
+cat << 'EOF' | tee -a $HOME/.bashrc
+source /mnt/data/llm/.venv/bin/activate
+EOF
 
 url="https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz"
 wget -q $url -O /tmp/nvim.tar.gz 
