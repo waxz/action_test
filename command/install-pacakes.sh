@@ -213,6 +213,7 @@ https://raw.githubusercontent.com/skymethod/denoflare/v0.7.0/cli/cli.ts
 #r2 rclone
 sudo -v ; curl https://rclone.org/install.sh | sudo bash
 
+./set-node.sh
 
 # wasi
 rustc --print=target-list
