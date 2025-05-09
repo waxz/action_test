@@ -1,0 +1,148 @@
+services:
+  base:
+    build:
+      network: host
+      platforms:
+        - "linux/amd64"
+        # - "linux/arm64"
+
+      context: .
+      dockerfile: base.Dockerfile
+      additional_contexts:
+        shell : ./shell
+      ssh:
+        - myproject=~/.ssh/id_ed25519
+
+      args:
+        IMAGE: "ubuntu:20.04"
+        MUSER: $MUSER
+        MUID : $MUID
+        MGID : $MGID
+        
+    #pull_policy: never
+    image: base:1.0  
+    security_opt: # options needed for gdb debugging
+      - seccomp:unconfined
+      - apparmor:unconfined   
+
+    network_mode: "host"
+
+
+    cap_add:
+      - ALL
+    #hostname: in_docker
+    working_dir: /tmp
+    user: "$MUID:$MGID"
+    # user: waxz
+    environment:
+      #- PYTHONUSERBASE=/home/waxz/share/python_deps
+      #- http_proxy="" #ok no need to map port
+      #- https_proxy="" #ok no need to map port
+      #- http_proxy=http://127.0.0.1:8889     #ok no need to map port
+      #- https_proxy=http://127.0.0.1:8889    #ok no need to map port
+      - RACK_ENV=development
+      - SHOW=true
+      - QT_X11_NO_MITSHM=1
+      - DISPLAY=:1
+      - SSH_PORT=2222
+    volumes:
+      - /lib/modules:/lib/modules:ro 
+      - /etc/resolv.conf:/etc/resolv.conf
+      - /etc/localtime:/etc/localtime
+      - /etc/machine-id:/etc/machine-id
+      - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
+      #- /tmp/.X11-unix:/tmp/.X11-unix:rw
+      #- /home/$USER/.Xauthority:/home/$USER/.Xauthority:rw
+      #- /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      #- /etc/group:/etc/group:ro
+      #- /etc/passwd:/etc/passwd:ro
+      #- /etc/shadow:/etc/shadow:ro
+      #- /etc/sudoers:/etc/sudoers:ro
+      # - ./share:/home/$USER/share
+      #- /mnt/$USER:/home/$USER
+
+
+    #devices:
+    #  - /dev/video0
+    #  - /dev/video1
+
+    entrypoint: bash
+    #command : "/bin/bash"
+    stop_signal: SIGKILL
+    pid: "host"
+    ipc: host
+    privileged: true
+    read_only: false
+    stdin_open: true
+    tty: true
+    #cpuset: 0,1
+    #cpus: 0.3
+    #mem_limit: 300m
+    #mem_reservation: 100m
+  rust:
+    build:
+      context: .
+      dockerfile: test.Dockerfile
+      additional_contexts:
+        base: service:base
+
+      args:
+        IMAGE: "ubuntu:20.04"
+        MUSER: $MUSER
+        MUID : $MUID
+        MGID : $MGID
+
+    security_opt: # options needed for gdb debugging
+      - seccomp:unconfined
+      - apparmor:unconfined   
+
+    network_mode: "host"
+
+
+    cap_add:
+      - ALL
+    #hostname: in_docker
+    working_dir: /tmp
+    user: "$MUID:$MGID"
+    # user: waxz
+    environment:
+      #- PYTHONUSERBASE=/home/waxz/share/python_deps
+      #- http_proxy="" #ok no need to map port
+      #- https_proxy="" #ok no need to map port
+      #- http_proxy=http://127.0.0.1:8889     #ok no need to map port
+      #- https_proxy=http://127.0.0.1:8889    #ok no need to map port
+      - RACK_ENV=development
+      - SHOW=true
+      - QT_X11_NO_MITSHM=1
+      - DISPLAY=:1
+      - SSH_PORT=2222
+    volumes:
+      - /lib/modules:/lib/modules:ro 
+      - /etc/resolv.conf:/etc/resolv.conf
+      - /etc/localtime:/etc/localtime
+      - /etc/machine-id:/etc/machine-id
+      - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
+      #- /tmp/.X11-unix:/tmp/.X11-unix:rw
+      #- /home/$USER/.Xauthority:/home/$USER/.Xauthority:rw
+      #- /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      #- /etc/group:/etc/group:ro
+      #- /etc/passwd:/etc/passwd:ro
+      #- /etc/shadow:/etc/shadow:ro
+      #- /etc/sudoers:/etc/sudoers:ro
+      # - ./share:/home/$USER/share
+      #- /mnt/$USER:/home/$USER
+
+
+    #devices:
+    #  - /dev/video0
+    #  - /dev/video1
+
+    entrypoint: bash
+    #command : "/bin/bash"
+    stop_signal: SIGKILL
+    pid: "host"
+    ipc: host
+    privileged: true
+    read_only: false
+    stdin_open: true
+    tty: true
