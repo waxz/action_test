@@ -67,7 +67,7 @@ mkdir /mnt/data/rclone-cache
 
 # todo test
 #rclone mount onedrive:mybackup /mnt/data/backup --use-server-modtime --async-read --no-modtime --umask 0000 --buffer-size 16M --dir-cache-time 180s --poll-interval 0m30s --write-back-cache --vfs-cache-max-age 43200s --vfs-cache-mode full --vfs-read-ahead 2M --vfs-read-chunk-size 16M --cache-dir /mnt/data/rclone-cache --max-read-ahead 512Ki --transfers 1000 --checkers 1000 --drive-chunk-size 2M --volname vod --filter-from ./rclone-filter.ini
-rclone mount onedrive:mybackup /mnt/data/backup --use-server-modtime --async-read --no-modtime --umask 0000 --buffer-size 16M --dir-cache-time 180s --poll-interval 0m30s --write-back-cache --vfs-cache-max-age 43200s --vfs-cache-mode full --vfs-read-ahead 2M --vfs-read-chunk-size 16M --cache-dir /mnt/data/rclone-cache --max-read-ahead 512Ki --transfers 1000 --checkers 1000 --drive-chunk-size 2M --volname vod --filter-from ./rclone-filter.ini
+#rclone mount onedrive:mybackup /mnt/data/backup --use-server-modtime --async-read --no-modtime --umask 0000 --buffer-size 16M --dir-cache-time 180s --poll-interval 0m30s --write-back-cache --vfs-cache-max-age 43200s --vfs-cache-mode full --vfs-read-ahead 2M --vfs-read-chunk-size 16M --cache-dir /mnt/data/rclone-cache --max-read-ahead 512Ki --transfers 1000 --checkers 1000 --drive-chunk-size 2M --volname vod --filter-from ./rclone-filter.ini
 
 
 nohup bash -c "cd /tmp/self-host-reader/ondriver/ && ./download.sh " > /tmp/ondriver.out 2>&1 &
