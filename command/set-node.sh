@@ -11,7 +11,7 @@ myarn(){
 
 
 if [[ -z "$1" ]]; then
-    if [ !d "$1" ] ; then echo "$1 is not a folder";fi
+    if [ ! -d "$1" ] ; then echo "$1 is not a folder";fi
 
     echo "Please provide modules-folder . Usage: myarn modules-folder ...";
 else
