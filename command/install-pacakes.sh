@@ -192,7 +192,7 @@ vc_dmnt(){
     echo "Please provide filename . Usage: vc_dmnt filename ";
 
   else
-     veracrypt --dismount "$1"
+      veracrypt --dismount "$1"
   fi
 }
 
@@ -229,3 +229,7 @@ rustup target add wasm32-wasip2
 rustup target add wasm32-wasip1-threads
 curl https://wasmtime.dev/install.sh -sSf | bash
 
+wget https://github.com/vi/websocat/releases/download/v4.0.0-alpha2/websocat.x86_64-unknown-linux-musl -O  /tmp/websocat
+chmod +x /tmp/websocat 
+sudo mv /tmp/websocat /usr/bin/
+nohup bash -c "websocat --binary ws-l:127.0.0.1:8022 tcp:127.0.0.1:22" > /tmp/websocat-ssh.out &
