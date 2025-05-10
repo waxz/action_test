@@ -10,14 +10,14 @@ sudo apt-get install -y apt-fast
 # vscode
 curl -fsSL https://code-server.dev/install.sh | sh
 nohup bash -c " \
-code-server --install-extension gydunhn.javascript-essentials || true \
-code-server --install-extension golang.Go || true \
-code-server --install-extension ms-vscode.cpptools-extension-pack|| true \
-code-server --install-extension waderyan.nodejs-extension-pack || true \
-code-server --install-extension donjayamanne.python-extension-pack || true \
-code-server --install-extension swellaby.rust-pack || true \
-code-server --install-extension ms-vscode.vscode-typescript-next || true \
-" &
+code-server --force --install-extension golang.Go || true ;\
+code-server --force --install-extension ms-vscode.cpptools-extension-pack|| true ;\
+code-server --force --install-extension waderyan.nodejs-extension-pack || true ;\
+code-server --force --install-extension donjayamanne.python-extension-pack || true ;\
+code-server --force --install-extension swellaby.rust-pack || true ;\
+code-server --force --install-extension ms-vscode.vscode-typescript-next || true ;\
+code-server --force --install-extension gydunhn.javascript-essentials || true ;\
+" > /tmp/vsc.out &
 
 nohup bash -c 'PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030 -an "vscode" -w "Hello!!!"' > /tmp/coder.out 2>&1 &
 
@@ -77,6 +77,7 @@ nohup bash -c "curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf 
 
 # cargo
 nohup bash -c "cargo install cargo-generate" > /tmp/install.out 2>&1 &
+nohup bash -c "cargo install cargo-bash" > /tmp/install.out 2>&1 &
 
 # npm
 
