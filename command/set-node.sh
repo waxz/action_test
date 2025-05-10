@@ -10,17 +10,19 @@ myarn(){
   for arg in "$@"; do
     echo "Argument: $arg"
   done
+#echo "Original list: $@"
+#shift
+#echo "List after removing the first element: $@"
 
+ if [ ! -z "$CUSTOM_NODE_DIR" ]; then CUSTOM_NODE_DIR=$CUSTOM_NODE_DIR; else CUSTOM_NODE_DIR="/tmp/node_moudules";fi
 
-if [[ -z "$1" ]]; then
-    if [ ! -d "$1" ] ; then echo "$1 is not a folder";fi
+if [[ -z "$CUSTOM_NODE_DIR" ]]; then
+    if [ ! -d "$CUSTOM_NODE_DIR" ] ; then echo "$CUSTOM_NODE_DIR is not a folder";fi
 
-    echo "Please provide modules-folder . Usage: myarn modules-folder ...";
+    echo "Please provide modules-folder . Usage export CUSTOM_NODE_DIR = xxx; myarn ";
 else
-    CUSTOM_NODE_DIR=$1 
-    CUSTOM_NODE_DIR=/tmp/node_modules 
-    PATH=$CUSTOM_NODE_DIR/.bin:$PATH NODE_PATH="$CUSTOM_NODE_DIR:$NODE_PATH" 
-    yarn  --modules-folder $@
+    PATH=$CUSTOM_NODE_DIR/.bin:$PATH NODE_PATH="$CUSTOM_NODE_DIR:$NODE_PATH" \
+    yarn  --modules-folder $CUSTOM_NODE_DIR $@
 fi
 }
 EOF
