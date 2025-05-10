@@ -5,7 +5,7 @@
 # sudo mv ./server_linux_amd64 /bin/kcptun_server
 # sudo mv ./client_linux_amd64 /bin/kcptun_client
 
-ulimit -n 65535
+ulimit -n 1000000
 # https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/kernel_administration_guide/working_with_sysctl_and_kernel_tunables#modifying_files_in_etc_sysctl_d
 
 cat << EOF | sudo tee -a /etc/sysctl.d/99-custom.conf
