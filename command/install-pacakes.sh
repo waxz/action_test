@@ -11,9 +11,7 @@ UBUNTU_RELEASE=$(bash <(cat /etc/os-release; echo 'echo ${VERSION_ID/*, /}'))
 UBUNTU_CODENAME=$(bash <(cat /etc/os-release; echo 'echo ${UBUNTU_CODENAME/*, /}'))
 ARCH=$(dpkg --print-architecture)
 
-sudo add-apt-repository -y ppa:apt-fast/stable
-sudo apt-get update
-sudo apt-get install -y apt-fast
+
 
 
 # vscode
@@ -28,7 +26,7 @@ code-server --force --install-extension ms-vscode.vscode-typescript-next || true
 code-server --force --install-extension gydunhn.javascript-essentials || true ;\
 " > /tmp/vsc.out &
 
-nohup bash -c 'PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030 -an "vscode" -w "Hello!!!"' > /tmp/coder.out 2>&1 &
+nohup bash -c 'PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030' > /tmp/coder.out 2>&1 &
 
 
 # https://support.torproject.org/apt/tor-deb-repo/
@@ -43,8 +41,7 @@ wget -qO- https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8C
 
 sudo apt update
 
-sudo apt-fast install -y openssh-server tmux iperf jq nginx ripgrep mosquitto mosquitto-clients wireguard-tools apache2-utils tor deb.torproject.org-keyring \
-ncdu binaryen gcc-multilib
+sudo apt-fast install -y openssh-server tmux iperf jq nginx ripgrep mosquitto mosquitto-clients wireguard-tools apache2-utils tor deb.torproject.org-keyring ncdu binaryen gcc-multilib
 #veracrypt
 # https://docs.vultr.com/how-to-install-veracrypt-on-ubuntu-24-04
 sudo add-apt-repository ppa:unit193/encryption -y
@@ -56,9 +53,9 @@ sudo apt-fast install veracrypt -y
 # tailscale
 
 
-exec_fail=false
-curl -fsSL https://tailscale.com/install.sh | sh || exec_fail=true
-while $exec_fail; do exec_fail=false; curl -fsSL https://tailscale.com/install.sh | sh || exec_fail=true ; sleep 5; sudo apt-get update ;done
+curl -fsSL https://tailscale.com/install.sh | sh
+while ! which tailscale &>/dev/null ; do  curl -fsSL https://tailscale.com/install.sh | sh ; sleep 5 ;done
+
 echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
 echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
 sudo sysctl -p /etc/sysctl.d/99-tailscale.conf
@@ -69,9 +66,8 @@ sudo chmod 755 /etc/networkd-dispatcher/routable.d/50-tailscale
 
 # netbird
 
-exec_fail=false
-curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash || exec_fail=true
-while $exec_fail; do exec_fail=false; curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash || exec_fail=true ; sleep 5; sudo apt-get update ; done
+curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash
+while ! which netbird &>/dev/null; do  curl -fsSL https://pkgs.netbird.io/install.sh | sudo bash ; sleep 5 ; done
 
 
 # github cli

@@ -1,4 +1,6 @@
 cat << 'EOF' | tee -a $HOME/.bashrc
+
+## set modules-folder for yarn
 myarn(){
 
   echo "Number of arguments: $#"

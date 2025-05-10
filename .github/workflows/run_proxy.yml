@@ -67,9 +67,10 @@ jobs:
       shell: bash
       run: |
         echo github.workspace ${{ github.workspace }}
-        sudo add-apt-repository -y ppa:apt-fast/stable
-        sudo apt-get update
-        sudo apt-get install -y apt-fast
+
+        ./command/install-essential-packages.sh
+        
+
 
 
         # add ssh pub key
