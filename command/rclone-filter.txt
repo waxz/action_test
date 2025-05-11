@@ -1,0 +1,14 @@
+# Exclude the .venv directory
+- .venv/**
+# Exclude node_modules
+- node_modules/**
+# Exclude all .log files
+- *.log
+
+- .git/**
+
+- public/**
+
+# Include everything else
++ *
+

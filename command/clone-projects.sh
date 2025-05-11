@@ -1,3 +1,16 @@
+
+#!/bin/bash
+# https://stackoverflow.com/questions/59895/how-do-i-get-the-directory-where-a-bash-script-is-located-from-within-the-script
+SOURCE=${BASH_SOURCE[0]}
+while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+    DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
+    SOURCE=$(readlink "$SOURCE")
+    [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
+
+
+
 git clone git@github.com:waxz/action_test.git --depth 1  /tmp/action_test
 git clone git@github.com:waxz/quartz.git --depth 1  /tmp/quartz
 git clone git@github.com:waxz/markdown-editor.git --depth 1  /tmp/markdown-editor
@@ -67,6 +80,10 @@ mkdir /mnt/data/rclone-cache
 
 # todo test
 #rclone mount onedrive:mybackup /mnt/data/backup --use-server-modtime --async-read --no-modtime --umask 0000 --buffer-size 16M --dir-cache-time 180s --poll-interval 0m30s --write-back-cache --vfs-cache-max-age 43200s --vfs-cache-mode full --vfs-read-ahead 2M --vfs-read-chunk-size 16M --cache-dir /mnt/data/rclone-cache --max-read-ahead 512Ki --transfers 1000 --checkers 1000 --drive-chunk-size 2M --allow-non-empty --volname vod --filter-from ./rclone-filter.ini #--log-file /tmp/rclone-mount.log
+D=1 $DIR/rclone-sync.sh
+
+nohup bash -c "S=1 $DIR/rclone-sync.sh" &
+
 
 
 
