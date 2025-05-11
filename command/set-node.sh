@@ -25,6 +25,4 @@ else
 fi
 }
 
-
-}
 EOF
