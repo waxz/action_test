@@ -90,7 +90,7 @@ nohup bash -c "S=1 $DIR/rclone-sync.sh" > /tmp/rclone-sync-watch.out 2>&1 &
 
 
 
-nohup bash -c "cd /tmp/self-host-reader/ondriver/ && ./download.sh " > /tmp/ondriver.out 2>&1 &
+# nohup bash -c "cd /tmp/self-host-reader/ondriver/ && ./download.sh " > /tmp/ondriver.out 2>&1 &
 
 
 # export QUARTZ_PORT=8002
