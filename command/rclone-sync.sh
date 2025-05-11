@@ -18,11 +18,14 @@ FILTER="$DIR/rclone-filter.txt"
 LOG="/tmp/rclone-sync.log"
 
 if [ ! -z "$D" ];then
-    rclone sync  "$REMOTE" "$WATCH_DIR" --filter-from "$FILTER"
+    echo  download
+    rclone sync  "$REMOTE" "$WATCH_DIR" --filter-from "$FILTER" -v
+
     exit 0;
 fi;
 if [ ! -z "$U" ];then
-    rclone sync  "$WATCH_DIR"  "$REMOTE" --filter-from "$FILTER"
+    echo upload
+    rclone sync  "$WATCH_DIR"  "$REMOTE" --filter-from "$FILTER" -v
     exit 0;
 fi;
 

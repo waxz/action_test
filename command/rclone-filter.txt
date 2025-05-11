@@ -15,4 +15,4 @@
 
 # Include everything else
 + *
-
++ .git/**
