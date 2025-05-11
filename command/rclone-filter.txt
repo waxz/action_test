@@ -7,7 +7,12 @@
 
 - .git/**
 
+- .parcel-cache/**
+
 - public/**
+
+- **rust/target/**
+
 
 # Include everything else
 + *
