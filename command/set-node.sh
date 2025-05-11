@@ -14,15 +14,17 @@ myarn(){
 #shift
 #echo "List after removing the first element: $@"
 
- if [ ! -z "$CUSTOM_NODE_DIR" ]; then CUSTOM_NODE_DIR=$CUSTOM_NODE_DIR; else CUSTOM_NODE_DIR="/tmp/node_moudules";fi
+ if [ ! -z "$CUSTOM_NODE_DIR" ]; then CUSTOM_NODE_DIR=$CUSTOM_NODE_DIR; else CUSTOM_NODE_DIR="/tmp/node_modules";fi
 
 if [[ -z "$CUSTOM_NODE_DIR" ]]; then
     if [ ! -d "$CUSTOM_NODE_DIR" ] ; then echo "$CUSTOM_NODE_DIR is not a folder";fi
 
     echo "Please provide modules-folder . Usage export CUSTOM_NODE_DIR = xxx; myarn ";
 else
-    PATH=$CUSTOM_NODE_DIR/.bin:$PATH NODE_PATH="$CUSTOM_NODE_DIR:$NODE_PATH" \
-    yarn  --modules-folder $CUSTOM_NODE_DIR $@
+    PATH=$CUSTOM_NODE_DIR/.bin:$PATH  NODE_PATH=$CUSTOM_NODE_DIR:$NODE_PATH yarn  --modules-folder $CUSTOM_NODE_DIR $@
 fi
+}
+
+
 }
 EOF
