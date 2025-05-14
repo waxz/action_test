@@ -111,6 +111,7 @@ jobs:
         PINGGY_TOKEN: ${{ secrets.PINGGY_TOKEN }}
         PIPING_CMD: ${{secrets.PIPING_CMD}}
         PINGGY_SSH_TOKEN: ${{secrets.PINGGY_SSH_TOKEN}}
+        MQTT_TUNNEL_TOPIC: ${{ secrets.MQTT_TUNNEL_TOPIC }}
 
     - name: Create User
       if: env.run_tasks == 'true'
