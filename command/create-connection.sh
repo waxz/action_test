@@ -3,7 +3,7 @@ mkdir -p /tmp/bore && tar xf /tmp/bore.tar.gz -C /tmp/bore
 sudo mv /tmp/bore/bore /bin/
 
 nohup bore local 22 --to bore.pub -p $BORE_PORT > /tmp/bore.out 2>&1 &
-nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
+nohup ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=30  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
 
 # cloudflared
 echo "run cloudflare tunnel"

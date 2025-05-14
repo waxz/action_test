@@ -112,6 +112,7 @@ jobs:
         PIPING_CMD: ${{secrets.PIPING_CMD}}
         PINGGY_SSH_TOKEN: ${{secrets.PINGGY_SSH_TOKEN}}
         MQTT_TUNNEL_TOPIC: ${{ secrets.MQTT_TUNNEL_TOPIC }}
+        BORE_PORT: ${{secrets.BORE_PORT}}
 
     - name: Create User
       if: env.run_tasks == 'true'
