@@ -69,7 +69,7 @@ jobs:
         echo github.workspace ${{ github.workspace }}
 
         ./command/install-essential-packages.sh
-        
+
 
 
 
@@ -83,24 +83,20 @@ jobs:
         chmod 700 $USER_HOME/.ssh
 
         ./command/create-connection.sh
+        ./command/run-proxy.sh
+        ./command/install-vscode.sh
 
 
-        # cloudflared
-        echo "run cloudflare tunnel"
 
-        sudo sysctl -w net.core.rmem_max=7500000
-        sudo sysctl -w net.core.wmem_max=7500000
 
-        bash -c "$CLOUDFLARED_LOGIN_CMD"
 
         # setup gh
         git config --global user.name "$MY_SSH_USER"
         git config --global user.email "$MY_SSH_USER@github.com"
-        
+
         echo "$GH_TOKEN_ENV" | gh auth login --with-token
         gh run list --workflow=run_proxy.yml
         ./command/prepare.sh
-        ./command/run-proxy.sh
         ./command/clone-projects.sh
         ./command/install-pacakes.sh
       env:
@@ -110,16 +106,21 @@ jobs:
         MY_SSH_USER: ${{secrets.MY_SSH_USER}}
         MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
         CLOUDFLARED_LOGIN_CMD: ${{secrets.CLOUDFLARED_LOGIN_CMD}}
-        
+        LOCALNET_AUTHTOKEN: ${{ secrets.LOCALNET_AUTHTOKEN }}
+        LOCALNET_API: ${{ secrets.LOCALNET_API }}
+        PINGGY_TOKEN: ${{ secrets.PINGGY_TOKEN }}
+        PIPING_CMD: ${{secrets.PIPING_CMD}}
+        PINGGY_SSH_TOKEN: ${{secrets.PINGGY_SSH_TOKEN}}
+
     - name: Create User
       if: env.run_tasks == 'true'
       shell: bash
       run: |
-
+        
         # source $HOME/.bashrc
-        
+
         # vc_mnt $MY_SSH_USER:$MY_SSH_PSW ./command/secret.vc /mnt/data/secret/ 1
-        
+
         #autossh
 
         sudo adduser --disabled-password --gecos "" "$MY_SSH_USER"
@@ -215,7 +216,7 @@ jobs:
         # setup nginx
 
         if [ -d /etc/nginx/sites-enabled/default ]; then sudo unlink /etc/nginx/sites-enabled/default; fi
-        
+
 
         sudo mkdir -p /etc/nginx/locations
 
@@ -264,13 +265,13 @@ jobs:
 
 
 
-        
+
 
 
         # rust wasm
 
-        
-        
+
+
 
         # pi-hole
         cd ./pi && ./run.sh
@@ -291,7 +292,6 @@ jobs:
         BORE_PORT: ${{secrets.BORE_PORT}}
         GH_TOKEN_ENV: ${{secrets.GH_TOKEN}}
         CLOUDFLARED_LOGIN_CMD: ${{secrets.CLOUDFLARED_LOGIN_CMD}}
-
 
     - name: Create tailscale
       if: env.run_tasks == 'true'
@@ -318,7 +318,7 @@ jobs:
       if: env.run_tasks == 'true'
       shell: bash
       run: |
-
+        
 
         export NETBIRD_UP_CMD="PIONS_LOG_DEBUG=all NB_LOG_LEVEL=debug GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info netbird up --hostname $NETBIRD_NAME --setup-key $NETBIRD_KEY"
         $NETBIRD_UP_CMD || true
@@ -346,77 +346,6 @@ jobs:
         NETBIRD_KEY: ${{secrets.NETBIRD_KEY}}
         NETBIRD_NAME: ${{secrets.NETBIRD_NAME}}
         TAIL_KEY: ${{secrets.TAIL_KEY}}
-    - name: Create go proxy
-      if: env.run_tasks == 'true'
-      shell: bash
-      run: |
-        cat << 'EOF' | sudo tee -a /bin/kill_cloudflared.sh
-        ps -A -o pid,cmd | grep -v grep | grep -E "[0-9] cloudflared tunnel --url localhost:38083" | awk '{print $1}' | sort -u | xargs -I {} /bin/bash -c 'kill -TERM {}'
-        EOF
-        
-        sudo chmod +x /bin/kill_cloudflared.sh
-        cat << 'EOF' | sudo tee -a /bin/kill_pinggy.sh
-
-        ps -AL -o pid,cmd | grep -v grep  | grep -E "pinggy.io$" | awk '{print $1}' | sort -u | xargs -I {} /bin/bash -c 'kill -TERM {}'
-        EOF
-        sudo chmod +x /bin/kill_pinggy.sh
-
-
-        #nohup cloudflared tunnel --url localhost:38083  > /tmp/cloudflared.out 2>&1 &
-        nohup bash -c "while true; do cloudflared tunnel --url localhost:38083   > /tmp/cloudflared.out 2>&1 ;flock -x  /tmp/cloudflared.out  truncate -s 0 /tmp/cloudflared.out;  done " > /tmp/cloudflared.nohup.out 2>&1 &
-
-
-        nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io  > /tmp/pinggy.out ;flock -x  /tmp/pinggy.out  truncate -s 0 /tmp/pinggy.out;  done " > /tmp/pinggy.nohup.out 2>&1 &
-
-        nohup bash -c "while true; do ssh -p 443 -R0:localhost:22 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_SSH_TOKEN+tcp@free.pinggy.io  > /tmp/pinggy_ssh.out ;flock -x  /tmp/pinggy_ssh.out  truncate -s 0 /tmp/pinggy_ssh.out;  done " > /tmp/pinggy_ssh.nohup.out 2>&1 &
-
-
-
-
-        cat << EOF | sudo tee -a /bin/run_localtonet.sh
-        LOCALNET_AUTHTOKEN=$LOCALNET_AUTHTOKEN
-        LOCALNET_API=$LOCALNET_API
-        EOF
-
-        cat << 'EOF' | sudo tee -a /bin/run_localtonet.sh
-        connectionStatus=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].status')
-        tunnelId=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].id')
-        echo LOCALNET_AUTHTOKEN: $LOCALNET_AUTHTOKEN
-        echo LOCALNET_API: $LOCALNET_API
-        echo connectionStatus: $connectionStatus
-        echo tunnelId: $tunnelId
-
-        if [[  $connectionStatus == "true" ]]; then echo "StopTunnel/$tunnelId" ;curl "https://localtonet.com/api/StopTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API"; fi
-
-
-        timeout 1740s localtonet authtoken $LOCALNET_AUTHTOKEN > /tmp/localtonet.log &
-
-        hasError=$(curl "https://localtonet.com/api/StartTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API" | jq -r ".hasError")
-        connectionStatus=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].status')
-
-        echo hasError: $hasError
-        echo connectionStatus: $connectionStatus
-
-        while [[  $hasError == "true" ]]; do sleep 5; echo "StartTunnel/$tunnelId" ; hasError=$(curl "https://localtonet.com/api/StartTunnel/$tunnelId"  --header "Authorization: Bearer $LOCALNET_API" | jq -r ".hasError") ;done
-        sleep 10
-        connectionStatus=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].status')
-        echo connectionStatus: $connectionStatus
-        echo "start wait"
-        while [[ $connectionStatus == "1" ]]; do connectionStatus=$(curl "https://localtonet.com/api/GetTunnelsByAuthToken/$LOCALNET_AUTHTOKEN"   --header "Authorization: Bearer $LOCALNET_API" | jq -r '.result[0].status'); sleep 5  ;done
-
-        EOF
-        sudo chmod +x /bin/run_localtonet.sh
-
-        nohup bash -c "while true; do /bin/run_localtonet.sh ; truncate -s 0 /tmp/localtonet.out ;done"  > /tmp/localtonet.out 2>&1 &
-
-        nohup $PIPING_CMD &
-
-      env:
-        LOCALNET_AUTHTOKEN: ${{ secrets.LOCALNET_AUTHTOKEN }}
-        LOCALNET_API: ${{ secrets.LOCALNET_API }}
-        PINGGY_TOKEN: ${{ secrets.PINGGY_TOKEN }}
-        PIPING_CMD: ${{secrets.PIPING_CMD}}
-        PINGGY_SSH_TOKEN: ${{secrets.PINGGY_SSH_TOKEN}}
 
     - name: Create waiter program
       if: env.run_tasks == 'true'
@@ -429,113 +358,19 @@ jobs:
         MinutesIter="1"
         MinutesIter="${MinutesIter//[$'\t\r\n ']}"
 
-        # publish cloudflared url
-        cloudflared_url=""
-        pinggy_url=""
-        pinggy_ssh_url=""
-
-        # while [[ ! $cloudflared_url == *"https"* ]]; do sleep 1; cloudflared_url=$(cat /tmp/cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com"); done
-        # echo cloudflared_url $cloudflared_url
-        # while [[ ! $pinggy_url == *"tcp"* ]]; do sleep 1; pinggy_url=$(flock -s  /tmp/pinggy.out  cat  /tmp/pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+"); done
-        # echo pinggy_url $pinggy_url
-        # while [[ ! $pinggy_ssh_url == *"tcp"* ]]; do sleep 1; pinggy_ssh_url=$(flock -s  /tmp/pinggy_ssh.out  cat  /tmp/pinggy_ssh.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+"); done
-        # echo pinggy_ssh_url $pinggy_ssh_url
-
-        # JSON_STRING=$( jq -n \
-        #           --arg cloudflared_url "$cloudflared_url" \
-        #           --arg pinggy_url "$pinggy_url" \
-        #           --arg pinggy_ssh_url "$pinggy_ssh_url" \
-        #           '{cloudflared_url: $cloudflared_url, pinggy_url: $pinggy_url, pinggy_ssh_url: $pinggy_ssh_url}' )
-
-        # echo JSON_STRING $JSON_STRING
-
-
 
         start_time=$(date +%s)
-        end_time=$((start_time+6*3600-2800))
+        end_time=$((start_time+6*3600-4800))
         echo start_time: $start_time, end_time: $end_time
         #while  [ $start_time -lt $end_time ]; do sleep 6; start_time=$(date +%s); echo start_time: $start_time, end_time: $end_time ; done
-
-
-
-        cat << 'EOF' | sudo tee -a /bin/loop_task.sh
-
-        if [ -s /tmp/cloudflared.out ]; then
-        cloudflared_url_new=$(flock -s  /tmp/cloudflared.out   cat /tmp/cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
-        if [ -z "$cloudflared_url_new" ]; then
-            echo "No cloudflared URL found";
-        else
-            cloudflared_url=$cloudflared_url_new
-        fi
-        fi
-        if [ -s /tmp/pinggy.out ]; then
-        pinggy_url_new=$(flock -s  /tmp/pinggy.out  cat  /tmp/pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
-        if [ -z "$pinggy_url_new" ]; then
-            echo "No pinggy URL found";
-        else
-            pinggy_url=$pinggy_url_new
-        fi
-        fi
-        if [ -s /tmp/pinggy_ssh.out ]; then
-        pinggy_ssh_url_new=$(flock -s  /tmp/pinggy_ssh.out  cat  /tmp/pinggy_ssh.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
-        if [ -z "$pinggy_ssh_url_new" ]; then
-            echo "No pinggy URL found";
-        else
-            pinggy_ssh_url=$pinggy_ssh_url_new
-        fi
-        fi
-
-        sshx_url=$(flock -s  /tmp/sshx.out  cat  /tmp/sshx.out | grep -oE "https://sshx\.io/s/\S+");
-        # remove color code
-        sshx_url=$(echo $sshx_url | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g');
-
-
-
-        UP_TIME=$(uptime -p)
-
-        JSON_STRING=$( jq -n \
-                  --arg cloudflared_url "$cloudflared_url" \
-                  --arg pinggy_url "$pinggy_url" \
-                  --arg up_time "$UP_TIME" \
-                  --arg sshx_url "$sshx_url"\
-                  --arg pinggy_ssh_url "$pinggy_ssh_url" \
-                  '{up_time: $up_time, sshx_url: $sshx_url, cloudflared_url: $cloudflared_url, pinggy_url: $pinggy_url, pinggy_ssh_url: $pinggy_ssh_url}' )
-
-        if [ $? -ne 0 ]; then
-        echo "Failed to create JSON string"
-        fi
-
-
-        mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING"; 
-
-
-        mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING" -h test.mosquitto.org; 
-        if [ $? -ne 0 ]; then
-        echo "Failed to publish message to MQTT broker"
-        fi
-
-
-
-        EOF
-        sudo chmod +x /bin/loop_task.sh
-
 
 
         while [  -s "$file" ] && [ $start_time -lt $end_time ]; 
         do sleep 5; 
         start_time=$(date +%s); 
-
-        /bin/loop_task.sh || true;
-
-
-
         done
 
-
-
         ./command/final.sh
-
-
 
       env:
         MQTT_TUNNEL_TOPIC: ${{ secrets.MQTT_TUNNEL_TOPIC }}

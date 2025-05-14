@@ -5,3 +5,10 @@ sudo mv /tmp/bore/bore /bin/
 nohup bore local 22 --to bore.pub -p $BORE_PORT > /tmp/bore.out 2>&1 &
 nohup ssh -o StrictHostKeyChecking=no  $MY_SSHJ_NS@ssh-j.com -N -R $MY_SSHJ_HOST:22:localhost:22 &
 
+# cloudflared
+echo "run cloudflare tunnel"
+sudo sysctl -w net.core.rmem_max=7500000
+sudo sysctl -w net.core.wmem_max=7500000
+bash -c "$CLOUDFLARED_LOGIN_CMD"
+
+
