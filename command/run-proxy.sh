@@ -121,8 +121,7 @@ cloudflared_url=""
 pinggy_url=""
 pinggy_ssh_url=""
 
-cat << 'EOF' | sudo tee -a /bin/loop_task.sh
-
+cat << 'EOF' | sudo tee  /bin/loop_task.sh
 if [ -s /tmp/cloudflared.out ]; then
 cloudflared_url_new=$(flock -s  /tmp/cloudflared.out   cat /tmp/cloudflared.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
 if [ -z "$cloudflared_url_new" ]; then
@@ -147,15 +146,10 @@ else
     pinggy_ssh_url=$pinggy_ssh_url_new
 fi
 fi
-
 sshx_url=$(flock -s  /tmp/sshx.out  cat  /tmp/sshx.out | grep -oE "https://sshx\.io/s/\S+");
 # remove color code
 sshx_url=$(echo $sshx_url | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g');
-
-
-
 UP_TIME=$(uptime -p)
-
 JSON_STRING=$( jq -n \
             --arg cloudflared_url "$cloudflared_url" \
             --arg pinggy_url "$pinggy_url" \
@@ -167,24 +161,20 @@ JSON_STRING=$( jq -n \
 if [ $? -ne 0 ]; then
 echo "Failed to create JSON string"
 fi
+topic=github_action/cloudflared/server/123456
+mosquitto_pub -t $topic -m "$JSON_STRING"; 
+#mosquitto_pub -t $topic -m "$JSON_STRING" -h test.mosquitto.org; 
+mosquitto_pub -t $topic -m "$JSON_STRING" -h broker.emqx.io; 
 
-
-mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING"; 
-
-
-mosquitto_pub -t $MQTT_TUNNEL_TOPIC -m "$JSON_STRING" -h test.mosquitto.org; 
 if [ $? -ne 0 ]; then
 echo "Failed to publish message to MQTT broker"
 fi
-
-
-
 EOF
+
 sudo chmod +x /bin/loop_task.sh
 
 start_time=$(date +%s)
-end_time=$((start_time+6*3600-1800))
-echo start_time: $start_time, end_time: $end_time
+end_time=$((start_time + 6*3600 - 1800))
+echo "start_time: $start_time, end_time: $end_time"
 
-file=/tmp/blocker.txt
-nohup bash -c 'while  [ $start_time -lt $end_time ];  do sleep 5; start_time=$(date +%s);  /bin/loop_task.sh || true; done;sudo rm -r /tmp/blocker.txt' > /tmp/loop_task.nohup.out 2>&1 &
+nohup bash -c "while [ \$(date +%s) -lt $end_time ]; do sleep 1; echo \$(date +%s); /bin/loop_task.sh || true; done; sudo rm /tmp/blocker.txt" > /tmp/loop_task.nohup.out 2>&1 &
