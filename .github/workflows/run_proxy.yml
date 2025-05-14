@@ -111,7 +111,7 @@ jobs:
         PINGGY_TOKEN: ${{ secrets.PINGGY_TOKEN }}
         PIPING_CMD: ${{secrets.PIPING_CMD}}
         PINGGY_SSH_TOKEN: ${{secrets.PINGGY_SSH_TOKEN}}
-        MQTT_TUNNEL_TOPIC: ${{ secrets.MQTT_TUNNEL_TOPIC }}
+        MQTT_TUNNEL_TOPIC: ${{ secrets.MQTT_TUNNEL_TOPIC}}
         BORE_PORT: ${{secrets.BORE_PORT}}
         MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
         MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}

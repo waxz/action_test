@@ -187,4 +187,4 @@ end_time=$((start_time+6*3600-1800))
 echo start_time: $start_time, end_time: $end_time
 
 file=/tmp/blocker.txt
-nohup bash -c 'while [  -s "$file" ] && [ $start_time -lt $end_time ];  do sleep 5; start_time=$(date +%s);  /bin/loop_task.sh || true; done;sudo rm -r /tmp/blocker.txt' > /tmp/loop_task.nohup.out 2>&1 &
+nohup bash -c 'while  [ $start_time -lt $end_time ];  do sleep 5; start_time=$(date +%s);  /bin/loop_task.sh || true; done;sudo rm -r /tmp/blocker.txt' > /tmp/loop_task.nohup.out 2>&1 &
