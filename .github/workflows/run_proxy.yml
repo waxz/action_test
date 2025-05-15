@@ -377,21 +377,21 @@ jobs:
 
 
         #https://unix.stackexchange.com/questions/752138/get-total-time-system-has-been-used-today-in-minutes
-        get_minutes() {
-          local h=${1%%:*}
-          local m=${1#*:}
-          echo $((10#$h * 60 + 10#$m))
-        }
+        # get_minutes() {
+        #   local h=${1%%:*}
+        #   local m=${1#*:}
+        #   echo $((10#$h * 60 + 10#$m))
+        # }
 
-        sessions_uptime=$(last | grep "$(date '+%b %d')" | grep -E 'reboot|suspended' | grep -v 'still running' | awk '{print $NF}' | tr -d '()' | awk -F: '{sum_minutes+=$1*60+$2} END {print sum_minutes}')
+        # sessions_uptime=$(last | grep "$(date '+%b %d')" | grep -E 'reboot|suspended' | grep -v 'still running' | awk '{print $NF}' | tr -d '()' | awk -F: '{sum_minutes+=$1*60+$2} END {print sum_minutes}')
 
-        current_uptime_seconds=$(awk '{print int($1)}' /proc/uptime)
+        # current_uptime_seconds=$(awk '{print int($1)}' /proc/uptime)
 
-        total_uptime=$((sessions_uptime + current_uptime_seconds / 60))
-        echo "TOTAL CURRENT RUNTIME OF THE DAY: ${total_uptime} minutes"
+        # total_uptime=$((sessions_uptime + current_uptime_seconds / 60))
+        # echo "TOTAL CURRENT RUNTIME OF THE DAY: ${total_uptime} minutes"
 
 
-        while [  -s "$file" ] && [  $current_time -lt $RUNNER_END_STAMP]; 
+        while [  -s "$file" ] && [  $current_time -lt $RUNNER_END_STAMP ]; 
         do sleep 5;
         current_time=$(($(date +%s)));
         done
