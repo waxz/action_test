@@ -368,7 +368,7 @@ jobs:
         #while  [ $start_time -lt $end_time ]; do sleep 6; start_time=$(date +%s); echo start_time: $start_time, end_time: $end_time ; done
 
 
-
+        #https://unix.stackexchange.com/questions/752138/get-total-time-system-has-been-used-today-in-minutes
         get_minutes() {
           local h=${1%%:*}
           local m=${1#*:}
