@@ -368,9 +368,25 @@ jobs:
         #while  [ $start_time -lt $end_time ]; do sleep 6; start_time=$(date +%s); echo start_time: $start_time, end_time: $end_time ; done
 
 
-        while [  -s "$file" ] && [ $start_time -lt $end_time ]; 
+
+        get_minutes() {
+          local h=${1%%:*}
+          local m=${1#*:}
+          echo $((10#$h * 60 + 10#$m))
+        }
+
+        sessions_uptime=$(last | grep "$(date '+%b %d')" | grep -E 'reboot|suspended' | grep -v 'still running' | awk '{print $NF}' | tr -d '()' | awk -F: '{sum_minutes+=$1*60+$2} END {print sum_minutes}')
+
+        current_uptime_seconds=$(awk '{print int($1)}' /proc/uptime)
+
+        total_uptime=$((sessions_uptime + current_uptime_seconds / 60))
+        echo "TOTAL CURRENT RUNTIME OF THE DAY: ${total_uptime} minutes"
+
+
+        while [  -s "$file" ] && [ $total_uptime -lt 330 ]; 
         do sleep 5; 
-        start_time=$(date +%s); 
+        current_uptime_seconds=$(awk '{print int($1)}' /proc/uptime);
+        total_uptime=$((sessions_uptime + current_uptime_seconds / 60))
         done
 
         ./command/final.sh
