@@ -368,7 +368,8 @@ jobs:
         MinutesIter="${MinutesIter//[$'\t\r\n ']}"
 
 
-        current_time=$(date +%s)
+        current_time=$(($(date +%s)))
+        RUNNER_END_STAMP=$(($RUNNER_END_STAMP))
         #while  [ $start_time -lt $end_time ]; do sleep 6; start_time=$(date +%s); echo start_time: $start_time, end_time: $end_time ; done
         echo "RUNNER_END_STAMP : $RUNNER_END_STAMP"
 
@@ -392,7 +393,7 @@ jobs:
 
         while [  -s "$file" ] && [  $current_time -lt $RUNNER_END_STAMP]; 
         do sleep 5;
-        current_time=$(date +%s);
+        current_time=$(($(date +%s)));
         done
         echo "exit loop"
 
