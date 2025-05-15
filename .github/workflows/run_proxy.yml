@@ -57,6 +57,12 @@ jobs:
         echo "START_TIME=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
         echo "STAMP=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
 
+        start_time=$(date +%s)
+        end_time=$((start_time+6*3600-1000))
+
+        echo "RUNNER_START_STAMP=$start_time" >> $GITHUB_ENV
+        echo "RUNNER_END_STAMP=$end_time" >> $GITHUB_ENV
+
     - name: Echo current date
       if: env.run_tasks == 'true'
       run: |
@@ -362,10 +368,11 @@ jobs:
         MinutesIter="${MinutesIter//[$'\t\r\n ']}"
 
 
-        start_time=$(date +%s)
-        end_time=$((start_time+6*3600-4800))
-        echo start_time: $start_time, end_time: $end_time
+        current_time=$(date +%s)
         #while  [ $start_time -lt $end_time ]; do sleep 6; start_time=$(date +%s); echo start_time: $start_time, end_time: $end_time ; done
+        echo "RUNNER_END_STAMP : $RUNNER_END_STAMP"
+
+        echo "RUNNER_START_STAMP : $RUNNER_START_STAMP"
 
 
         #https://unix.stackexchange.com/questions/752138/get-total-time-system-has-been-used-today-in-minutes
@@ -383,11 +390,11 @@ jobs:
         echo "TOTAL CURRENT RUNTIME OF THE DAY: ${total_uptime} minutes"
 
 
-        while [  -s "$file" ] && [ $total_uptime -lt 330 ]; 
-        do sleep 5; 
-        current_uptime_seconds=$(awk '{print int($1)}' /proc/uptime);
-        total_uptime=$((sessions_uptime + current_uptime_seconds / 60))
+        while [  -s "$file" ] && [  $current_time -lt $RUNNER_END_STAMP]; 
+        do sleep 5;
+        current_time=$(date +%s);
         done
+        echo "exit loop"
 
         ./command/final.sh
 
