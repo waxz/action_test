@@ -60,11 +60,7 @@ vc_dmnt(){
 
 EOF
 
-cat << EOF | sudo tee -a $HOME/.bash_profile
-if [ -f ~/.bashrc ]; then
-  . ~/.bashrc
-fi
-EOF
+
 source $HOME/.bashrc
 /tmp/self-host-reader/secret/mount.sh
 
