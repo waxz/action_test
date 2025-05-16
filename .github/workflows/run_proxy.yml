@@ -229,6 +229,8 @@ jobs:
 
         sudo mkdir -p /etc/nginx/locations
 
+        if [ ! -f /etc/nginx/conf.d/default.conf ];then 
+
         cat << 'EOF' | sudo tee /etc/nginx/conf.d/default.conf
         server {
         listen 80;
@@ -236,6 +238,7 @@ jobs:
         include /etc/nginx/locations/*.conf;
         }
         EOF
+        fi 
 
 
         cat << 'EOF' | sudo tee -a /etc/nginx/locations/vscode.conf
