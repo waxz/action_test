@@ -37,8 +37,8 @@ gh_install vi/websocat websocat.x86_64-unknown-linux-musl /tmp/websocat
 chmod +x /tmp/websocat
 sudo mv /tmp/websocat /bin
 
-
-nohup websocat --binary ws-l:127.0.0.1:38022 tcp:127.0.0.1:22 &
+ 
+nohup bash -c "websocat --binary ws-l:127.0.0.1:38022 tcp:127.0.0.1:22" > /tmp/websocat-ssh.out &
 
 
 
