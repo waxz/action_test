@@ -201,7 +201,7 @@ DENO_INSTALL=$HOME/.deno /tmp/deno.sh -y
 export PATH="$HOME/.deno":"$PATH"
 deno install --global -A --unstable-worker-options --name denoflare --force \
 https://raw.githubusercontent.com/skymethod/denoflare/v0.7.0/cli/cli.ts
-
+deno install -A jsr:@deno/deployctl --global
 
 #r2 rclone
 sudo -v ; curl https://rclone.org/install.sh | sudo bash
