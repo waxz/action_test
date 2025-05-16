@@ -115,4 +115,5 @@ nohup bash -c "S=1 $DIR/rclone-sync.sh" > /tmp/rclone-sync-watch.out 2>&1 &
 
 nohup /tmp/self-host-reader/run_readeck.sh > /tmp/reader.out 2>&1 &
 
-
+# pi-hole
+cd ./pi && ./run.sh
