@@ -269,21 +269,6 @@ jobs:
         sudo service nginx restart
         sudo nginx -t && sudo systemctl reload nginx
 
-
-
-
-
-
-
-
-
-        # rust wasm
-
-
-
-
-        # pi-hole
-        cd ./pi && ./run.sh
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
         MY_SSH_USER: ${{secrets.MY_SSH_USER}}
