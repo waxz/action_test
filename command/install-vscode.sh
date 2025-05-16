@@ -8,6 +8,7 @@ code-server --force --install-extension donjayamanne.python-extension-pack || tr
 code-server --force --install-extension swellaby.rust-pack || true ;\
 code-server --force --install-extension ms-vscode.vscode-typescript-next || true ;\
 code-server --force --install-extension gydunhn.javascript-essentials || true ;\
+code-server --force --install-extension denoland.vscode-deno || true ;\
 " > /tmp/vsc.out &
 
 nohup bash -c 'PASSWORD=1234 code-server --bind-addr=0.0.0.0:3030' > /tmp/coder.out 2>&1 &
