@@ -1,11 +1,14 @@
+#!/bin/bash
 # https://stackoverflow.com/questions/59895/how-do-i-get-the-directory-where-a-bash-script-is-located-from-within-the-script
 SOURCE=${BASH_SOURCE[0]}
 while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-  DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
-  SOURCE=$(readlink "$SOURCE")
-  [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+    DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
+    SOURCE=$(readlink "$SOURCE")
+    [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 done
 DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
+
+
 
 UBUNTU_RELEASE=$(bash <(cat /etc/os-release; echo 'echo ${VERSION_ID/*, /}'))
 UBUNTU_CODENAME=$(bash <(cat /etc/os-release; echo 'echo ${UBUNTU_CODENAME/*, /}'))
@@ -150,46 +153,6 @@ sudo wget -q https://raw.githubusercontent.com/gpakosz/.tmux/refs/heads/master/.
 # nohup bash -c "/opt/ovs/bin/openvscode-server --without-connection-token --port  3030 --host 0.0.0.0 --server-base-path  vscode"  > /tmp/openvscode.out 2>&1 &
 
 
-
-
-
-
-cat << 'EOF' | tee -a $HOME/.bashrc
-
-vc_create() {
-  if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
-    echo "Please provide password, filename, and filesize. Usage: vc_create password filename filesize";
-  else
-    veracrypt --text --create "$2" --size "$3" --password "$1" --volume-type normal --encryption AES --hash sha-512 --filesystem ext4 --pim 0 --keyfiles "" --random-source ~/.bashrc;
-  fi
-}
-
-# Define the function for mounting a VeraCrypt volume
-vc_mnt() {
-  if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" ]]; then
-    echo "Please provide password, filename, mountpath and slot. Usage: vc_mnt password filename mountpath slot";
-  else
-    if [[ ! -d "$3" ]]; then mkdir -p "$3";fi;
-    veracrypt --text --mount "$2" "$3" --password "$1" --pim 0 --keyfiles "" --protect-hidden no --slot "$4" --verbose;
-  fi
-}
-
-vc_dmnt(){
-  if [[ -z "$1" ]]; then
-    echo "Please provide filename . Usage: vc_dmnt filename ";
-
-  else
-      veracrypt --dismount "$1"
-  fi
-}
-
-EOF
-
-cat << EOF | sudo tee -a $HOME/.bash_profile
-if [ -f ~/.bashrc ]; then
-  . ~/.bashrc
-fi
-EOF
 source $HOME/.bashrc
 
 
@@ -204,9 +167,7 @@ https://raw.githubusercontent.com/skymethod/denoflare/v0.7.0/cli/cli.ts
 deno install -A jsr:@deno/deployctl --global
 
 
-cat << 'EOF' | tee -a $HOME/.bashrc
-export PATH="$HOME/.deno":"$PATH"
-EOF
+
 
 #r2 rclone
 sudo -v ; curl https://rclone.org/install.sh | sudo bash

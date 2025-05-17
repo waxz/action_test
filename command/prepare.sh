@@ -1,3 +1,14 @@
+#!/bin/bash
+# https://stackoverflow.com/questions/59895/how-do-i-get-the-directory-where-a-bash-script-is-located-from-within-the-script
+SOURCE=${BASH_SOURCE[0]}
+while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+    DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
+    SOURCE=$(readlink "$SOURCE")
+    [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
+
+
 sudo mkdir -p /mnt/data
 sudo chown -R $USER:$USER /mnt/data
 ln -s /mnt/data $HOME/data
@@ -62,36 +73,12 @@ fi
 }
 
 EOF
-cat << 'EOF' | tee -a $HOME/.bashrc
 
-# gh install
-# gh_install vi/websocat websocat.x86_64-unknown-linux-musl
-gh_install(){
 
-    echo "Number of arguments: $#"
-  echo "All arguments as separate words: $@"
-  echo "All arguments as a single string: $*"
-  if [[ -z "$1" ||  -z "$2" || -z "$3" ]]; then
-  echo "please set repo , arch and filename"
-  fi 
-  repo=$1
-  arch=$2
-  filename=$3
 
-  echo "set repo: $repo, arch: $arch, filename: $filename"
+cat << EOF | tee -a $HOME/.bashrc
 
-  url=$(curl -L   -H "Accept: application/vnd.github+json"   https://api.github.com/repos/$repo/releases | jq -r ".[0].assets[] | .browser_download_url" | grep "$arch") 
-  count=0
-  while [  -z "$url" && $count -lt 5 ];do
-      url=$(curl -L   -H "Accept: application/vnd.github+json"   https://api.github.com/repos/$repo/releases | jq -r ".[0].assets[] | .browser_download_url" | grep "$arch") 
-      count=$((count+1))
-  done
-  echo "url: $url"
-
-  if [ ! -z "$url" ]; then
-      wget $url -O $filename
-  fi
-} 
+source $DIR/var.sh
 
 EOF
 
