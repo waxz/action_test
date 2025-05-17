@@ -71,7 +71,7 @@ gh_install(){
     echo "Number of arguments: $#"
   echo "All arguments as separate words: $@"
   echo "All arguments as a single string: $*"
-  if [ -z "$1" ||  -z "$2" || -z "$3" ]; then
+  if [[ -z "$1" ||  -z "$2" || -z "$3" ]]; then
   echo "please set repo , arch and filename"
   fi 
   repo=$1
