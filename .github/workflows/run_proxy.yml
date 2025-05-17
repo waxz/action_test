@@ -269,8 +269,8 @@ jobs:
         }
         EOF
 
-        sudo service nginx restart
-        sudo nginx -t && sudo systemctl reload nginx
+        # sudo service nginx restart
+        # sudo nginx -t && sudo systemctl reload nginx
 
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
