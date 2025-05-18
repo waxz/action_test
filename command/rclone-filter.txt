@@ -11,6 +11,11 @@
 # - public/**
 
 - **rust/target/**
+- **target/release/**
+- **target/debug/**
+- **target/wasm32-unknown-unknown/release/**
+- **target/wasm32-unknown-unknown/debug/**
+- **target/wasm32-unknown-unknown/**
 
 
 # Include everything else
