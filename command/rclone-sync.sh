@@ -29,13 +29,13 @@ fi;
 
 if [ ! -z "$D" ];then
     echo  download
-    rclone sync  "$REMOTE" "$WATCH_DIR"  -M --filter-from "$FILTER" -v
+    rclone sync --skip-links "$REMOTE" "$WATCH_DIR"  -M --filter-from "$FILTER" -v
 
     exit 0;
 fi;
 if [ ! -z "$U" ];then
     echo upload
-    rclone sync  "$WATCH_DIR"  "$REMOTE"  -M --filter-from "$FILTER" -v
+    rclone sync --skip-links  "$WATCH_DIR"  "$REMOTE"  -M --filter-from "$FILTER" -v
     exit 0;
 fi;
 
@@ -50,7 +50,7 @@ if [ ! -z "$S" ];then
             exit 0;
         fi;
         echo "Folder size: $local_folder_size" >> "$LOG"
-        rclone sync "$WATCH_DIR" "$REMOTE"   -M  --filter-from "$FILTER" >> "$LOG" 2>&1
+        rclone sync --skip-links "$WATCH_DIR" "$REMOTE"   -M  --filter-from "$FILTER" >> "$LOG" 2>&1
         echo "Sync completed" >> "$LOG"
     done
 fi;
