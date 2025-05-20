@@ -161,7 +161,7 @@ source $HOME/.bashrc
 curl -fsSL https://deno.land/install.sh -o /tmp/deno.sh 
 chmod +x /tmp/deno.sh
 DENO_INSTALL=$HOME/.deno /tmp/deno.sh -y
-export PATH="$HOME/.deno":"$PATH"
+export PATH="$HOME/.deno/bin":"$PATH"
 deno install --global -A --unstable-worker-options --name denoflare --force \
 https://raw.githubusercontent.com/skymethod/denoflare/v0.7.0/cli/cli.ts
 deno install -A jsr:@deno/deployctl --global
