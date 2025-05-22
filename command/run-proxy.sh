@@ -50,6 +50,7 @@ sudo mv /tmp/websocat /bin
 
  
 nohup bash -c "websocat --binary ws-l:127.0.0.1:38022 tcp:127.0.0.1:22" > /tmp/websocat-ssh.out &
+sudo mkdir -p /etc/nginx/locations
 sudo cp $DIR/location-websocat.conf /etc/nginx/locations/
 sudo nginx -t && sudo systemctl restart nginx
 
@@ -90,6 +91,7 @@ sudo chmod +x /bin/kill_pinggy.sh
 #nohup cloudflared tunnel --url localhost:38083  > /tmp/cloudflared.out 2>&1 &
 nohup bash -c "while true; do cloudflared tunnel --url localhost:38083   > /tmp/cloudflared.out 2>&1 ;flock -x  /tmp/cloudflared.out  truncate -s 0 /tmp/cloudflared.out;  done " > /tmp/cloudflared.nohup.out 2>&1 &
 nohup bash -c "while true; do cloudflared tunnel --url localhost:38022   > /tmp/cloudflared-ssh.out 2>&1 ;flock -x  /tmp/cloudflared-ssh.out  truncate -s 0 /tmp/cloudflared-ssh.out;  done " > /tmp/cloudflared.nohup-ssh.out 2>&1 &
+nohup bash -c "while true; do cloudflared tunnel --url localhost:80   > /tmp/cloudflared-web.out 2>&1 ;flock -x  /tmp/cloudflared-web.out  truncate -s 0 /tmp/cloudflared-web.out;  done " > /tmp/cloudflared.nohup-web.out 2>&1 &
 
 
 nohup bash -c "while true; do ssh -p 443 -R0:localhost:38082 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $PINGGY_TOKEN+tcp@free.pinggy.io  > /tmp/pinggy.out ;flock -x  /tmp/pinggy.out  truncate -s 0 /tmp/pinggy.out;  done " > /tmp/pinggy.nohup.out 2>&1 &
@@ -141,6 +143,7 @@ nohup $PIPING_CMD  > /tmp/PIPING_CMD.out 2>&1 &
 # publish cloudflared url
 cloudflared_url=""
 cloudflared_ssh_url=""
+cloudflared_web_url=""
 
 pinggy_url=""
 pinggy_ssh_url=""
@@ -162,7 +165,14 @@ if [ -s /tmp/cloudflared-ssh.out ]; then
         cloudflared_ssh_url=$cloudflared_ssh_url_new
     fi
 fi
-
+if [ -s /tmp/cloudflared-web.out ]; then
+    cloudflared_web_url_new=$(flock -s  /tmp/cloudflared-web.out   cat /tmp/cloudflared-web.out | grep -oE "https://[a-zA-Z0-9.-]+\.trycloudflare\.com");
+    if [ -z "$cloudflared_web_url_new" ]; then
+        echo "No cloudflared URL found";
+    else
+        cloudflared_web_url=$cloudflared_web_url_new
+    fi
+fi
 
 if [ -s /tmp/pinggy.out ]; then
 pinggy_url_new=$(flock -s  /tmp/pinggy.out  cat  /tmp/pinggy.out | grep -oE "tcp://[a-zA-Z0-9.-]+\.pinggy\.link:[0-9.-]+");
@@ -187,11 +197,12 @@ UP_TIME=$(uptime -p)
 JSON_STRING=$( jq -n \
             --arg cloudflared_url "$cloudflared_url" \
             --arg cloudflared_ssh_url "$cloudflared_ssh_url" \
+            --arg cloudflared_web_url "$cloudflared_web_url" \
             --arg pinggy_url "$pinggy_url" \
             --arg up_time "$UP_TIME" \
             --arg sshx_url "$sshx_url"\
             --arg pinggy_ssh_url "$pinggy_ssh_url" \
-            '{up_time: $up_time, sshx_url: $sshx_url, cloudflared_url: $cloudflared_url, cloudflared_ssh_url: $cloudflared_ssh_url, pinggy_url: $pinggy_url, pinggy_ssh_url: $pinggy_ssh_url}' )
+            '{up_time: $up_time, sshx_url: $sshx_url, cloudflared_url: $cloudflared_url, cloudflared_ssh_url: $cloudflared_ssh_url, cloudflared_web_url: $cloudflared_web_url, pinggy_url: $pinggy_url, pinggy_ssh_url: $pinggy_ssh_url}' )
 
 if [ $? -ne 0 ]; then
 echo "Failed to create JSON string"
