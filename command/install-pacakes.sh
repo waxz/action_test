@@ -8,6 +8,7 @@ while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
 
+source $DIR/var.sh
 
 
 UBUNTU_RELEASE=$(bash <(cat /etc/os-release; echo 'echo ${VERSION_ID/*, /}'))
@@ -166,8 +167,9 @@ deno install --global -A --unstable-worker-options --name denoflare --force \
 https://raw.githubusercontent.com/skymethod/denoflare/v0.7.0/cli/cli.ts
 deno install -A jsr:@deno/deployctl --global
 
-
-
+# supabase
+gh_install supabase/cli linux_amd64.deb  /tmp/superbase.deb
+sudo dpkg -i /tmp/superbase.deb
 
 #r2 rclone
 sudo -v ; curl https://rclone.org/install.sh | sudo bash
