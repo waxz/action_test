@@ -168,8 +168,8 @@ https://raw.githubusercontent.com/skymethod/denoflare/v0.7.0/cli/cli.ts
 deno install -A jsr:@deno/deployctl --global
 
 # supabase
-gh_install supabase/cli linux_amd64.deb  /tmp/superbase.deb
-sudo dpkg -i /tmp/superbase.deb
+gh_install supabase/cli linux_amd64.deb  /tmp/supabase.deb
+sudo dpkg -i /tmp/supabase.deb
 
 #r2 rclone
 sudo -v ; curl https://rclone.org/install.sh | sudo bash
