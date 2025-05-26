@@ -26,7 +26,7 @@ myarn(){
 #shift
 #echo "List after removing the first element: $@"
 
- if [ ! -z "$CUSTOM_NODE_DIR" ]; then CUSTOM_NODE_DIR=$CUSTOM_NODE_DIR; else CUSTOM_NODE_DIR="/tmp/node_modules";fi
+ if [[ ! -z "$CUSTOM_NODE_DIR" ]]; then CUSTOM_NODE_DIR=$CUSTOM_NODE_DIR; else CUSTOM_NODE_DIR="/tmp/node_modules";fi
 
 if [[ -z "$CUSTOM_NODE_DIR" ]]; then
     if [ ! -d "$CUSTOM_NODE_DIR" ] ; then echo "$CUSTOM_NODE_DIR is not a folder";fi
@@ -54,15 +54,16 @@ gh_install(){
 
   echo "set repo: $repo, arch: $arch, filename: $filename"
 
+  url=""
   url=$(curl -L   -H "Accept: application/vnd.github+json"   https://api.github.com/repos/$repo/releases | jq -r ".[0].assets[] | .browser_download_url" | grep "$arch") 
   count=0
-  while [  -z "$url" && $count -lt 5 ];do
+  while [[  -z "$url" && $count -lt 5 ]];do
       url=$(curl -L   -H "Accept: application/vnd.github+json"   https://api.github.com/repos/$repo/releases | jq -r ".[0].assets[] | .browser_download_url" | grep "$arch") 
       count=$((count+1))
   done
   echo "url: $url"
 
-  if [ ! -z "$url" ]; then
+  if [[ ! -z "$url" ]]; then
       wget $url -O $filename
   fi
 
