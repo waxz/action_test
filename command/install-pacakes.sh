@@ -184,3 +184,10 @@ rustup target add wasm32-wasip2
 rustup target add wasm32-wasip1-threads
 curl https://wasmtime.dev/install.sh -sSf | bash
 
+git clone https://github.com/emscripten-core/emsdk.git  --depth 1 /tmp/emsdk/
+cd /tmp/emsdk/
+./emsdk install latest
+./emsdk activate latest
+cat << 'EOF' | tee -a $HOME/.bashrc
+source /tmp/emsdk/emsdk_env.sh
+EOF
