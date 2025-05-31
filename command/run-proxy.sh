@@ -48,11 +48,11 @@ gh_install vi/websocat websocat.x86_64-unknown-linux-musl /tmp/websocat
 chmod +x /tmp/websocat
 sudo mv /tmp/websocat /bin
 
- 
+
 nohup bash -c "websocat --binary ws-l:127.0.0.1:38022 tcp:127.0.0.1:22" > /tmp/websocat-ssh.out &
-sudo mkdir -p /etc/nginx/locations
-sudo cp $DIR/location-websocat.conf /etc/nginx/locations/
-sudo nginx -t && sudo systemctl restart nginx
+# sudo mkdir -p /etc/nginx/locations
+# sudo cp $DIR/location-websocat.conf /etc/nginx/locations/
+# sudo nginx -t && sudo systemctl restart nginx
 
 
 # go proxy https://github.com/snail007/goproxy/tree/master

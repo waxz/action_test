@@ -1,0 +1,45 @@
+# The Caddyfile is an easy way to configure your Caddy web server.
+#
+# Unless the file starts with a global options block, the first
+# uncommented line is always the address of your site.
+#
+# To use your own domain name (with automatic HTTPS), first make
+# sure your domain's A/AAAA DNS records are properly pointed to
+# this machine's public IP, then replace ":80" below with your
+# domain name.    
+
+ 
+
+
+:80 {
+	handle_path /vscode/* {
+		reverse_proxy localhost:3030
+	}
+
+	handle /readeck/* {
+		reverse_proxy localhost:8000
+	}
+
+	handle /ws {
+		@websockets {
+			header Connection *Upgrade*
+			header Upgrade websocket
+		}
+		reverse_proxy @websockets localhost:38022
+	}
+
+	log {
+        output file /tmp/access.log {
+        roll_size       150mb
+        roll_keep_for   48h
+        roll_keep       5
+        }
+        format json
+        level INFO
+}
+}
+
+
+
+# Refer to the Caddy docs for more information:  
+# https://caddyserver.com/docs/caddyfile
