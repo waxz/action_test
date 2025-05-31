@@ -48,9 +48,9 @@ mkdir /mnt/data/rclone-cache
 
 # todo test
 #rclone mount onedrive:mybackup /mnt/data/backup --use-server-modtime --async-read --no-modtime --umask 0000 --buffer-size 16M --dir-cache-time 180s --poll-interval 0m30s --write-back-cache --vfs-cache-max-age 43200s --vfs-cache-mode full --vfs-read-ahead 2M --vfs-read-chunk-size 16M --cache-dir /mnt/data/rclone-cache --max-read-ahead 512Ki --transfers 1000 --checkers 1000 --drive-chunk-size 2M --allow-non-empty --volname vod --filter-from ./rclone-filter.ini #--log-file /tmp/rclone-mount.log
-D=1 $DIR/rclone-sync.sh
 
-nohup bash -c "S=1 $DIR/rclone-sync.sh" > /tmp/rclone-sync-watch.out 2>&1 &
+
+nohup bash -c "D=1 $DIR/rclone-sync.sh; S=1 $DIR/rclone-sync.sh" > /tmp/rclone-sync-watch.out 2>&1 &
 
 
 
