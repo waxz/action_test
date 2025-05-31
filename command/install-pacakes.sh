@@ -202,11 +202,12 @@ curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo 
 
 sudo apt update && sudo apt install -y caddy
 
+sudo systemctl disable --now apache2
+sudo systemctl disable --now nginx
 
-sudo systemctl stop nginx
 sudo cp $DIR/Caddyfile /etc/caddy/Caddyfile
 # sudo caddy start --config $DIR/Caddyfile
-sudo systemctl start caddy
+sudo systemctl restart caddy
 sudo systemctl reload caddy
 
 
