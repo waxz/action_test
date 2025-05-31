@@ -191,3 +191,6 @@ cd /tmp/emsdk/
 cat << 'EOF' | tee -a $HOME/.bashrc
 source /tmp/emsdk/emsdk_env.sh
 EOF
+
+wget https://github.com/tinygo-org/tinygo/releases/download/v0.37.0/tinygo_0.37.0_amd64.deb -O /tmp/tinygo_0.37.0_amd64.deb
+sudo dpkg -i /tmp/tinygo_0.37.0_amd64.deb
