@@ -4,7 +4,10 @@
 - node_modules/**
 # Exclude all .log files
 - *.log
+#
+- *.swp
 
+- .wrangler/**
 
 - .parcel-cache/**
 
