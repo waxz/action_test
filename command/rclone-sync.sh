@@ -12,6 +12,8 @@ DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
 
 
 WATCH_DIR="/tmp/code"
+CACHE_DIR="/tmp/rclone-cache"
+
 mkdir -p $WATCH_DIR
 REMOTE="r2:r2disk/code"
 FILTER="$DIR/rclone-filter.txt"
@@ -23,7 +25,7 @@ echo "Local folder size: $local_folder_size"
 remote_folder_size=$(rclone size "$REMOTE" --json | jq -r '.bytes')
 echo "Remote folder size: $remote_folder_size"
 
-if [ $local_folder_size -gt 1000000000 ];then
+if [ "$local_folder_size" -gt 1000000000 ];then
     echo "Local folder size is greater than 1GB"
     exit 1;
 fi;
@@ -40,6 +42,19 @@ if [ ! -z "$U" ];then
     exit 0;
 fi;
 
+if [ ! -z "$M" ];then
+    echo mount
+    rclone mount --skip-links --filter-from "$FILTER" "$REMOTE" "$WATCH_DIR" --allow-non-empty --dir-cache-time 5000h\
+    --umask 002 \
+    --cache-dir=$CACHE_DIR --vfs-read-chunk-size 1M --vfs-cache-mode writes --vfs-cache-max-size 20G \
+    --vfs-cache-max-age 2h --vfs-cache-poll-interval 5m --vfs-read-ahead 2G \
+    --log-file $LOG --log-level INFO\
+    --links
+    #--poll-interval 5s  --allow-other 
+    #umount $WATCH_DIR
+    rm -r $WATCH_DIR
+    exit 0;
+fi;
 
 if [ ! -z "$S" ];then
     echo "Starting sync..."
