@@ -83,3 +83,6 @@ nohup /tmp/self-host-reader/run_readeck.sh > /tmp/reader.out 2>&1 &
 
 # pi-hole
 cd ./pi && ./run.sh
+
+# tts
+docker run --rm -d -p 8001:8000 ghcr.io/dbccccccc/ttsfm:latest
