@@ -219,15 +219,22 @@ Environment="OLLAMA_ORIGINS=*"
 ' | sudo tee /etc/systemd/system/ollama.service.d/override.conf > /dev/null
 
 sudo systemctl daemon-reload
+sudo systemctl enable ollama
 sudo systemctl restart ollama
+
 ollama pull gemma3:1b
 
 # webui
 docker run -d --rm -e PORT=9000 -e OLLAMA_URL=http://localhost:11434 --network=host ghcr.io/anishgowda21/tiny-ollama-chat:latest
 
-cd $DIR/../searxng && docker compose up -d
-caddy start --config  $DIR/Caddyfile-Searx
+# cd $DIR/../searxng && docker compose up -d
+# caddy start --config  $DIR/Caddyfile-Searx
+git clone https://github.com/mendableai/firecrawl.git /tmp/firecrawl --depth 1
+cp $DIR/firecrawl-env /tmp/firecrawl/.env
+cd /tmp/firecrawl/ && docker compose up -d
 
 
 export OLLAMA_API_KEY=sk-ollama
-caddy start --config  $DIR/Caddyfile-Ollama
+caddy stop --config  $DIR/Caddyfile-Ollama || true  && caddy start --config  $DIR/Caddyfile-Ollama
+# caddy stop --config  ./Caddyfile-Ollama || true  && caddy start --config  ./Caddyfile-Ollama
+ 
