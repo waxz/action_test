@@ -1,35 +1,48 @@
 :8081 {
-	@options {
-		method OPTIONS
-	}
-	header {
-		Access-Control-Allow-Origin *
-		Access-Control-Allow-Credentials true
-		Access-Control-Allow-Methods *
-		Access-Control-Allow-Headers *
-		defer
-	}
+    # Handle OPTIONS preflight requests
+    @options {
+        method OPTIONS
+    }
 
-	# Define a matcher for authorized API access
-	@apiAuth {
-		header Authorization "Bearer {env.OLLAMA_API_KEY}"
-	}
+    # Respond to OPTIONS with 204 and proper CORS headers
+    header @options {
+        Access-Control-Allow-Origin "{http.request.header.Origin}"
+        Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        Access-Control-Allow-Headers "Origin, Content-Type, Accept, Authorization, x-requested-with"
+        Access-Control-Allow-Credentials "true"
+        Access-Control-Max-Age "1728000"
+        Content-Type "text/plain; charset=UTF-8"
+        Content-Length "0"
+        Vary "Origin"
+    }
+    respond @options 204
 
-	# Proxy authorized requests
-	reverse_proxy @apiAuth http://localhost:11434 {
-		header_up Host {http.reverse_proxy.upstream.hostport}
-		header_down -Access-Control-Allow-Origin
-	}
+    # Add CORS headers on all other requests
+    header {
+        Access-Control-Allow-Origin "{http.request.header.Origin}"
+        Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        Access-Control-Allow-Headers "Origin, Content-Type, Accept, Authorization, x-requested-with"
+        Access-Control-Allow-Credentials "true"
+        Vary "Origin"
+    }
 
-	# Define a matcher for unauthorized access
-	@unauthorized {
-		not {
-			header Authorization "Bearer {env.OLLAMA_API_KEY}"
-		}
-	}
-	respond @options 204
-	# Respond to unauthorized access
-	respond @unauthorized "Unauthorized" 401 {
-		close
-	}
+    # Authenticated requests matcher
+    @apiAuth {
+        header Authorization "Bearer {env.OLLAMA_API_KEY}"
+    }
+
+    # Proxy authorized requests to Ollama server
+    reverse_proxy @apiAuth http://localhost:11434 {
+        header_up Host "localhost:11434"
+        # Remove upstream Access-Control-Allow-Origin to avoid conflicts
+        header_down -Access-Control-Allow-Origin
+    }
+
+    # Deny unauthorized requests
+    @unauthorized {
+        not header Authorization "Bearer {env.OLLAMA_API_KEY}"
+    }
+    respond @unauthorized "Unauthorized" 401 {
+        close
+    }
 }

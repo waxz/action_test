@@ -212,5 +212,16 @@ sudo systemctl reload caddy
 
 # run ollama proxy
 curl -fsSL https://ollama.com/install.sh | sh
+sudo mkdir -p /etc/systemd/system/ollama.service.d/
+echo '[Service]
+Environment="OLLAMA_HOST=0.0.0.0"
+Environment="OLLAMA_ORIGINS=*"
+' | sudo tee /etc/systemd/system/ollama.service.d/override.conf > /dev/null
+
+sudo systemctl daemon-reload
+sudo systemctl restart ollama
+ollama pull gemma3:1b
+
+
 export OLLAMA_API_KEY=sk-ollama
 caddy start --config  $DIR/Caddyfile-Ollama
