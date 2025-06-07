@@ -18,7 +18,9 @@
 	handle_path /vscode/* {
 		reverse_proxy localhost:3030
 	}
-
+	handle_path /search/* {
+		reverse_proxy localhost:8080
+	}
 	handle /readeck/* {
 		reverse_proxy localhost:8000
 	}
