@@ -210,4 +210,7 @@ sudo cp $DIR/Caddyfile /etc/caddy/Caddyfile
 sudo systemctl restart caddy
 sudo systemctl reload caddy
 
-
+# run ollama proxy
+curl -fsSL https://ollama.com/install.sh | sh
+export OLLAMA_API_KEY=sk-ollama
+caddy start --config  $DIR/Caddyfile-Ollama
