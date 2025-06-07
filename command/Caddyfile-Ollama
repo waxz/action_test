@@ -1,4 +1,15 @@
 :8081 {
+	@options {
+		method OPTIONS
+	}
+	header {
+		Access-Control-Allow-Origin *
+		Access-Control-Allow-Credentials true
+		Access-Control-Allow-Methods *
+		Access-Control-Allow-Headers *
+		defer
+	}
+
 	# Define a matcher for authorized API access
 	@apiAuth {
 		header Authorization "Bearer {env.OLLAMA_API_KEY}"
@@ -7,6 +18,7 @@
 	# Proxy authorized requests
 	reverse_proxy @apiAuth http://localhost:11434 {
 		header_up Host {http.reverse_proxy.upstream.hostport}
+		header_down -Access-Control-Allow-Origin
 	}
 
 	# Define a matcher for unauthorized access
@@ -15,7 +27,7 @@
 			header Authorization "Bearer {env.OLLAMA_API_KEY}"
 		}
 	}
-
+	respond @options 204
 	# Respond to unauthorized access
 	respond @unauthorized "Unauthorized" 401 {
 		close
