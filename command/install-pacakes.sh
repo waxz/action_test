@@ -222,6 +222,9 @@ sudo systemctl daemon-reload
 sudo systemctl restart ollama
 ollama pull gemma3:1b
 
+# webui
+docker run --rm -e PORT=9000 -e OLLAMA_URL=http://localhost:11434 --network=host ghcr.io/anishgowda21/tiny-ollama-chat:latest
+
 
 export OLLAMA_API_KEY=sk-ollama
 caddy start --config  $DIR/Caddyfile-Ollama
