@@ -96,7 +96,9 @@ server:
   # If your instance owns a /etc/searxng/settings.yml file, then set the following
   # values there.
 
-  secret_key: "01a32c69fba13954832d3c95e6186010"  # Is overwritten by ${SEARXNG_SECRET}
+  secret_key: ""  # Is overwritten by ${SEARXNG_SECRET}
+  authentication:
+    enabled: false
   # Proxy image results through SearXNG. Is overwritten by ${SEARXNG_IMAGE_PROXY}
   image_proxy: false
   # 1.0 and 1.1 are supported
@@ -1651,6 +1653,7 @@ engines:
   - name: public domain image archive
     engine: public_domain_image_archive
     shortcut: pdia
+    disable : true
 
   - name: pubmed
     engine: pubmed
