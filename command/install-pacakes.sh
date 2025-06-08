@@ -219,16 +219,16 @@ Environment="OLLAMA_ORIGINS=*"
 ' | sudo tee /etc/systemd/system/ollama.service.d/override.conf > /dev/null
 
 sudo systemctl daemon-reload
-sudo systemctl enable ollama
-sudo systemctl restart ollama
+sudo systemctl enable ollama --now
+sudo systemctl restart ollama --now
 
 
-sudo systemctl stop ollama
+sudo systemctl stop ollama --now
 
 sudo rsync -a /usr/share/ollama/.ollama/ /mnt/data/ollama/
 sudo rm -rf /usr/share/ollama/.ollama/
 sudo ln -s /mnt/data/ollama /usr/share/ollama/.ollama
-sudo systemctl restart ollama
+sudo systemctl restart ollama --now
 
 
 ollama pull gemma3:1b
