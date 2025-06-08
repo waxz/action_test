@@ -91,9 +91,9 @@ source $HOME/.bashrc
 
 
 sudo systemctl stop docker
+
 sudo rsync -a /var/lib/docker/ /mnt/data/docker/
 sudo rm -rf /var/lib/docker/
+sudo ln -s /mnt/data/docker /var/lib/docker
+
 sudo systemctl restart docker
-   
-
-
