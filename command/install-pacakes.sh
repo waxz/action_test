@@ -228,8 +228,7 @@ sudo systemctl stop ollama
 sudo rsync -a /usr/share/ollama/.ollama/ /mnt/data/ollama/
 sudo rm -rf /usr/share/ollama/.ollama/
 sudo ln -s /mnt/data/ollama /usr/share/ollama/.ollama
-
-sudo systemctl restart docker
+sudo systemctl restart ollama
 
 
 ollama pull gemma3:1b
