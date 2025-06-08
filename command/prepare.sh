@@ -90,3 +90,10 @@ EOF
 source $HOME/.bashrc
 
 
+sudo systemctl stop docker
+sudo rsync -a /var/lib/docker/ /mnt/data/docker/
+sudo rm -rf /var/lib/docker/
+sudo systemctl restart docker
+   
+
+
