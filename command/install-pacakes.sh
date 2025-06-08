@@ -222,6 +222,16 @@ sudo systemctl daemon-reload
 sudo systemctl enable ollama
 sudo systemctl restart ollama
 
+
+sudo systemctl stop ollama
+
+sudo rsync -a /usr/share/ollama/.ollama/ /mnt/data/ollama/
+sudo rm -rf /usr/share/ollama/.ollama/
+sudo ln -s /mnt/data/ollama /usr/share/ollama/.ollama
+
+sudo systemctl restart docker
+
+
 ollama pull gemma3:1b
 
 # webui
