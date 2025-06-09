@@ -296,8 +296,8 @@ jobs:
       run: |
         #tailscale
         #sudo ufw allow 41641/udp
-        sudo tailscale up --hostname=github-action --auth-key="$TAIL_KEY" --advertise-exit-node
-        tailscale status
+        sudo tailscale up --hostname=github-action --auth-key="$TAIL_KEY" --advertise-exit-node || true
+        tailscale status || true
 
       env:
         SUPER_SECRET: ${{ secrets.SUPER_SECRET }}
