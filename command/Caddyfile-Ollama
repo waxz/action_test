@@ -32,7 +32,7 @@
     }
 
     # Proxy authorized requests to Ollama server
-    reverse_proxy @apiAuth http://localhost:11434 {
+    reverse_proxy http://localhost:11434 {
         header_up Host "localhost:11434"
         # Remove upstream Access-Control-Allow-Origin to avoid conflicts
         header_down -Access-Control-Allow-Origin
@@ -42,7 +42,7 @@
     @unauthorized {
         not header Authorization "Bearer {env.OLLAMA_API_KEY}"
     }
-    respond @unauthorized "Unauthorized" 401 {
-        close
-    }
+   # respond @unauthorized "Unauthorized" 401 {
+   #     close
+   # }
 }
