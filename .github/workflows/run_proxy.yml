@@ -172,7 +172,7 @@ jobs:
 
 
 
-        sudo cp $HOME/.tmux* /home/$MY_SSH_USER/
+        sudo cp $HOME/.tmux.conf* /home/$MY_SSH_USER/
 
 
 
