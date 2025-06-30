@@ -15,7 +15,8 @@ WATCH_DIR="/tmp/code"
 CACHE_DIR="/tmp/rclone-cache"
 
 mkdir -p $WATCH_DIR
-REMOTE="r2:r2disk/code"
+# r2 is very expensive for high frequency writing/creating operations. 
+REMOTE="onedrive:code"
 FILTER="$DIR/rclone-filter.txt"
 LOG="/tmp/rclone-sync.log"
 
