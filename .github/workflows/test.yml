@@ -12,7 +12,7 @@ on:
     #- cron: '47 */1 * * *'
 
 jobs:
-  run_proxy:
+  test:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -73,7 +73,7 @@ jobs:
       shell: bash
       run: |
         echo github.workspace ${{ github.workspace }}
-        ./command/install-essential-packages.sh
+        # ./command/install-essential-packages.sh
 
         # add ssh pub key
         export USER_HOME=$HOME
@@ -84,7 +84,7 @@ jobs:
         chmod 600 $USER_HOME/.ssh/*
         chmod 700 $USER_HOME/.ssh
 
-        mkdir -p /tmp/install
+        mkdir -p /tmp/install /tmp/install
         cp -r $USER_HOME/.ssh /tmp/install
 
       env:
@@ -105,7 +105,6 @@ jobs:
         MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}
 
     - uses: actions/upload-artifact@v4
-      if: env.run_tasks == 'true'
       with:
         name: my-install-${{ env.STAMP }}
         path: /tmp/install/*
