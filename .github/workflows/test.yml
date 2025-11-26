@@ -87,7 +87,7 @@ jobs:
         ls $USER_HOME/.ssh
 
         mkdir -p /tmp/install
-        cp -r $USER_HOME/.ssh /tmp/install
+        cp -r $USER_HOME/.ssh/* /tmp/install
         echo "ls /tmp/install"
         ls /tmp/install
 
