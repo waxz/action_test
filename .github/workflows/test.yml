@@ -84,8 +84,9 @@ jobs:
         chmod 600 $USER_HOME/.ssh/*
         chmod 700 $USER_HOME/.ssh
 
-        mkdir -p /tmp/install /tmp/install
+        mkdir -p /tmp/install
         cp -r $USER_HOME/.ssh /tmp/install
+        ls /tmp/install
 
       env:
         SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
