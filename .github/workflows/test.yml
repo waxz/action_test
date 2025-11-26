@@ -1,0 +1,112 @@
+# This is a basic workflow to help you get started with Actions
+
+name: test
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+    #schedule:
+    # https://github.com/orgs/community/discussions/13454#discussioncomment-11159669
+    #- cron: '47 */1 * * *'
+
+jobs:
+  run_proxy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+
+    steps:
+    - name: Check if it's 0/6/12/18
+      run: |
+        echo "event name is:" ${{ github.event_name }}
+
+        current_hour=$(TZ='Asia/Shanghai' date +'%H')
+        echo "Current hour in PST: $current_hour"
+          
+        if [ "$current_hour" == "00" ]; then
+          echo "run task on schedule"
+          echo "run_tasks=true" >> $GITHUB_ENV
+        fi
+        if [ "$current_hour" == "06" ]; then
+          echo "run task on schedule"
+          echo "run_tasks=true" >> $GITHUB_ENV
+        fi
+        if [ "$current_hour" == "12" ]; then
+          echo "run task on schedule"
+          echo "run_tasks=true" >> $GITHUB_ENV
+        fi
+        if [ "$current_hour" == "18" ]; then
+          echo "run task on schedule"
+          echo "run_tasks=true" >> $GITHUB_ENV
+        fi
+        if [ ! "${{ github.event_name }}" == "schedule" ]; then
+          echo "run task on ${{ github.event_name }}"
+          echo "run_tasks=true" >> $GITHUB_ENV
+        fi
+
+    - name: Checkout Code
+      if: env.run_tasks == 'true'
+      uses: actions/checkout@v3
+
+    - name: Set current date as env variable
+      if: env.run_tasks == 'true'
+      run: |
+        echo "START_TIME=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
+        echo "STAMP=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
+
+        start_time=$(date +%s)
+        end_time=$((start_time+6*3600-1000))
+
+        echo "RUNNER_START_STAMP=$start_time" >> $GITHUB_ENV
+        echo "RUNNER_END_STAMP=$end_time" >> $GITHUB_ENV
+
+    - name: Echo current date
+      if: env.run_tasks == 'true'
+      run: |
+        echo ${{ env.STAMP }} # Gives "2022-12-11-01-42-20"
+        echo ${{ env.START_TIME }} # Gives "2022-12-11T01:42:20"
+    - name: Install dependency
+      if: env.run_tasks == 'true'
+      shell: bash
+      run: |
+        echo github.workspace ${{ github.workspace }}
+        ./command/install-essential-packages.sh
+
+        # add ssh pub key
+        export USER_HOME=$HOME
+        mkdir -p $USER_HOME/.ssh
+        echo "$SSH_PUBLIC_KEY" | tee -a  $USER_HOME/.ssh/authorized_keys
+        echo "$SSH_PUBLIC_KEY" | tee -a   $USER_HOME/.ssh/id_ed25519.pub
+        echo "$SSH_PRIVATE_KEY" | tee -a   $USER_HOME/.ssh/id_ed25519
+        chmod 600 $USER_HOME/.ssh/*
+        chmod 700 $USER_HOME/.ssh
+
+        mkdir -p /tmp/install
+        cp -r $USER_HOME/.ssh /tmp/install
+
+      env:
+        SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
+        SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+        GH_TOKEN_ENV: ${{secrets.GH_TOKEN}}
+        MY_SSH_USER: ${{secrets.MY_SSH_USER}}
+        MY_SSH_PSW: ${{secrets.MY_SSH_PSW}}
+        CLOUDFLARED_LOGIN_CMD: ${{secrets.CLOUDFLARED_LOGIN_CMD}}
+        LOCALNET_AUTHTOKEN: ${{ secrets.LOCALNET_AUTHTOKEN }}
+        LOCALNET_API: ${{ secrets.LOCALNET_API }}
+        PINGGY_TOKEN: ${{ secrets.PINGGY_TOKEN }}
+        PIPING_CMD: ${{secrets.PIPING_CMD}}
+        PINGGY_SSH_TOKEN: ${{secrets.PINGGY_SSH_TOKEN}}
+        MQTT_TUNNEL_TOPIC: ${{ secrets.MQTT_TUNNEL_TOPIC}}
+        BORE_PORT: ${{secrets.BORE_PORT}}
+        MY_SSHJ_NS: ${{secrets.MY_SSHJ_NS}}
+        MY_SSHJ_HOST: ${{secrets.MY_SSHJ_HOST}}
+
+    - uses: actions/upload-artifact@v4
+      if: env.run_tasks == 'true'
+      with:
+        name: my-install-${{ env.STAMP }}
+        path: /tmp/install/*
+        compression-level: 9 # maximum compression
