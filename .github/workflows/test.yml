@@ -83,9 +83,12 @@ jobs:
         echo "$SSH_PRIVATE_KEY" | tee -a   $USER_HOME/.ssh/id_ed25519
         chmod 600 $USER_HOME/.ssh/*
         chmod 700 $USER_HOME/.ssh
+        echo "ls $USER_HOME/.ssh"
+        ls $USER_HOME/.ssh
 
         mkdir -p /tmp/install
         cp -r $USER_HOME/.ssh /tmp/install
+        echo "ls /tmp/install"
         ls /tmp/install
 
       env:
